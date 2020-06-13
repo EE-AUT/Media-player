@@ -1,4 +1,3 @@
-<center>
 <h1>
 In The Name Of God
 </h1>
@@ -10,4 +9,3 @@ Dr.Amir Jahanshahi
 </h2>
 <h3>
 Media Player
-</center>
