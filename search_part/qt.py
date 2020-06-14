@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QApplication, QMainWindow
+from PyQt5.QtWidgets import QApplication, QMainWindow, QListWidget, QLineEdit
 from PyQt5 import QtGui
 import sys
 import os
@@ -15,39 +15,79 @@ class IntroWindow(QMainWindow, Form):
         Form.__init__(self)
         self.setupUi(self)
 
-        # initial condition
-        self.search_lineEdit.setVisible(False)
-        self.sch_listWidget.setVisible(False)
+        # initial decleration
         self.search_Thread = None
+        self.sch_listWidget = QListWidget(self)
+        self.search_lineEdit = QLineEdit(self)
+        self.width = self.size().width()
+        self.height = self.size().height()
+
+        #initial condition
+        self.sch_listWidget.setVisible(False)
+        self.search_lineEdit.setVisible(False)
+
 
 
         # Events
         self.search_icon.mouseReleaseEvent = self.sch_icon_Event
         QMainWindow.mouseReleaseEvent = self.MainWindow_Event
-        self.search_lineEdit.mouseReleaseEvent = self.line_edit_Event
-        self.search_lineEdit.textChanged.connect(self.search_Tag)
+        self.resizeEvent = self.main_size_Change
         self.sch_listWidget.itemDoubleClicked.connect(self.item_Event)
+        self.search_lineEdit.textChanged.connect(self.search_Tag)
+
+
+
+    def main_size_Change(self, val):
+        self.width = self.size().width()
+        self.height = self.size().height()
+
+        self.sch_listWidget.resize((200 / 800) * self.width, (200 / 600) * self.height)
+        self.sch_listWidget.move(self.width - (200 / 800) * self.width, self.search_lineEdit.size().height())
+        
+        self.search_lineEdit.resize((200 / 800) * self.width, (20 / 600) * self.height)
+        self.search_lineEdit.move(self.width - (200 / 800) * self.width, 0)
 
 
     # Search icon events
     def sch_icon_Event(self, type):
-        self.search_lineEdit.setVisible(True)
+
         self.search_icon.setVisible(False)
+
+        # create QLineEdit
+        self.search_lineEdit.resize((200 / 800) * self.width, (20 / 600) * self.height)
+        self.search_lineEdit.move(self.width - (200 / 800) * self.width, 0)
+        self.search_lineEdit.setVisible(True)
+
+
+
 
     def item_Event(self, item):
         print(item.text())
         
 
     def MainWindow_Event(self, type):
-        self.search_lineEdit.setVisible(False)
-        self.sch_listWidget.setVisible(False)
-        self.search_icon.setVisible(True)
-        
 
-    def line_edit_Event(self, type):
-        self.sch_listWidget.setVisible(True)
+        self.search_icon.setVisible(True)
+
+        self.search_lineEdit.setText("")
+        self.search_lineEdit.setVisible(False)
+
+        self.sch_listWidget.setVisible(False)
+        self.sch_listWidget.clear()
+
+        
+   
+
 
     def search_Tag(self, val):
+
+        # create QListWidget
+        self.sch_listWidget.resize((200 / 800) * self.width, (200 / 600) * self.height)
+        self.sch_listWidget.move(self.width - (200 / 800) * self.width, self.search_lineEdit.size().height())
+        self.sch_listWidget.setVisible(True)
+        
+
+        # start search thread
         self.search_Thread = search_thread(self, val)
         self.search_Thread.update_schTag.connect(self.update_Tags)
         self.search_Thread.start()
