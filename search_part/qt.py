@@ -41,11 +41,11 @@ class IntroWindow(QMainWindow, Form):
         self.width = self.size().width()
         self.height = self.size().height()
 
-        self.sch_listWidget.resize((200 / 800) * self.width, (200 / 600) * self.height)
-        self.sch_listWidget.move(self.width - (200 / 800) * self.width, self.search_lineEdit.size().height())
+        self.sch_listWidget.resize(int((200 / 800) * self.width), int((200 / 600) * self.height))
+        self.sch_listWidget.move(int(self.width - (200 / 800) * self.width), self.search_lineEdit.size().height())
         
-        self.search_lineEdit.resize((200 / 800) * self.width, (20 / 600) * self.height)
-        self.search_lineEdit.move(self.width - (200 / 800) * self.width, 0)
+        self.search_lineEdit.resize(int((200 / 800) * self.width), int((20 / 600) * self.height))
+        self.search_lineEdit.move(int(self.width - (200 / 800) * self.width), 0)
 
 
     # Search icon events
@@ -54,8 +54,8 @@ class IntroWindow(QMainWindow, Form):
         self.search_icon.setVisible(False)
 
         # create QLineEdit
-        self.search_lineEdit.resize((200 / 800) * self.width, (20 / 600) * self.height)
-        self.search_lineEdit.move(self.width - (200 / 800) * self.width, 0)
+        self.search_lineEdit.resize(int((200 / 800) * self.width), int((20 / 600) * self.height))
+        self.search_lineEdit.move(int(self.width - (200 / 800) * self.width), 0)
         self.search_lineEdit.setVisible(True)
 
 
@@ -82,8 +82,8 @@ class IntroWindow(QMainWindow, Form):
     def search_Tag(self, val):
 
         # create QListWidget
-        self.sch_listWidget.resize((200 / 800) * self.width, (200 / 600) * self.height)
-        self.sch_listWidget.move(self.width - (200 / 800) * self.width, self.search_lineEdit.size().height())
+        self.sch_listWidget.resize(int((200 / 800) * self.width), int((200 / 600) * self.height))
+        self.sch_listWidget.move(int(self.width - (200 / 800) * self.width), self.search_lineEdit.size().height())
         self.sch_listWidget.setVisible(True)
         
 
