@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>640</width>
-    <height>578</height>
+    <width>600</width>
+    <height>500</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -24,7 +24,7 @@
     <item row="0" column="0" rowspan="2">
      <layout class="QVBoxLayout" name="verticalLayout">
       <item>
-       <widget class="QOpenGLWidget" name="openGLWidget">
+       <widget class="QVideoWidget" name="videowidget" native="true">
         <property name="minimumSize">
          <size>
           <width>480</width>
@@ -34,7 +34,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QSlider" name="horizontalSlider_Play">
+       <widget class="QSlider" name="Slider_Play">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>
@@ -45,11 +45,11 @@
     <item row="2" column="0">
      <layout class="QHBoxLayout" name="horizontalLayout_3">
       <item>
-       <widget class="QPushButton" name="pushButton_Start">
+       <widget class="QPushButton" name="pushButton">
         <property name="minimumSize">
          <size>
-          <width>50</width>
-          <height>25</height>
+          <width>30</width>
+          <height>30</height>
          </size>
         </property>
         <property name="maximumSize">
@@ -59,12 +59,28 @@
          </size>
         </property>
         <property name="text">
-         <string>Start</string>
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset>
+          <normaloff>Icons/prev.png</normaloff>Icons/prev.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>20</width>
+          <height>20</height>
+         </size>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="pushButton_Pause">
+       <widget class="QPushButton" name="pushButton_Start">
+        <property name="minimumSize">
+         <size>
+          <width>30</width>
+          <height>30</height>
+         </size>
+        </property>
         <property name="maximumSize">
          <size>
           <width>50</width>
@@ -72,7 +88,76 @@
          </size>
         </property>
         <property name="text">
-         <string>Pause</string>
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset>
+          <normaloff>Icons/play.jpg</normaloff>
+          <disabledoff>Icons/play.png</disabledoff>Icons/play.jpg</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>20</width>
+          <height>20</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pushButton_next">
+        <property name="minimumSize">
+         <size>
+          <width>30</width>
+          <height>30</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>50</width>
+          <height>25</height>
+         </size>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset>
+          <normaloff>Icons/next.png</normaloff>Icons/next.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>20</width>
+          <height>20</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pushButton_2">
+        <property name="minimumSize">
+         <size>
+          <width>30</width>
+          <height>30</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>50</width>
+          <height>25</height>
+         </size>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset>
+          <normaloff>Icons/stop.png</normaloff>Icons/stop.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>20</width>
+          <height>20</height>
+         </size>
         </property>
        </widget>
       </item>
@@ -83,6 +168,11 @@
           <width>200</width>
           <height>0</height>
          </size>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>16</pointsize>
+         </font>
         </property>
         <property name="text">
          <string>Name</string>
@@ -145,7 +235,8 @@
             </property>
             <property name="icon">
              <iconset>
-              <normaloff>Icons/volume 0.jpg</normaloff>Icons/volume 0.jpg</iconset>
+              <normaloff>Icons/volume 0.jpg</normaloff>
+              <disabledoff>Icons/sound on.png</disabledoff>Icons/volume 0.jpg</iconset>
             </property>
             <property name="iconSize">
              <size>
@@ -156,7 +247,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QSlider" name="horizontalSlider_volume">
+           <widget class="QSlider" name="Slider_Volume">
             <property name="minimumSize">
              <size>
               <width>0</width>
@@ -187,7 +278,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>640</width>
+     <width>600</width>
      <height>21</height>
     </rect>
    </property>
@@ -200,34 +291,20 @@
    </widget>
    <addaction name="menuFile"/>
   </widget>
-  <widget class="QToolBar" name="toolBar">
-   <property name="windowTitle">
-    <string>toolBar</string>
-   </property>
-   <attribute name="toolBarArea">
-    <enum>TopToolBarArea</enum>
-   </attribute>
-   <attribute name="toolBarBreak">
-    <bool>false</bool>
-   </attribute>
-  </widget>
-  <widget class="QToolBar" name="toolBar_2">
-   <property name="windowTitle">
-    <string>toolBar_2</string>
-   </property>
-   <attribute name="toolBarArea">
-    <enum>TopToolBarArea</enum>
-   </attribute>
-   <attribute name="toolBarBreak">
-    <bool>false</bool>
-   </attribute>
-  </widget>
   <action name="actionOpen">
    <property name="text">
     <string>Open</string>
    </property>
   </action>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>QVideoWidget</class>
+   <extends>QWidget</extends>
+   <header>PyQt5.QtMultimediaWidgets</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>
