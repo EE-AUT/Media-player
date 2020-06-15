@@ -19,9 +19,51 @@
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>Icons/media player.png</normaloff>Icons/media player.png</iconset>
+  </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QGridLayout" name="gridLayout">
-    <item row="0" column="0" rowspan="2">
+   <layout class="QVBoxLayout" name="verticalLayout_2">
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_5">
+      <item>
+       <widget class="QRadioButton" name="radioButton_NightMode">
+        <property name="font">
+         <font>
+          <pointsize>10</pointsize>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>Night Mode</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pushButton_Search">
+        <property name="maximumSize">
+         <size>
+          <width>30</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="layoutDirection">
+         <enum>Qt::RightToLeft</enum>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset>
+          <normaloff>Icons/search_iocn.png</normaloff>Icons/search_iocn.png</iconset>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
      <layout class="QVBoxLayout" name="verticalLayout">
       <item>
        <widget class="QVideoWidget" name="videowidget" native="true">
@@ -34,18 +76,72 @@
        </widget>
       </item>
       <item>
-       <widget class="QSlider" name="Slider_Play">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-       </widget>
+       <layout class="QHBoxLayout" name="horizontalLayout_4">
+        <item>
+         <widget class="QSlider" name="Slider_Play">
+          <property name="mouseTracking">
+           <bool>false</bool>
+          </property>
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_Time">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>20</height>
+           </size>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>10</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
      </layout>
     </item>
-    <item row="2" column="0">
+    <item>
      <layout class="QHBoxLayout" name="horizontalLayout_3">
       <item>
-       <widget class="QPushButton" name="pushButton">
+       <widget class="QPushButton" name="pushButton_open">
+        <property name="minimumSize">
+         <size>
+          <width>30</width>
+          <height>30</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>50</width>
+          <height>25</height>
+         </size>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset>
+          <normaloff>Icons/open.png</normaloff>Icons/open.png</iconset>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pushButton_previous">
         <property name="minimumSize">
          <size>
           <width>30</width>
@@ -92,8 +188,7 @@
         </property>
         <property name="icon">
          <iconset>
-          <normaloff>Icons/play.jpg</normaloff>
-          <disabledoff>Icons/play.png</disabledoff>Icons/play.jpg</iconset>
+          <normaloff>Icons/play.png</normaloff>Icons/play.png</iconset>
         </property>
         <property name="iconSize">
          <size>
@@ -133,7 +228,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="pushButton_2">
+       <widget class="QPushButton" name="pushButton_stop">
         <property name="minimumSize">
          <size>
           <width>30</width>
@@ -165,7 +260,7 @@
        <widget class="QLabel" name="label_Name">
         <property name="minimumSize">
          <size>
-          <width>200</width>
+          <width>0</width>
           <height>0</height>
          </size>
         </property>
@@ -175,7 +270,7 @@
          </font>
         </property>
         <property name="text">
-         <string>Name</string>
+         <string/>
         </property>
         <property name="alignment">
          <set>Qt::AlignCenter</set>
@@ -209,6 +304,12 @@
         </item>
         <item>
          <widget class="QSlider" name="horizontalSlider_Speed">
+          <property name="minimumSize">
+           <size>
+            <width>30</width>
+            <height>0</height>
+           </size>
+          </property>
           <property name="maximumSize">
            <size>
             <width>100</width>
@@ -224,10 +325,16 @@
          <layout class="QHBoxLayout" name="horizontalLayout">
           <item>
            <widget class="QPushButton" name="pushButton_volume">
+            <property name="minimumSize">
+             <size>
+              <width>25</width>
+              <height>0</height>
+             </size>
+            </property>
             <property name="maximumSize">
              <size>
-              <width>30</width>
-              <height>30</height>
+              <width>25</width>
+              <height>25</height>
              </size>
             </property>
             <property name="text">
@@ -235,13 +342,12 @@
             </property>
             <property name="icon">
              <iconset>
-              <normaloff>Icons/volume 0.jpg</normaloff>
-              <disabledoff>Icons/sound on.png</disabledoff>Icons/volume 0.jpg</iconset>
+              <normaloff>Icons/mute.png</normaloff>Icons/mute.png</iconset>
             </property>
             <property name="iconSize">
              <size>
-              <width>40</width>
-              <height>40</height>
+              <width>25</width>
+              <height>25</height>
              </size>
             </property>
            </widget>
@@ -250,7 +356,7 @@
            <widget class="QSlider" name="Slider_Volume">
             <property name="minimumSize">
              <size>
-              <width>0</width>
+              <width>40</width>
               <height>0</height>
              </size>
             </property>

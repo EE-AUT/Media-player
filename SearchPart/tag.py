@@ -11,7 +11,6 @@ class tag:
             file_reader = csv.reader(csvfile, delimiter=',')
             self.tagsDict = {rows[0]:self.__getTime__(rows[1]) for rows in file_reader}
 
-
     # function for casting time string to seconds
     def __getTime__(self, tim):
         result = 0
