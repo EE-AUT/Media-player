@@ -2,7 +2,7 @@ import sys
 import os
 import LoginPart.Login as Login
 import SearchPart.tag as Tag
-from PyQt5.QtWidgets import QApplication, QMainWindow, QMenuBar, QFileDialog, QLineEdit, QListWidget
+from PyQt5.QtWidgets import QApplication, QMainWindow, QMenuBar, QFileDialog, QLineEdit, QListWidget, QSlider
 from PyQt5 import uic, QtCore
 from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
 from PyQt5.QtCore import Qt, QUrl
@@ -29,6 +29,38 @@ class MediaPlayer(QMainWindow, Form):
         self.resizeEvent = self.main_size_Change
         self.search_Thread = None
 
+        # create Slider
+        self.Slider_Play = Slider(self)
+        self.Slider_Play.setOrientation(Qt.Horizontal)
+        self.Slider_Play.resize(644, 22)
+        self.horizontalLayout_4.addWidget(self.Slider_Play, 1)
+        self.horizontalLayout_4.addWidget(self.label_Time, 0)
+        self.Duration = 0
+        # StyleSheet for Slider_Play
+        self.Slider_Play.setStyleSheet("""
+            QSlider::groove:horizontal {
+                border: 1px solid #bbb;
+                background: white;
+                height: 10px;
+                border-radius: 4px;
+            }
+
+            QSlider::sub-page:horizontal {
+                background: qlineargradient(x1: 0, y1: 0,    x2: 0, y2: 1, stop: 0 #66e, stop: 1 #bbf);
+                background: qlineargradient(x1: 0, y1: 0.2, x2: 1, y2: 1, stop: 0 #bbf, stop: 1 #55f);
+                border: 1px solid #777;
+                height: 10px;
+                border-radius: 4px;
+            }
+            
+            QSlider::add-page:horizontal {
+                background: #fff;
+                border: 1px solid #777;
+                height: 10px;
+                border-radius: 4px;
+            }
+        """)
+
         # PushButtton
         self.pushButton_Start.setEnabled(False)
         self.pushButton_Start.mouseReleaseEvent
@@ -51,10 +83,11 @@ class MediaPlayer(QMainWindow, Form):
         self.pushButton_Search.clicked.connect(self.sch_icon_Event)
 
         # Slider Play
+
         self.Slider_Play.setRange(0, 0)
         self.player.positionChanged.connect(self.Position_changed)
         self.player.durationChanged.connect(self.Duration_changed)
-        self.Slider_Play.sliderMoved.connect(self.Set_Position)
+        self.Slider_Play.setUP_Slider.connect(self.Set_Position)
 
         # Slider Volume
         self.Slider_Volume.setRange(0, 0)
@@ -142,9 +175,15 @@ class MediaPlayer(QMainWindow, Form):
         self.Slider_Play.setValue(position)
 
     def Duration_changed(self, duration):
+        self.Duration = duration
         self.Slider_Play.setRange(0, duration)
 
     def Set_Position(self, position):
+
+        if not (position < 0 and position > self.Slider_Play.width()):
+            position = int(self.Duration * (position / self.Slider_Play.width()))
+            self.Slider_Play.setValue(position)
+
         self.player.setPosition(position)
 
     # def Volume_changed(self, volume):
@@ -224,6 +263,22 @@ class MediaPlayer(QMainWindow, Form):
     def GoTO(self, time):
         self.Slider_Play.setValue(int(time)*1000)
         self.player.setPosition(int(time)*1000)
+
+
+
+# Custome play slider
+class Slider(QSlider):
+    setUP_Slider = QtCore.pyqtSignal(int)
+    def __init__(self, MediaPlayer):
+        QSlider.__init__(self, parent= MediaPlayer)
+
+    def mousePressEvent(self, position):
+        self.setUP_Slider.emit(position.pos().x())
+
+    def mouseMoveEvent(self, position):
+        self.setUP_Slider.emit(position.x())
+
+
 
 
 # thread for searching in tags
