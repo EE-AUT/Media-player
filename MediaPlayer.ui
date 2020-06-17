@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>600</width>
-    <height>500</height>
+    <width>685</width>
+    <height>586</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -77,16 +77,6 @@
       </item>
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout_4">
-        <item>
-         <widget class="QSlider" name="Slider_Play">
-          <property name="mouseTracking">
-           <bool>false</bool>
-          </property>
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-         </widget>
-        </item>
         <item>
          <widget class="QLabel" name="label_Time">
           <property name="minimumSize">
@@ -316,6 +306,29 @@
             <height>20</height>
            </size>
           </property>
+          <property name="styleSheet">
+           <string notr="true">            QSlider::groove:horizontal {
+            border: 2px solid #bbb;
+            background: white;
+            height: 10px;
+            border-radius: 4px;
+            }
+
+            QSlider::sub-page:horizontal {
+            background: qlineargradient(x1: 0, y1: 0,    x2: 0, y2: 1, stop: 0 #66e, stop: 1 #bbf);
+            background: qlineargradient(x1: 0, y1: 0.2, x2: 1, y2: 1, stop: 0 #bbf, stop: 1 #55f);
+            border: 1px solid #777;
+            height: 10px;
+            border-radius: 4px;
+            }
+
+            QSlider::add-page:horizontal {
+            background: #fff;
+            border: 1px solid #777;
+            height: 10px;
+            border-radius: 4px;
+            }</string>
+          </property>
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
@@ -366,6 +379,32 @@
               <height>20</height>
              </size>
             </property>
+            <property name="styleSheet">
+             <string notr="true">            QSlider::groove:horizontal {
+            border: 1px solid #bbb;
+            background: white;
+            height: 10px;
+            border-radius: 4px;
+            }
+
+            QSlider::sub-page:horizontal {
+            background: qlineargradient(x1: 0, y1: 0,    x2: 0, y2: 1, stop: 0 #66e, stop: 1 #bbf);
+            background: qlineargradient(x1: 0, y1: 0.2, x2: 1, y2: 1, stop: 0 #bbf, stop: 1 #55f);
+            border: 1px solid #777;
+            height: 10px;
+            border-radius: 4px;
+            }
+
+            QSlider::add-page:horizontal {
+            background: #fff;
+            border: 1px solid #777;
+            height: 10px;
+            border-radius: 4px;
+            }
+
+
+</string>
+            </property>
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
             </property>
@@ -384,8 +423,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>600</width>
-     <height>21</height>
+     <width>685</width>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
