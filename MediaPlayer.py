@@ -28,6 +28,11 @@ class MediaPlayer(QMainWindow, Form):
         self.mouseReleaseEvent = self.MainWindow_Event
         self.resizeEvent = self.main_size_Change
         self.search_Thread = None
+        self.write_Bookmark = QLineEdit(self)
+        self.write_Bookmark.setVisible(False)
+        self.write_Bookmark.returnPressed.connect(self.save_Bookmarks)
+        self.movie_Name = None
+
 
         # Create Tags
         self.TagDB = None
@@ -151,8 +156,8 @@ class MediaPlayer(QMainWindow, Form):
         file_path, _ = QFileDialog.getOpenFileName(
             self, "Open video", directory=os.path.join(os.getcwd(), 'Video'))
         path_Element = file_path.split("/")
-        movie_Name = path_Element.pop()
-        Tag_path = "/".join(path_Element) + "/Tags/" + movie_Name.split(".")[0]
+        self.movie_Name = path_Element.pop()
+        Tag_path = "/".join(path_Element) + "/Tags/" + self.movie_Name.split(".")[0]
         self.Create_Tags(Tag_path)
 
         if file_path:
@@ -214,11 +219,36 @@ class MediaPlayer(QMainWindow, Form):
             self.player.setMuted(True)
             self.pushButton_volume.setIcon(QIcon('./Icons/mute.png'))
 
+    def save_Bookmarks(self):
+        self.write_Bookmark.setVisible(False)
+        try:
+            path = os.path.join(os.getcwd(), "bookmarks")
+            os.mkdir(path)
+        except:
+            pass
+        
+        try:
+            with open(f"{os.getcwd()}/bookmarks/9623070.csv", "a", newline="") as csvfile:
+                csvfile.write(f"{self.movie_Name}, {self.write_Bookmark.text()}, {self.label_Time.text()}")
+                csvfile.write("\n")
+        except:
+            pass
+        self.write_Bookmark.setText("")
+
+
+
+
     def sch_icon_Event(self, type):
+
+        self.write_Bookmark.resize(
+            int((200 / 800) * self.size().width()), self.pushButton_Search.geometry().height())
+        self.write_Bookmark.move(
+            int(self.size().width() / 2 - (100 / 800) * self.size().width()), 31)
+        self.write_Bookmark.setVisible(True)
 
         # create QLineEdit
         self.search_lineEdit.resize(
-            int((200 / 800) * self.size().width()), self.pushButton_Search.geometry().height()-2)
+            int((200 / 800) * self.size().width()), self.pushButton_Search.geometry().height())
         self.search_lineEdit.move(
             int(self.pushButton_Search.x() - (200 / 800) * self.size().width()), 31)
         self.search_lineEdit.setVisible(True)
@@ -228,10 +258,18 @@ class MediaPlayer(QMainWindow, Form):
         self.search_lineEdit.setText("")
         self.search_lineEdit.setVisible(False)
 
+        self.write_Bookmark.setText("")
+        self.write_Bookmark.setVisible(False)
+
         self.sch_listWidget.setVisible(False)
         self.sch_listWidget.clear()
 
     def main_size_Change(self, val):
+
+        self.write_Bookmark.resize(
+            int((200 / 800) * self.size().width()), self.pushButton_Search.geometry().height())
+        self.write_Bookmark.move(
+            int(self.size().width() / 2 - (100 / 800) * self.size().width()), 31)
 
         self.sch_listWidget.resize(
             int((200 / 800) * self.size().width()), int((200 / 600) * self.size().height()))
@@ -239,7 +277,7 @@ class MediaPlayer(QMainWindow, Form):
             int(self.pushButton_Search.x() - (200 / 800) * self.size().width()), 52)
 
         self.search_lineEdit.resize(
-            int((200 / 800) * self.size().width()), self.pushButton_Search.geometry().height()-2)
+            int((200 / 800) * self.size().width()), self.pushButton_Search.geometry().height())
         self.search_lineEdit.move(
             int(self.pushButton_Search.x() - (200 / 800) * self.size().width()), 31)
 
