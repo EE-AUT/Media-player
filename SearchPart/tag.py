@@ -3,11 +3,11 @@ import difflib
 
 
 class tag:
-    def __init__(self, sessNumber):
-        self.sessNumber = sessNumber # session number
+    def __init__(self, sessName):
+        self.sessName = sessName # session Name
         self.tagsDict = {} # datas dictionary
         # read datas from csv file and save them in tagDict
-        with open(str(sessNumber) + ".csv ") as csvfile:
+        with open(str(sessName) + ".csv ") as csvfile:
             file_reader = csv.reader(csvfile, delimiter=',')
             self.tagsDict = {rows[0]:self.__getTime__(rows[1]) for rows in file_reader}
 

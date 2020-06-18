@@ -29,6 +29,10 @@ class MediaPlayer(QMainWindow, Form):
         self.resizeEvent = self.main_size_Change
         self.search_Thread = None
 
+        # Create Tags
+        self.TagDB = None
+
+
         # create Slider
         self.Slider_Play = Slider(self)
         self.Slider_Play.setOrientation(Qt.Horizontal)
@@ -83,7 +87,6 @@ class MediaPlayer(QMainWindow, Form):
         self.pushButton_Search.clicked.connect(self.sch_icon_Event)
 
         # Slider Play
-
         self.Slider_Play.setRange(0, 0)
         self.player.positionChanged.connect(self.Position_changed)
         self.player.durationChanged.connect(self.Duration_changed)
@@ -147,6 +150,11 @@ class MediaPlayer(QMainWindow, Form):
     def Load_video(self):
         file_path, _ = QFileDialog.getOpenFileName(
             self, "Open video", directory=os.path.join(os.getcwd(), 'Video'))
+        path_Element = file_path.split("/")
+        movie_Name = path_Element.pop()
+        Tag_path = "/".join(path_Element) + "/Tags/" + movie_Name.split(".")[0]
+        self.Create_Tags(Tag_path)
+
         if file_path:
             self.player.setMedia(QMediaContent(QUrl.fromLocalFile(file_path)))
             self.start()
@@ -264,6 +272,12 @@ class MediaPlayer(QMainWindow, Form):
         self.Slider_Play.setValue(int(time)*1000)
         self.player.setPosition(int(time)*1000)
 
+    def Create_Tags(self, directory):
+        self.TagDB = Tag.tag("SearchPart/1")
+
+        
+
+
 
 
 # Custome play slider
@@ -287,11 +301,16 @@ class search_thread(QtCore.QThread):
 
     def __init__(self, window, val):
         self.val = val
+        self.Parent = window
         QtCore.QThread.__init__(self, parent=window)
 
     def run(self):
-        sch_Tags = TagDB.find_Closest_to(self.val)
-        self.update_schTag.emit(sch_Tags)
+        if self.Parent.TagDB:
+            sch_Tags = self.Parent.TagDB.find_Closest_to(self.val)
+            self.update_schTag.emit(sch_Tags)
+        else :
+            self.update_schTag.emit([])
+
 
 
 if __name__ == '__main__':
@@ -301,7 +320,7 @@ if __name__ == '__main__':
     app.exec_()
     if Loginw.Login():
         # app=QApplication(sys.argv)
-        TagDB = Tag.tag("SearchPart/1")
+        # self.TagDB = Tag.tag("SearchPart/1")
         Mainw = MediaPlayer()
         Mainw.show()
         sys.exit(app.exec_())
