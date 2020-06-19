@@ -4,7 +4,6 @@ import os
 import sys
 import csv
 
-
 class LoginDatabase():
     def __init__(self):
         self.dic = {}
@@ -19,6 +18,7 @@ class LoginDatabase():
                     return True
         return False
 
+
 Form = uic.loadUiType(os.path.join(os.getcwd(), 'LoginPart/Login.ui'))[0]
 
 
@@ -28,8 +28,8 @@ class LoginWindow(QDialog, Form):
         QDialog.__init__(self)
         self.setupUi(self)
         self.setWindowTitle("Login")
-        self.StudentID =str('')
-        self.Email=str('')
+        self.StudentID = str('')
+        self.Email = str('')
         # Event
 
         self.LoginButton.clicked.connect(self.Login)
@@ -71,7 +71,10 @@ class LoginWindow(QDialog, Form):
 
     def Login(self):
         Database = LoginDatabase()
-        if Database.check((str(self.Email), str(self.StudentID))):
+        if Database.check((str(self.StudentID), str(self.Email))):
+            with open("LoginPart/User.csv", "w") as oFile:
+                employee_writer=csv.writer(oFile,delimiter=',')
+                employee_writer.writerow([self.StudentID,self.Email])
             self.close()
             return True
         else:
