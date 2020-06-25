@@ -4,6 +4,7 @@ import os
 import sys
 import csv
 
+
 class LoginDatabase():
     def __init__(self):
         self.dic = {}
@@ -72,9 +73,9 @@ class LoginWindow(QDialog, Form):
     def Login(self):
         Database = LoginDatabase()
         if Database.check((str(self.StudentID), str(self.Email))):
-            with open("LoginPart/User.csv", "w") as oFile:
-                employee_writer=csv.writer(oFile,delimiter=',')
-                employee_writer.writerow([self.StudentID,self.Email])
+            with open("LoginPart/User.csv", "w", newline="") as oFile:
+                employee_writer = csv.writer(oFile, delimiter=',')
+                employee_writer.writerow([self.StudentID, self.Email])
             self.close()
             return True
         else:

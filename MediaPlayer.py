@@ -4,6 +4,7 @@ import csv
 import subprocess
 import LoginPart.Login as Login
 import SearchPart.tag as Tag
+import SettingPart.Setting as Setting
 from PyQt5.QtWidgets import QApplication, QMainWindow, QMenuBar, QFileDialog, QLineEdit, QListWidget, QSlider, QShortcut
 from PyQt5 import uic, QtCore
 from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
@@ -44,30 +45,30 @@ class MediaPlayer(QMainWindow, Form):
         self.horizontalLayout_4.addWidget(self.Slider_Play, 1)
         self.horizontalLayout_4.addWidget(self.label_Time, 0)
         self.Duration = 0
-        # StyleSheet for Slider_Play
-        self.Slider_Play.setStyleSheet("""
-            QSlider::groove:horizontal {
-                border: 1px solid #bbb;
-                background: white;
-                height: 10px;
-                border-radius: 4px;
-            }
+        # # StyleSheet for Slider_Play
+        # self.Slider_Play.setStyleSheet("""
+        #     QSlider::groove:horizontal {
+        #         border: 1px solid #bbb;
+        #         background: white;
+        #         height: 3px;
+        #         border-radius: 4px;
+        #     }
 
-            QSlider::sub-page:horizontal {
-                background: qlineargradient(x1: 0, y1: 0,    x2: 0, y2: 1, stop: 0 #66e, stop: 1 #bbf);
-                background: qlineargradient(x1: 0, y1: 0.2, x2: 1, y2: 1, stop: 0 #bbf, stop: 1 #55f);
-                border: 1px solid #777;
-                height: 10px;
-                border-radius: 4px;
-            }
+        #     QSlider::sub-page:horizontal {
+        #         background: qlineargradient(x1: 0, y1: 0,    x2: 0, y2: 1, stop: 0 #66e, stop: 1 #bbf);
+        #         background: qlineargradient(x1: 0, y1: 0.2, x2: 1, y2: 1, stop: 0 #bbf, stop: 1 #55f);
+        #         border: 1px solid #777;
+        #         height: 10px;
+        #         border-radius: 4px;
+        #     }
             
-            QSlider::add-page:horizontal {
-                background: #fff;
-                border: 1px solid #777;
-                height: 10px;
-                border-radius: 4px;
-            }
-        """)
+        #     QSlider::add-page:horizontal {
+        #         background: #fff;
+        #         border: 1px solid #777;
+        #         height: 10px;
+        #         border-radius: 4px;
+        #     }
+        # """)
 
         # PushButtton
         self.pushButton_Start.setEnabled(False)
@@ -98,6 +99,9 @@ class MediaPlayer(QMainWindow, Form):
         self.pushButton_BookMark.clicked.connect(self.add_BookMarks)
         self.pushButton_BookMark.setToolTip("Add BookMark")
 
+        self.pushButton_Setting.clicked.connect(self.Settingshow)
+        self.pushButton_Setting.setToolTip("Setting")
+
         # Slider Play
         self.Slider_Play.setRange(0, 0)
         self.player.positionChanged.connect(self.Position_changed)
@@ -120,7 +124,7 @@ class MediaPlayer(QMainWindow, Form):
 
         # self.lineEdit_GoTo.textChanged.connect(self.GoTO)
 
-        # Shortcut 
+        # Shortcut
         QShortcut(QKeySequence('Ctrl+B'),
                   self).activated.connect(self.add_BookMarks)
         QShortcut(QKeySequence('Ctrl+Z'),
@@ -129,7 +133,8 @@ class MediaPlayer(QMainWindow, Form):
                   self).activated.connect(self.volumeOnOff)
         QShortcut(QKeySequence('Ctrl+S'),
                   self).activated.connect(self.sch_icon_Event)
-
+        QShortcut(QKeySequence('Ctrl+O'),
+                  self).activated.connect(self.Load_video)
 
     def add_BookMarks(self):
         if self.player.isVideoAvailable() or self.player.isAudioAvailable():
@@ -164,12 +169,19 @@ class MediaPlayer(QMainWindow, Form):
         self.Slider_Volume.setVisible(self.isFullScreen())
         self.label_Time.setVisible(self.isFullScreen())
         self.menubar.setVisible(self.isFullScreen())
+        self.pushButton_Search.setVisible(self.isFullScreen())
+        self.label_spacer3.setVisible(self.isFullScreen())
+        self.label_spacer2.setVisible(self.isFullScreen())
+        self.label_spacer1.setVisible(self.isFullScreen())
+        self.pushButton_BookMark.setVisible(self.isFullScreen())
         if not self.isFullScreen():
             self.showFullScreen()
-            self.actionFullScreen.setText("Exit FullScreen")
         else:
             self.showNormal()
-            self.actionFullScreen.setText("FullScreen")
+
+    def Settingshow(self):
+        settingw = Setting.SettingWindow(self)
+        settingw.show()
 
     def start(self):
         if self.player.state() == QMediaPlayer.PlayingState:
@@ -226,7 +238,8 @@ class MediaPlayer(QMainWindow, Form):
             self.pushButton_volume.setEnabled(True)
             self.pushButton_volume.setIcon(QIcon('./Icons/unmute.png'))
             self.pushButton_volume.setToolTip("Mute")
-            self.pushButton_BookMark.setVisible(True)
+            if not self.isFullScreen():
+                self.pushButton_BookMark.setVisible(True)
             self.pushButton_stop.setEnabled(True)
             self.Slider_Volume.setRange(0, self.player.volume())
             self.Slider_Volume.setValue(80)
@@ -312,8 +325,7 @@ class MediaPlayer(QMainWindow, Form):
                 User = csv.reader(iFile, delimiter=',')
                 for row in User:
                     admin = row[0]
-
-            with open(f"{os.getcwd()}/bookmarks/{admin}.csv", "a") as csvfile:
+            with open(f"{os.getcwd()}/bookmarks/{admin}.csv", "a", newline="") as csvfile:
                 employee_writer = csv.writer(csvfile, delimiter=',')
                 employee_writer.writerow(
                     [self.FileName, self.write_Bookmark.text(), self.label_Time.text()])
@@ -394,6 +406,7 @@ class MediaPlayer(QMainWindow, Form):
     def Logout(self):
         os.remove("LoginPart/User.csv")
         self.close()
+        self.player.stop()
         subprocess.call(['python', 'MediaPlayer.py'])
 
 
@@ -429,7 +442,10 @@ class search_thread(QtCore.QThread):
 
 
 if __name__ == '__main__':
+
     app = QApplication(sys.argv)
+    app.setStyle("Fusion")
+
     if os.path.exists("LoginPart/User.csv"):
         # with open("LoginPart/User.csv") as iFile:
         #     User = csv.reader(iFile, delimiter=',')
