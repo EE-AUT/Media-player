@@ -6,7 +6,7 @@ import LoginPart.Login as Login
 import SearchPart.tag as Tag
 import SettingPart.Setting as Setting
 from PyQt5.QtWidgets import QApplication, QMainWindow, QMenuBar, QFileDialog, QLineEdit, QListWidget, QSlider, QShortcut
-from PyQt5 import uic, QtCore
+from PyQt5 import uic, QtCore, QtGui
 from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
 from PyQt5.QtCore import Qt, QUrl
 from PyQt5.QtGui import QIcon, QKeySequence
@@ -35,40 +35,55 @@ class MediaPlayer(QMainWindow, Form):
         self.write_Bookmark.returnPressed.connect(self.save_Bookmarks)
         self.movie_Name = None
 
+        styleSheet_LineEdits = ("""
+            QLineEdit{ 
+                background-color:rgba(202, 255, 227, 0.5);
+                border: 2px solid gray;
+                border-radius: 4px;
+                padding: 0 8px;
+                selection-background-color: darkgray;
+                font-size: 14px;
+            }
+        """)
+
+        self.search_lineEdit.setStyleSheet(styleSheet_LineEdits)
+        self.write_Bookmark.setStyleSheet(styleSheet_LineEdits)
+        self.search_lineEdit.setPlaceholderText("search Tags here")
+        self.write_Bookmark.setPlaceholderText("write bookmark here")
+
+        self.sch_listWidget.setStyleSheet("""
+            QListWidget{ 
+                background-color:rgba(202, 255, 227, 0.5);
+                border: 2px solid gray;
+                border-radius: 4px;
+                padding: 0 8px;
+                selection-background-color: darkgray;
+                font-size: 14px;
+            }
+        """)
+
         # Create Tags
         self.TagDB = None
+        
 
-        # create Slider
+
+        # create Volume Slide
+        self.Slider_Volume = Slider(self)
+        self.Slider_Volume.setOrientation(Qt.Horizontal)
+        self.horizontalLayout_3.addWidget(self.Slider_Volume, 0)
+        self.Slider_Volume.setMaximumWidth(90)
+        self.Slider_Volume.setMaximumHeight(20)
+        self.Volume = 0
+
+
+
+        # create Play Slider
         self.Slider_Play = Slider(self)
         self.Slider_Play.setOrientation(Qt.Horizontal)
         self.Slider_Play.resize(644, 22)
         self.horizontalLayout_4.addWidget(self.Slider_Play, 1)
         self.horizontalLayout_4.addWidget(self.label_Time, 0)
         self.Duration = 0
-        # # StyleSheet for Slider_Play
-        # self.Slider_Play.setStyleSheet("""
-        #     QSlider::groove:horizontal {
-        #         border: 1px solid #bbb;
-        #         background: white;
-        #         height: 3px;
-        #         border-radius: 4px;
-        #     }
-
-        #     QSlider::sub-page:horizontal {
-        #         background: qlineargradient(x1: 0, y1: 0,    x2: 0, y2: 1, stop: 0 #66e, stop: 1 #bbf);
-        #         background: qlineargradient(x1: 0, y1: 0.2, x2: 1, y2: 1, stop: 0 #bbf, stop: 1 #55f);
-        #         border: 1px solid #777;
-        #         height: 10px;
-        #         border-radius: 4px;
-        #     }
-            
-        #     QSlider::add-page:horizontal {
-        #         background: #fff;
-        #         border: 1px solid #777;
-        #         height: 10px;
-        #         border-radius: 4px;
-        #     }
-        # """)
 
         # PushButtton
         self.pushButton_Start.setEnabled(False)
@@ -110,7 +125,8 @@ class MediaPlayer(QMainWindow, Form):
 
         # Slider Volume
         self.Slider_Volume.setRange(0, 0)
-        self.Slider_Volume.sliderMoved.connect(self.Set_volume)
+        # self.Slider_Volume.sliderMoved.connect(self.Set_volume)
+        self.Slider_Volume.setUP_Slider.connect(self.Set_volume)
 
         # Tool Bar
         self.actionOpen.triggered.connect(self.Load_video)
@@ -174,9 +190,19 @@ class MediaPlayer(QMainWindow, Form):
         self.label_spacer2.setVisible(self.isFullScreen())
         self.label_spacer1.setVisible(self.isFullScreen())
         self.pushButton_BookMark.setVisible(self.isFullScreen())
+
         if not self.isFullScreen():
+            self.verticalLayout.removeWidget(self.videowidget)
+            screenWidth = QApplication.desktop().screenGeometry().width()
+            screenHeight = QApplication.desktop().screenGeometry().height()
+            self.videowidget.resize(screenWidth, screenHeight)
+            self.videowidget.move(0, 0)
             self.showFullScreen()
+            
         else:
+            self.verticalLayout.addWidget(self.videowidget, 1)
+            self.verticalLayout.removeItem(self.horizontalLayout_4)
+            self.verticalLayout.addLayout(self.horizontalLayout_4, 0)
             self.showNormal()
 
     def Settingshow(self):
@@ -242,6 +268,7 @@ class MediaPlayer(QMainWindow, Form):
                 self.pushButton_BookMark.setVisible(True)
             self.pushButton_stop.setEnabled(True)
             self.Slider_Volume.setRange(0, self.player.volume())
+            self.Volume = self.player.volume()
             self.Slider_Volume.setValue(80)
             self.FileName = file_path.split("/")[-1]
             self.setWindowTitle(f" Media Player - {self.FileName}")
@@ -288,7 +315,10 @@ class MediaPlayer(QMainWindow, Form):
         self.player.setPosition(position)
 
     def Set_volume(self, volume):
-        if not volume:
+        # self.Slider_Volume.setValue(volume)
+        if self.Slider_Play.width()-1 <= volume:
+            position = self.Slider_Play.width()-1
+        if not self.Volume:
             self.player.setMuted(True)
             self.pushButton_volume.setIcon(QIcon('./Icons/mute.png'))
             self.pushButton_volume.setToolTip("UnMute")
@@ -297,8 +327,11 @@ class MediaPlayer(QMainWindow, Form):
             self.player.setMuted(False)
             self.pushButton_volume.setIcon(QIcon('./Icons/unmute.png'))
             self.pushButton_volume.setToolTip("Mute")
-
-        self.player.setVolume(volume)
+    
+        position = int(self.Volume *
+                       (volume / self.Slider_Volume.width()))
+        self.Slider_Volume.setValue(position)
+        self.player.setVolume(position)
 
     def volumeOnOff(self):
         if self.player.isAudioAvailable() or self.player.isVideoAvailable():
@@ -416,6 +449,38 @@ class Slider(QSlider):
 
     def __init__(self, MediaPlayer):
         QSlider.__init__(self, parent=MediaPlayer)
+        # stylesheet for Sliders
+        self.setStyleSheet("""
+            QSlider::groove:horizontal {
+                border: 1px solid white;
+                background: white;
+                height: 1px;
+                border-radius: 4px;
+            }
+
+            QSlider::sub-page:horizontal {
+                background: qlineargradient(x1: 0, y1: 0,    x2: 0, y2: 1, stop: 0 #aa55ff, stop: 1 #DDA0DD);
+                background: qlineargradient(x1: 0, y1: 0.2, x2: 1, y2: 1, stop: 0 #DDA0DD, stop: 1 #aa55ff);
+                border: 1px solid #777;
+                height: 10px;
+                border-radius: 4px;
+            }
+                
+            QSlider::add-page:horizontal {
+                background: #fff;
+                border: 1px solid white;
+                height: 10px;
+                border-radius: 4px;
+            }
+            QSlider::handle:horizontal {
+                background-color: #aa55ff;
+                border: 1px solid;
+                height: 10px;
+                width: 10px;
+                margin: -5px 0px;
+                border-radius: 4px;
+            }
+        """)
 
     def mousePressEvent(self, position):
         self.setUP_Slider.emit(position.pos().x())
