@@ -73,9 +73,7 @@ class LoginWindow(QDialog, Form):
     def Login(self):
         Database = LoginDatabase()
         if Database.check((str(self.StudentID), str(self.Email))):
-            with open("LoginPart/User.csv", "w", newline="") as oFile:
-                employee_writer = csv.writer(oFile, delimiter=',')
-                employee_writer.writerow([self.StudentID, self.Email])
+            open("LoginPart/User.csv", "w")
             self.close()
             return True
         else:

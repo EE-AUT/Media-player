@@ -35,37 +35,12 @@ class MediaPlayer(QMainWindow, Form):
         self.write_Bookmark.returnPressed.connect(self.save_Bookmarks)
         self.movie_Name = None
 
-        styleSheet_LineEdits = ("""
-            QLineEdit{ 
-                background-color:rgba(202, 255, 227, 0.5);
-                border: 2px solid gray;
-                border-radius: 4px;
-                padding: 0 8px;
-                selection-background-color: darkgray;
-                font-size: 14px;
-            }
-        """)
-
-        self.search_lineEdit.setStyleSheet(styleSheet_LineEdits)
-        self.write_Bookmark.setStyleSheet(styleSheet_LineEdits)
         self.search_lineEdit.setPlaceholderText("search Tags here")
         self.write_Bookmark.setPlaceholderText("write bookmark here")
 
-        self.sch_listWidget.setStyleSheet("""
-            QListWidget{ 
-                background-color:rgba(202, 255, 227, 0.5);
-                border: 2px solid gray;
-                border-radius: 4px;
-                padding: 0 8px;
-                selection-background-color: darkgray;
-                font-size: 14px;
-            }
-        """)
 
         # Create Tags
         self.TagDB = None
-        
-
 
         # create Volume Slide
         self.Slider_Volume = Slider(self)
@@ -73,9 +48,6 @@ class MediaPlayer(QMainWindow, Form):
         self.horizontalLayout_3.addWidget(self.Slider_Volume, 0)
         self.Slider_Volume.setMaximumWidth(90)
         self.Slider_Volume.setMaximumHeight(20)
-        self.Volume = 0
-
-
 
         # create Play Slider
         self.Slider_Play = Slider(self)
@@ -83,7 +55,6 @@ class MediaPlayer(QMainWindow, Form):
         self.Slider_Play.resize(644, 22)
         self.horizontalLayout_4.addWidget(self.Slider_Play, 1)
         self.horizontalLayout_4.addWidget(self.label_Time, 0)
-        self.Duration = 0
 
         # PushButtton
         self.pushButton_Start.setEnabled(False)
@@ -125,7 +96,6 @@ class MediaPlayer(QMainWindow, Form):
 
         # Slider Volume
         self.Slider_Volume.setRange(0, 0)
-        # self.Slider_Volume.sliderMoved.connect(self.Set_volume)
         self.Slider_Volume.setUP_Slider.connect(self.Set_volume)
 
         # Tool Bar
@@ -186,9 +156,6 @@ class MediaPlayer(QMainWindow, Form):
         self.label_Time.setVisible(self.isFullScreen())
         self.menubar.setVisible(self.isFullScreen())
         self.pushButton_Search.setVisible(self.isFullScreen())
-        self.label_spacer3.setVisible(self.isFullScreen())
-        self.label_spacer2.setVisible(self.isFullScreen())
-        self.label_spacer1.setVisible(self.isFullScreen())
         self.pushButton_BookMark.setVisible(self.isFullScreen())
 
         if not self.isFullScreen():
@@ -198,7 +165,7 @@ class MediaPlayer(QMainWindow, Form):
             self.videowidget.resize(screenWidth, screenHeight)
             self.videowidget.move(0, 0)
             self.showFullScreen()
-            
+
         else:
             self.verticalLayout.addWidget(self.videowidget, 1)
             self.verticalLayout.removeItem(self.horizontalLayout_4)
@@ -268,8 +235,7 @@ class MediaPlayer(QMainWindow, Form):
                 self.pushButton_BookMark.setVisible(True)
             self.pushButton_stop.setEnabled(True)
             self.Slider_Volume.setRange(0, self.player.volume())
-            self.Volume = self.player.volume()
-            self.Slider_Volume.setValue(80)
+            self.Set_volume(80)
             self.FileName = file_path.split("/")[-1]
             self.setWindowTitle(f" Media Player - {self.FileName}")
             self.File_Path = file_path.replace(f"/{self.FileName}", "")
@@ -280,8 +246,8 @@ class MediaPlayer(QMainWindow, Form):
                 self.pushButton_next.setEnabled(True)
 
     def Position_changed(self, position):
-        if position > self.Duration:
-            position = self.Duration
+        if position > self.player.duration():
+            position = self.player.duration()
         hour = position//(1000*3600)
         minute = (position % (1000*3600))//(60*1000)
         second = ((position % (1000*3600)) % (60*1000))//1000
@@ -289,7 +255,7 @@ class MediaPlayer(QMainWindow, Form):
         self.label_Time.setText(
             f'{str(hour).zfill(2)}:{str(minute).zfill(2)}:{str(second).zfill(2)}')
         # Automatic Next
-        if (self.Duration and position == self.Duration):
+        if self.player.duration() and position == self.player.duration():
             if self.pushButton_next.isEnabled():
                 self.next()
             else:
@@ -297,7 +263,6 @@ class MediaPlayer(QMainWindow, Form):
         self.Slider_Play.setValue(position)
 
     def Duration_changed(self, duration):
-        self.Duration = duration
         self.Slider_Play.setRange(0, duration)
 
     def Set_Position(self, position):
@@ -309,16 +274,18 @@ class MediaPlayer(QMainWindow, Form):
             self.pushButton_Start.setToolTip("Paly")
 
         # if not (position < 0 and position > self.Slider_Play.width()):
-        position = int(self.Duration *
+        position = int(self.player.duration() *
                        (position / self.Slider_Play.width()))
         self.Slider_Play.setValue(position)
         self.player.setPosition(position)
 
     def Set_volume(self, volume):
         # self.Slider_Volume.setValue(volume)
-        if self.Slider_Play.width()-1 <= volume:
-            position = self.Slider_Play.width()-1
-        if not self.Volume:
+        if 100 <= volume:
+            volume = 100
+        elif volume <= 0:
+            volume = 0
+        if not volume:
             self.player.setMuted(True)
             self.pushButton_volume.setIcon(QIcon('./Icons/mute.png'))
             self.pushButton_volume.setToolTip("UnMute")
@@ -327,11 +294,9 @@ class MediaPlayer(QMainWindow, Form):
             self.player.setMuted(False)
             self.pushButton_volume.setIcon(QIcon('./Icons/unmute.png'))
             self.pushButton_volume.setToolTip("Mute")
-    
-        position = int(self.Volume *
-                       (volume / self.Slider_Volume.width()))
-        self.Slider_Volume.setValue(position)
-        self.player.setVolume(position)
+
+        self.Slider_Volume.setValue(volume)
+        self.player.setVolume(volume)
 
     def volumeOnOff(self):
         if self.player.isAudioAvailable() or self.player.isVideoAvailable():
@@ -371,8 +336,16 @@ class MediaPlayer(QMainWindow, Form):
         # create QLineEdit
         self.search_lineEdit.resize(
             int((200 / 800) * self.size().width()), self.pushButton_Search.geometry().height())
-        self.search_lineEdit.move(
-            int(self.pushButton_Search.x() - (200 / 800) * self.size().width()), 31)
+        # Is not FullScreen
+        if not self.isFullScreen():
+            self.search_lineEdit.move(
+                int(self.pushButton_Search.x() - (200 / 800) * self.size().width()), 31)
+
+        # Is FullScreen
+        else:
+            self.search_lineEdit.move(
+                int((600 / 800) * self.size().width())-self.pushButton_Search.geometry().width(), 31)
+
         self.search_lineEdit.setVisible(True)
         self.search_lineEdit.setFocus()
 
@@ -392,7 +365,7 @@ class MediaPlayer(QMainWindow, Form):
         self.write_Bookmark.resize(
             int((200 / 800) * self.size().width()), self.pushButton_Search.geometry().height())
         self.write_Bookmark.move(
-            int(self.pushButton_BookMark.x() + 25), 31)
+            int(self.pushButton_BookMark.x() + self.pushButton_Search.geometry().width()), 31)
 
         self.sch_listWidget.resize(
             int((200 / 800) * self.size().width()), int((200 / 600) * self.size().height()))
@@ -412,8 +385,16 @@ class MediaPlayer(QMainWindow, Form):
         # create QListWidget
         self.sch_listWidget.resize(
             int((200 / 800) * self.size().width()), int((200 / 600) * self.size().height()))
-        self.sch_listWidget.move(
-            int(self.pushButton_Search.x() - (200 / 800) * self.size().width()), 52)
+        # Is Not FullScreen
+        if not self.isFullScreen():
+            self.sch_listWidget.move(
+                int(self.pushButton_Search.x() - (200 / 800) * self.size().width()), 52)
+
+        # Is FullScreen
+        else:
+            self.sch_listWidget.move(
+                int((600 / 800) * self.size().width())-self.pushButton_Search.geometry().width(), 52)
+
         self.sch_listWidget.setVisible(True)
 
         # start search thread
@@ -449,38 +430,6 @@ class Slider(QSlider):
 
     def __init__(self, MediaPlayer):
         QSlider.__init__(self, parent=MediaPlayer)
-        # stylesheet for Sliders
-        self.setStyleSheet("""
-            QSlider::groove:horizontal {
-                border: 1px solid white;
-                background: white;
-                height: 1px;
-                border-radius: 4px;
-            }
-
-            QSlider::sub-page:horizontal {
-                background: qlineargradient(x1: 0, y1: 0,    x2: 0, y2: 1, stop: 0 #aa55ff, stop: 1 #DDA0DD);
-                background: qlineargradient(x1: 0, y1: 0.2, x2: 1, y2: 1, stop: 0 #DDA0DD, stop: 1 #aa55ff);
-                border: 1px solid #777;
-                height: 10px;
-                border-radius: 4px;
-            }
-                
-            QSlider::add-page:horizontal {
-                background: #fff;
-                border: 1px solid white;
-                height: 10px;
-                border-radius: 4px;
-            }
-            QSlider::handle:horizontal {
-                background-color: #aa55ff;
-                border: 1px solid;
-                height: 10px;
-                width: 10px;
-                margin: -5px 0px;
-                border-radius: 4px;
-            }
-        """)
 
     def mousePressEvent(self, position):
         self.setUP_Slider.emit(position.pos().x())
@@ -512,10 +461,6 @@ if __name__ == '__main__':
     app.setStyle("Fusion")
 
     if os.path.exists("LoginPart/User.csv"):
-        # with open("LoginPart/User.csv") as iFile:
-        #     User = csv.reader(iFile, delimiter=',')
-        #     for row in User:
-        #         if Login.LoginDatabase().check((row[0],row[1])):
         Mainw = MediaPlayer()
         Mainw.show()
         app.exec_()

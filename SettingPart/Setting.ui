@@ -98,7 +98,7 @@
            <property name="geometry">
             <rect>
              <x>0</x>
-             <y>0</y>
+             <y>-65</y>
              <width>283</width>
              <height>312</height>
             </rect>
@@ -865,9 +865,16 @@
        </spacer>
       </item>
       <item>
-       <widget class="QPushButton" name="pushButton_close">
+       <widget class="QPushButton" name="pushButton_OK">
         <property name="text">
-         <string>Close</string>
+         <string>OK</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pushButton_Cancel">
+        <property name="text">
+         <string>Cancel</string>
         </property>
        </widget>
       </item>
