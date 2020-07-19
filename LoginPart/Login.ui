@@ -124,7 +124,20 @@
          </size>
         </property>
         <property name="text">
-         <string>Login</string>
+         <string>sign in</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="signButton">
+        <property name="maximumSize">
+         <size>
+          <width>50</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>sign up</string>
         </property>
        </widget>
       </item>
@@ -149,25 +162,34 @@
      </layout>
     </item>
     <item row="3" column="1">
-     <widget class="QLabel" name="label_Error">
+     <widget class="QLabel" name="label_Forget">
       <property name="minimumSize">
        <size>
         <width>50</width>
-        <height>0</height>
+        <height>25</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>16777215</width>
+        <height>25</height>
        </size>
       </property>
       <property name="font">
        <font>
-        <pointsize>14</pointsize>
+        <pointsize>8</pointsize>
         <weight>75</weight>
         <bold>true</bold>
        </font>
       </property>
       <property name="styleSheet">
-       <string notr="true">color: rgb(255, 0, 0);</string>
+       <string notr="true">QLabel::hover
+{
+color: rgb(0, 170, 0);
+}</string>
       </property>
       <property name="text">
-       <string/>
+       <string>forget password</string>
       </property>
      </widget>
     </item>
