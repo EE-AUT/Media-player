@@ -17,3 +17,4 @@ class LineEdit(QLineEdit):
         self.setStyleSheet(styleSheet_LineEdits)
         self.resize(250, 30)
         self.move(parent.size().width() / 2 - 125, parent.size().height()/2 - 15)
+

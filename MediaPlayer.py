@@ -468,7 +468,7 @@ if __name__ == '__main__':
         Loginw = Login.LoginWindow()
         Loginw.show()
         app.exec_()
-        if Loginw.Login():
+        if Loginw.LoginAccept():
             Mainw = MediaPlayer()
             Mainw.show()
             app.exec_()
