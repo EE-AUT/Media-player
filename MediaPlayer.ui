@@ -116,7 +116,7 @@
         </property>
         <property name="icon">
          <iconset>
-          <normaloff>Icons/sa.png</normaloff>Icons/sa.png</iconset>
+          <normaloff>Icons/iconfinder_icon-111-search_314478.png</normaloff>Icons/iconfinder_icon-111-search_314478.png</iconset>
         </property>
         <property name="iconSize">
          <size>
@@ -242,6 +242,43 @@
         </property>
         <property name="flat">
          <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pushButton_Playlist">
+        <property name="minimumSize">
+         <size>
+          <width>40</width>
+          <height>30</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>50</width>
+          <height>25</height>
+         </size>
+        </property>
+        <property name="autoFillBackground">
+         <bool>false</bool>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">border-radius: 50%;
+
+</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset>
+          <normaloff>Icons/playlist.png</normaloff>Icons/playlist.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>20</width>
+          <height>20</height>
+         </size>
         </property>
        </widget>
       </item>

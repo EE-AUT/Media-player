@@ -1,6 +1,7 @@
 from PyQt5.QtWidgets import QMainWindow, QApplication
 from PyQt5 import uic, QtCore, QtGui
 import os
+import csv
 
 Form = uic.loadUiType(os.path.join(os.getcwd(), 'SettingPart/Setting.ui'))[0]
 
@@ -13,352 +14,174 @@ class SettingWindow(QMainWindow, Form, QtCore.QThread):
         self.setupUi(self)
         self.MediaPlayer = Mediaplayer
 
-        self.pushButton_Cancel.clicked.connect(lambda: self.close())
+        # Theme Part
+        self.palette = QtGui.QPalette()
+        self.pushButton_Cancel.clicked.connect(self.Exit)
         self.pushButton_OK.clicked.connect(self.saveANDexit)
         self.comboBox_Theme.activated.connect(self._Theme)
         self.scrollArea_Theme.setVisible(False)
 
+        # Play Back Part
+        self.horizontalSlider_Speed.setRange(0, 300)
+        self.horizontalSlider_Speed.setValue(100)
+        self.lineEdit_Speed.setText("1.00")
+        self.label_Error_Range.setVisible(False)
+        self.label_Error_Number.setVisible(False)
+
+        self.horizontalSlider_Speed.valueChanged.connect(self.Play_Back_Slider)
+        self.lineEdit_Speed.textChanged.connect(self.Play_Back_LineEdit)
+
+        # Text Part
+        self.comboBox_Font.activated.connect(self.Font_Change)
+
+
+    def Font_Change(self, val):
+        print(val)
+        # if int(val)==0:
+        #     print(self.font())
+        #     self.setFont(QtGui.QFont('Arial',2))
+        #     self.MediaPlayer.setFont(QtGui.QFont('Arial',2))
+        #     self.Tab.setFont(QtGui.QFont('Arial',2))
+        #     self.MediaPlayer.actionFullScreen.setFont(QtGui.QFont('Arial',2))
+
+    def Play_Back_LineEdit(self, val):
+        try:
+            if val:
+                if float(val):
+                    self.label_Error_Number.setVisible(False)
+
+                    if float(val) >= 0 and float(val) <= 3:
+                        self.label_Error_Range.setVisible(False)
+                        self.horizontalSlider_Speed.setValue(float(val)*100)
+                        if self.MediaPlayer.player.isAvailable():
+                            self.MediaPlayer.player.setPlaybackRate(float(val))
+                    else:
+                        self.label_Error_Range.setVisible(True)
+
+        except:
+            self.label_Error_Number.setVisible(True)
+
+    def Play_Back_Slider(self, val):
+        self.lineEdit_Speed.setText(str(val/100))
+
+    def Exit(self):
+        self.Theme_apply()
+        self.close()
 
     def saveANDexit(self):
-        pass
+        # To Write everything about Setting in Sitting.csv
+        with open('SettingPart/Setting.csv', mode='w', newline='') as file:
+            Setting_writer = csv.writer(file)
+            Setting_writer.writerow(
+                ['Theme'] + [self.comboBox_Theme.currentIndex()])
+            Setting_writer.writerow(
+                ['Classic'] + [int(self.checkBox_Theme.isChecked())])
+            Setting_writer.writerow(
+                ['Background'] + [self.comboBox_Background.currentIndex()])
+            Setting_writer.writerow(
+                ['Base'] + [self.comboBox_Base.currentIndex()])
+            Setting_writer.writerow(
+                ['WindowText'] + [self.comboBox_WindowsText.currentIndex()])
+            Setting_writer.writerow(
+                ['Text'] + [self.comboBox_Text.currentIndex()])
+            Setting_writer.writerow(
+                ['Button'] + [self.comboBox_Button.currentIndex()])
+            Setting_writer.writerow(
+                ['ButtonText'] + [self.comboBox_ButtonText.currentIndex()])
+            Setting_writer.writerow(
+                ['Slider Color'] + [self.comboBox_Slider.currentIndex()])
+            # Setting_writer.writerow(
+            #     ['Slider Size'] + [self.spinBox_Slider.value()])
+
+        self.Theme_apply()
+        self.close()
 
     def _Theme(self, index):
         if index == 0:
-            QApplication.setStyle("Fusion")
-            palette = QtGui.QPalette()
-            palette.setColor(QtGui.QPalette.Window, QtGui.QColor('#ebebeb'))
-            palette.setColor(QtGui.QPalette.WindowText, QtCore.Qt.black)
-            palette.setColor(QtGui.QPalette.Base, QtGui.QColor('#ffffff'))
-            # palette.setColor(QtGui.QPalette.AlternateBase, QtGui.QColor("#c5c5c5"))
-            # palette.setColor(QtGui.QPalette.ToolTipBase, QtCore.Qt.black)
-            # palette.setColor(QtGui.QPalette.ToolTipText, QtCore.Qt.black)
-            palette.setColor(QtGui.QPalette.Text, QtGui.QColor('#000000'))
-            palette.setColor(QtGui.QPalette.Button, QtGui.QColor('#ffffff'))
-            palette.setColor(QtGui.QPalette.ButtonText,
-                             QtGui.QColor('#000000'))
-            # palette.setColor(QtGui.QPalette.BrightText, QtCore.Qt.black)
-            palette.setColor(QtGui.QPalette.Highlight, QtGui.QColor('#2c88f7'))
-            palette.setColor(QtGui.QPalette.HighlightedText, QtCore.Qt.black)
-            QApplication.setPalette(palette)
+            self.Classic_Theme(False)
+            self.checkBox_Theme.setChecked(False)
+
+            self.background_Theme(1)
+            self.comboBox_Background.setCurrentIndex(1)
+
+            self.Base_Theme(0)
+            self.comboBox_Base.setCurrentIndex(0)
+
+            self.WindowsText_Theme(2)
+            self.comboBox_WindowsText.setCurrentIndex(2)
+
+            self.Text_Theme(2)
+            self.comboBox_Text.setCurrentIndex(2)
+
+            self.Button_Theme(0)
+            self.comboBox_Button.setCurrentIndex(0)
+
+            self.ButtonText_Theme(2)
+            self.comboBox_ButtonText.setCurrentIndex(2)
+
+            self.SliderTheme(3)
+            self.comboBox_Slider.setCurrentIndex(3)
+
+            # self.Slider_Size_Changed(int(Dict['Slider Size']))
+            # self.spinBox_Slider.setValue(int(Dict['Slider Size']))
+
+            self.palette.setColor(QtGui.QPalette.Highlight,
+                                  QtGui.QColor('#2c88f7'))
+            self.palette.setColor(
+                QtGui.QPalette.HighlightedText, QtCore.Qt.black)
+            QApplication.setPalette(self.palette)
             self.scrollArea_Theme.setVisible(False)
-            # Set styleSheet for Search and Bookmarks LineEdit
-            styleSheet_LineEdits = ("""
-                QLineEdit{ 
-                    background-color: #b5e2ff;
-                    border: 2px solid gray;
-                    border-radius: 4px;
-                    padding: 0 8px;
-                    selection-background-color: darkgray;
-                    font-size: 14px;
-                }
-            """)
-            self.MediaPlayer.search_lineEdit.setStyleSheet(
-                styleSheet_LineEdits)
-            self.MediaPlayer.write_Bookmark.setStyleSheet(styleSheet_LineEdits)
-
-            # Set styleSheet for Search listWidget
-            self.MediaPlayer.sch_listWidget.setStyleSheet("""
-                QListWidget{ 
-                    background-color:#b5e2ff;
-                    border: 2px solid gray;
-                    border-radius: 4px;
-                    padding: 0 8px;
-                    selection-background-color: darkgray;
-                    font-size: 14px;
-                }
-            """)
-            # Set stylesheet for Sliders
-            StyleSheet_Slider = ("""
-                QSlider::groove:horizontal {
-                    border: 1px solid white;
-                    background: white;
-                    height: 1px;
-                    border-radius: 4px;
-                }
-
-                QSlider::sub-page:horizontal {
-                    background: qlineargradient(x1: 0, y1: 0,    x2: 0, y2: 1, stop: 0 #5566ff, stop: 1 #8bd3ff);
-                    background: qlineargradient(x1: 0, y1: 0.2, x2: 1, y2: 1, stop: 0 #8bd3ff, stop: 1 #5566ff);
-                    border: 1px solid #777;
-                    height: 10px;
-                    border-radius: 4px;
-                }
-                    
-                QSlider::add-page:horizontal {
-                    background: #fff;
-                    border: 1px solid white;
-                    height: 10px;
-                    border-radius: 4px;
-                }
-                QSlider::handle:horizontal {
-                    background-color: #2c88f7;
-                    border: 1px solid;
-                    height: 10px;
-                    width: 10px;
-                    margin: -5px 0px;
-                    border-radius: 4px;
-                }
-            """)
-            self.MediaPlayer.Slider_Volume.setStyleSheet(StyleSheet_Slider)
-            self.MediaPlayer.Slider_Play.setStyleSheet(StyleSheet_Slider)
 
         if index == 1:
-            QApplication.setStyle("Fusion")
-            palette = QtGui.QPalette()
-            palette.setColor(QtGui.QPalette.Window, QtGui.QColor(53, 53, 53))
-            palette.setColor(QtGui.QPalette.WindowText, QtCore.Qt.white)
-            palette.setColor(QtGui.QPalette.Base, QtGui.QColor(15, 15, 15))
-            palette.setColor(QtGui.QPalette.AlternateBase,
-                             QtGui.QColor(53, 53, 53))
-            palette.setColor(QtGui.QPalette.ToolTipBase, QtCore.Qt.white)
-            palette.setColor(QtGui.QPalette.ToolTipText, QtCore.Qt.white)
-            palette.setColor(QtGui.QPalette.Text, QtCore.Qt.white)
-            palette.setColor(QtGui.QPalette.Button, QtGui.QColor(53, 53, 53))
-            palette.setColor(QtGui.QPalette.ButtonText, QtCore.Qt.white)
-            palette.setColor(QtGui.QPalette.BrightText, QtCore.Qt.red)
-            palette.setColor(QtGui.QPalette.Highlight, QtGui.QColor('#cb90ff'))
-            palette.setColor(QtGui.QPalette.HighlightedText, QtCore.Qt.black)
-            QApplication.setPalette(palette)
+            self.Classic_Theme(False)
+            self.checkBox_Theme.setChecked(False)
+
+            self.background_Theme(11)
+            self.comboBox_Background.setCurrentIndex(11)
+
+            self.Base_Theme(2)
+            self.comboBox_Base.setCurrentIndex(2)
+
+            self.WindowsText_Theme(0)
+            self.comboBox_WindowsText.setCurrentIndex(0)
+
+            self.Text_Theme(0)
+            self.comboBox_Text.setCurrentIndex(0)
+
+            self.Button_Theme(11)
+            self.comboBox_Button.setCurrentIndex(11)
+
+            self.ButtonText_Theme(0)
+            self.comboBox_ButtonText.setCurrentIndex(0)
+
+            self.SliderTheme(5)
+            self.comboBox_Slider.setCurrentIndex(5)
+
+            # self.Slider_Size_Changed(int(Dict['Slider Size']))
+            # self.spinBox_Slider.setValue(int(Dict['Slider Size']))
+            self.palette.setColor(QtGui.QPalette.Highlight,
+                                  QtGui.QColor('#cb90ff'))
+            self.palette.setColor(
+                QtGui.QPalette.HighlightedText, QtCore.Qt.black)
+            QApplication.setPalette(self.palette)
             self.scrollArea_Theme.setVisible(False)
-            # Set styleSheet for Search and Bookmarks LineEdit
-            styleSheet_LineEdits = ("""
-                QLineEdit{ 
-                    background-color: #dcb4ff;
-                    border: 2px solid gray;
-                    border-radius: 4px;
-                    padding: 0 8px;
-                    selection-background-color: darkgray;
-                    font-size: 14px;
-                }
-            """)
-            self.MediaPlayer.search_lineEdit.setStyleSheet(
-                styleSheet_LineEdits)
-            self.MediaPlayer.write_Bookmark.setStyleSheet(styleSheet_LineEdits)
-            pal = self.MediaPlayer.search_lineEdit.palette()
-            pal.setColor(QtGui.QPalette.PlaceholderText, QtGui.QColor("Gray"))
-            pal.setColor(QtGui.QPalette.Text, QtGui.QColor("Black"))
-            self.MediaPlayer.search_lineEdit.setPalette(pal)
-            pal = self.MediaPlayer.write_Bookmark.palette()
-            pal.setColor(QtGui.QPalette.PlaceholderText, QtGui.QColor("Gray"))
-            pal.setColor(QtGui.QPalette.Text, QtGui.QColor("Black"))
-            self.MediaPlayer.write_Bookmark.setPalette(pal)
-
-            # Set styleSheet for Search listWidget
-            self.MediaPlayer.sch_listWidget.setStyleSheet("""
-                QListWidget{ 
-                    background-color:#dcb4ff;
-                    border: 2px solid gray;
-                    border-radius: 4px;
-                    padding: 0 8px;
-                    selection-background-color: darkgray;
-                    font-size: 14px;
-                }
-            """)
-            # Set stylesheet for Sliders
-            StyleSheet_Slider = ("""
-                QSlider::groove:horizontal {
-                    border: 1px solid white;
-                    background: white;
-                    height: 1px;
-                    border-radius: 4px;
-                }
-
-                QSlider::sub-page:horizontal {
-                    background: qlineargradient(x1: 0, y1: 0,    x2: 0, y2: 1, stop: 0 #762d8a, stop: 1 #dcb4ff);
-                    background: qlineargradient(x1: 0, y1: 0.2, x2: 1, y2: 1, stop: 0 #dcb4ff, stop: 1 #762d8a);
-                    border: 1px solid #777;
-                    height: 10px;
-                    border-radius: 4px;
-                }
-                    
-                QSlider::add-page:horizontal {
-                    background: #fff;
-                    border: 1px solid Gray;
-                    height: 10px;
-                    border-radius: 4px;
-                }
-                QSlider::handle:horizontal {
-                    background-color: #aa6ec3;
-                    border: 1px solid;
-                    height: 10px;
-                    width: 10px;
-                    margin: -5px 0px;
-                    border-radius: 4px;
-                }
-            """)
-            self.MediaPlayer.Slider_Volume.setStyleSheet(StyleSheet_Slider)
-            self.MediaPlayer.Slider_Play.setStyleSheet(StyleSheet_Slider)
-
         if index == 2:
-            QApplication.setStyle("Windows")
-            palette = QtGui.QPalette()
-            palette.setColor(QtGui.QPalette.Window, QtGui.QColor(53, 53, 53))
-            palette.setColor(QtGui.QPalette.WindowText, QtCore.Qt.white)
-            palette.setColor(QtGui.QPalette.Base, QtGui.QColor(15, 15, 15))
-            palette.setColor(QtGui.QPalette.AlternateBase,
-                             QtGui.QColor(53, 53, 53))
-            palette.setColor(QtGui.QPalette.ToolTipBase, QtCore.Qt.white)
-            palette.setColor(QtGui.QPalette.ToolTipText, QtCore.Qt.white)
-            palette.setColor(QtGui.QPalette.Text, QtCore.Qt.white)
-            palette.setColor(QtGui.QPalette.Button, QtGui.QColor(53, 53, 53))
-            palette.setColor(QtGui.QPalette.ButtonText, QtCore.Qt.white)
-            palette.setColor(QtGui.QPalette.BrightText, QtCore.Qt.red)
-            palette.setColor(QtGui.QPalette.Highlight, QtGui.QColor('#cb90ff'))
-            palette.setColor(QtGui.QPalette.HighlightedText, QtCore.Qt.black)
-            QApplication.setPalette(palette)
-            self.scrollArea_Theme.setVisible(False)
-
-            # Set styleSheet for Search and Bookmarks LineEdit
-            styleSheet_LineEdits = ("""
-                QLineEdit{ 
-                    background-color: #dcb4ff;
-                    border: 2px solid gray;
-                    border-radius: 4px;
-                    padding: 0 8px;
-                    selection-background-color: darkgray;
-                    font-size: 14px;
-                }
-            """)
-            self.MediaPlayer.search_lineEdit.setStyleSheet(
-                styleSheet_LineEdits)
-            self.MediaPlayer.write_Bookmark.setStyleSheet(styleSheet_LineEdits)
-            pal = self.MediaPlayer.search_lineEdit.palette()
-            pal.setColor(QtGui.QPalette.PlaceholderText, QtGui.QColor("Gray"))
-            pal.setColor(QtGui.QPalette.Text, QtGui.QColor("Black"))
-            self.MediaPlayer.search_lineEdit.setPalette(pal)
-            pal = self.MediaPlayer.write_Bookmark.palette()
-            pal.setColor(QtGui.QPalette.PlaceholderText, QtGui.QColor("Gray"))
-            pal.setColor(QtGui.QPalette.Text, QtGui.QColor("Black"))
-            self.MediaPlayer.write_Bookmark.setPalette(pal)
-
-            # Set styleSheet for Search listWidget
-            self.MediaPlayer.sch_listWidget.setStyleSheet("""
-                QListWidget{ 
-                    background-color:#dcb4ff;
-                    border: 2px solid gray;
-                    border-radius: 4px;
-                    padding: 0 8px;
-                    selection-background-color: darkgray;
-                    font-size: 14px;
-                }
-            """)
-            # Set stylesheet for Sliders
-            StyleSheet_Slider = ("""
-                QSlider::groove:horizontal {
-                    border: 1px solid white;
-                    background: white;
-                    height: 1px;
-                    border-radius: 4px;
-                }
-
-                QSlider::sub-page:horizontal {
-                    background: qlineargradient(x1: 0, y1: 0,    x2: 0, y2: 1, stop: 0 #762d8a, stop: 1 #dcb4ff);
-                    background: qlineargradient(x1: 0, y1: 0.2, x2: 1, y2: 1, stop: 0 #dcb4ff, stop: 1 #762d8a);
-                    border: 1px solid #777;
-                    height: 10px;
-                    border-radius: 4px;
-                }
-                    
-                QSlider::add-page:horizontal {
-                    background: #fff;
-                    border: 1px solid Gray;
-                    height: 10px;
-                    border-radius: 4px;
-                }
-                QSlider::handle:horizontal {
-                    background-color: #aa6ec3;
-                    border: 1px solid;
-                    height: 10px;
-                    width: 10px;
-                    margin: -5px 0px;
-                    border-radius: 4px;
-                }
-            """)
-            self.MediaPlayer.Slider_Volume.setStyleSheet(StyleSheet_Slider)
-            self.MediaPlayer.Slider_Play.setStyleSheet(StyleSheet_Slider)
+            self._Theme(1)
+            self.Classic_Theme(True)
+            self.checkBox_Theme.setChecked(True)
+            self.SliderTheme(5)
 
         if index == 3:
-            QApplication.setStyle("windows")
-            palette = QtGui.QPalette()
-            palette.setColor(QtGui.QPalette.Window, QtGui.QColor('#ebebeb'))
-            palette.setColor(QtGui.QPalette.WindowText, QtCore.Qt.black)
-            palette.setColor(QtGui.QPalette.Base, QtGui.QColor('#ffffff'))
-            # palette.setColor(QtGui.QPalette.AlternateBase, QtGui.QColor("#c5c5c5"))
-            # palette.setColor(QtGui.QPalette.ToolTipBase, QtCore.Qt.black)
-            # palette.setColor(QtGui.QPalette.ToolTipText, QtCore.Qt.black)
-            palette.setColor(QtGui.QPalette.Text, QtGui.QColor('#000000'))
-            palette.setColor(QtGui.QPalette.Button, QtGui.QColor('#ffffff'))
-            palette.setColor(QtGui.QPalette.ButtonText,
-                             QtGui.QColor('#000000'))
-            # palette.setColor(QtGui.QPalette.BrightText, QtCore.Qt.black)
-            palette.setColor(QtGui.QPalette.Highlight, QtGui.QColor('#0057da'))
-            palette.setColor(QtGui.QPalette.HighlightedText, QtCore.Qt.black)
-            QApplication.setPalette(palette)
-            self.scrollArea_Theme.setVisible(False)
-
-            # Set styleSheet for Search and Bookmarks LineEdit
-            styleSheet_LineEdits = ("""
-                QLineEdit{ 
-                    background-color: #b5e2ff;
-                    border: 2px solid gray;
-                    border-radius: 4px;
-                    padding: 0 8px;
-                    selection-background-color: darkgray;
-                    font-size: 14px;
-                }
-            """)
-            self.MediaPlayer.search_lineEdit.setStyleSheet(
-                styleSheet_LineEdits)
-            self.MediaPlayer.write_Bookmark.setStyleSheet(styleSheet_LineEdits)
-            # Set styleSheet for Search listWidget
-            self.MediaPlayer.sch_listWidget.setStyleSheet("""
-                QListWidget{ 
-                    background-color:#b5e2ff;
-                    border: 2px solid gray;
-                    border-radius: 4px;
-                    padding: 0 8px;
-                    selection-background-color: darkgray;
-                    font-size: 14px;
-                }
-            """)
-            # Set stylesheet for Sliders
-            StyleSheet_Slider = ("""
-                QSlider::groove:horizontal {
-                    border: 1px solid white;
-                    background: white;
-                    height: 1px;
-                    border-radius: 4px;
-                }
-
-                QSlider::sub-page:horizontal {
-                    background: qlineargradient(x1: 0, y1: 0,    x2: 0, y2: 1, stop: 0 #5566ff, stop: 1 #8bd3ff);
-                    background: qlineargradient(x1: 0, y1: 0.2, x2: 1, y2: 1, stop: 0 #8bd3ff, stop: 1 #5566ff);
-                    border: 1px solid #777;
-                    height: 10px;
-                    border-radius: 4px;
-                }
-                    
-                QSlider::add-page:horizontal {
-                    background: #fff;
-                    border: 1px solid white;
-                    height: 10px;
-                    border-radius: 4px;
-                }
-                QSlider::handle:horizontal {
-                    background-color: #2c88f7;
-                    border: 1px solid;
-                    height: 10px;
-                    width: 10px;
-                    margin: -5px 0px;
-                    border-radius: 4px;
-                }
-            """)
-            self.MediaPlayer.Slider_Volume.setStyleSheet(StyleSheet_Slider)
-            self.MediaPlayer.Slider_Play.setStyleSheet(StyleSheet_Slider)
+            self._Theme(0)
+            self.Classic_Theme(True)
+            self.checkBox_Theme.setChecked(True)
+            self.SliderTheme(3)
 
         if index == 4:
-            self.palette = QtGui.QPalette()
+
             self.scrollArea_Theme.setVisible(True)
+
+            # To Connect Signals of custom Theme
             self.checkBox_Theme.stateChanged.connect(self.Classic_Theme)
             self.comboBox_Background.activated.connect(self.background_Theme)
             self.comboBox_Base.activated.connect(self.Base_Theme)
@@ -367,6 +190,9 @@ class SettingWindow(QMainWindow, Form, QtCore.QThread):
             self.comboBox_Button.activated.connect(self.Button_Theme)
             self.comboBox_ButtonText.activated.connect(self.ButtonText_Theme)
             self.comboBox_Slider.activated.connect(self.SliderTheme)
+
+            # self.spinBox_Slider.setRange(0, 10)
+            # self.spinBox_Slider.valueChanged.connect(self.Slider_Size_Changed)
 
     def Classic_Theme(self, classic):
         if classic:
@@ -418,6 +244,9 @@ class SettingWindow(QMainWindow, Form, QtCore.QThread):
         if index == 10:
             self.palette.setColor(QtGui.QPalette.Window,
                                   QtGui.QColor('#ffaa00'))
+        if index == 11:
+            self.palette.setColor(QtGui.QPalette.Window,
+                                  QtGui.QColor('#353535'))
         QApplication.setPalette(self.palette)
 
     ##########################
@@ -465,6 +294,9 @@ class SettingWindow(QMainWindow, Form, QtCore.QThread):
         if index == 10:
             self.palette.setColor(QtGui.QPalette.Base,
                                   QtGui.QColor('#ffaa00'))
+        if index == 11:
+            self.palette.setColor(QtGui.QPalette.Base,
+                                  QtGui.QColor('#353535'))
         QApplication.setPalette(self.palette)
 
     ###################
@@ -512,6 +344,9 @@ class SettingWindow(QMainWindow, Form, QtCore.QThread):
         if index == 10:
             self.palette.setColor(QtGui.QPalette.WindowText,
                                   QtGui.QColor('#ffaa00'))
+        if index == 11:
+            self.palette.setColor(QtGui.QPalette.WindowText,
+                                  QtGui.QColor('#353535'))
         QApplication.setPalette(self.palette)
 
     #############################
@@ -560,6 +395,9 @@ class SettingWindow(QMainWindow, Form, QtCore.QThread):
         if index == 10:
             self.palette.setColor(QtGui.QPalette.Text,
                                   QtGui.QColor('#ffaa00'))
+        if index == 11:
+            self.palette.setColor(QtGui.QPalette.Text,
+                                  QtGui.QColor('#353535'))
         QApplication.setPalette(self.palette)
 
     ###############################
@@ -607,6 +445,9 @@ class SettingWindow(QMainWindow, Form, QtCore.QThread):
         if index == 10:
             self.palette.setColor(QtGui.QPalette.Button,
                                   QtGui.QColor('#ffaa00'))
+        if index == 11:
+            self.palette.setColor(QtGui.QPalette.Button,
+                                  QtGui.QColor('#353535'))
         QApplication.setPalette(self.palette)
 
     ###############################
@@ -654,42 +495,92 @@ class SettingWindow(QMainWindow, Form, QtCore.QThread):
         if index == 10:
             self.palette.setColor(QtGui.QPalette.ButtonText,
                                   QtGui.QColor('#ffaa00'))
+        if index == 11:
+            self.palette.setColor(QtGui.QPalette.BrightText,
+                                  QtGui.QColor('#353535'))
         QApplication.setPalette(self.palette)
 
-    def SliderTheme(self, index, size=3):
+    def SliderTheme(self, index):
+        # Color of Slider in comboBox
         color = ["#ffffff", "#ebebeb", "#353535", "#35b9ff", "#163393",
                  "#ee8bff", "#9538bd", "#55aa00", "#ffff7f", "#ff0000", "#ffaa00"]
-        # Set stylesheet for Sliders
-        StyleSheet_Slider = ("""
-            QSlider::groove:horizontal {
-                border: 1px solid white;
-                background: white;
-                height: 1px;
-                border-radius: 4px;
-            }""" +
+        if self.checkBox_Theme.isChecked():
+            # Set stylesheet for Sliders Classic
 
-                             "QSlider::sub-page:horizontal {" +
-                             f"background: {color[index]};" +
-                             """border: 1px solid #777;
-                height: 10px;
-                border-radius: 4px;
-            }""" +
+            StyleSheet_Slider = ("")
+        else:
+            # Set stylesheet for Sliders Fusion
+            StyleSheet_Slider = ("""
+                QSlider::groove:horizontal {
+                    border: 1px solid white;
+                    background: white;
+                    height: 1px;
+                    border-radius: 4px;
+                }""" +
 
-                             """QSlider::add-page:horizontal {
-                background: #fff;
-                border: 1px solid Gray;
-                height: 10px;
-                border-radius: 4px;
-            }
-            QSlider::handle:horizontal {""" +
-                             f"background-color: {color[index]};" +
-                             """border: 1px solid;
-                height: 10px;
-                width: 10px;
-                margin: -5px 0px;
-                border-radius: 4px;
-            }
-        """)
+                                 "QSlider::sub-page:horizontal {" +
+                                 f"background: {color[index]};" +
+                                 """border: 1px solid #777;
+                    height: 10px;
+                    border-radius: 4px;
+                }""" +
+
+                                 """QSlider::add-page:horizontal {
+                    background: #fff;
+                    border: 1px solid Gray;
+                    height: 10px;
+                    border-radius: 4px;
+                }
+                QSlider::handle:horizontal {""" +
+                                 f"background-color: {color[index]};" +
+                                 """border: 1px solid;
+                    height: 10px;
+                    width: 10px;
+                    margin: -5px 0px;
+                    border-radius: 4px;
+                }
+            """)
         self.MediaPlayer.Slider_Volume.setStyleSheet(StyleSheet_Slider)
         self.MediaPlayer.Slider_Play.setStyleSheet(StyleSheet_Slider)
 
+    def Theme_apply(self):
+        with open('SettingPart/Setting.csv') as file:
+
+            Setting_reader = csv.reader(file)
+            Dict = {rows[0]: rows[1] for rows in Setting_reader}
+            self.comboBox_Theme.setCurrentIndex(int(Dict['Theme']))
+            self._Theme(int(Dict['Theme']))
+            self.Classic_Theme(int(Dict['Classic']))
+            self.checkBox_Theme.setChecked(int(Dict['Classic']))
+
+            self.background_Theme(int(Dict['Background']))
+            self.comboBox_Background.setCurrentIndex(
+                int(Dict['Background']))
+
+            self.Base_Theme(int(Dict['Base']))
+            self.comboBox_Base.setCurrentIndex(int(Dict['Base']))
+
+            self.WindowsText_Theme(int(Dict['WindowText']))
+            self.comboBox_WindowsText.setCurrentIndex(
+                int(Dict['WindowText']))
+
+            self.Text_Theme(int(Dict['Text']))
+            self.comboBox_Text.setCurrentIndex(int(Dict['Text']))
+
+            self.Button_Theme(int(Dict['Button']))
+            self.comboBox_Button.setCurrentIndex(int(Dict['Button']))
+
+            self.ButtonText_Theme(int(Dict['ButtonText']))
+            self.comboBox_ButtonText.setCurrentIndex(
+                int(Dict['ButtonText']))
+
+            self.SliderTheme(int(Dict['Slider Color']))
+            self.comboBox_Slider.setCurrentIndex(int(Dict['Slider Color']))
+
+            # self.Slider_Size_Changed(int(Dict['Slider Size']))
+            # self.spinBox_Slider.setValue(int(Dict['Slider Size']))
+
+            if int(Dict['Theme']) != 4:
+                self.scrollArea_Theme.setVisible(False)
+            elif int(Dict['Theme']) == 4:
+                self.scrollArea_Theme.setVisible(True)

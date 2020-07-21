@@ -5,6 +5,7 @@ import subprocess
 import LoginPart.Login as Login
 import SearchPart.tag as Tag
 import SettingPart.Setting as Setting
+import PlayListPart.Playlist as Playlist
 from PyQt5.QtWidgets import QApplication, QMainWindow, QMenuBar, QFileDialog, QLineEdit, QListWidget, QSlider, QShortcut
 from PyQt5 import uic, QtCore, QtGui
 from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
@@ -38,7 +39,6 @@ class MediaPlayer(QMainWindow, Form):
         self.search_lineEdit.setPlaceholderText("search Tags here")
         self.write_Bookmark.setPlaceholderText("write bookmark here")
 
-
         # Create Tags
         self.TagDB = None
 
@@ -55,6 +55,10 @@ class MediaPlayer(QMainWindow, Form):
         self.Slider_Play.resize(644, 22)
         self.horizontalLayout_4.addWidget(self.Slider_Play, 1)
         self.horizontalLayout_4.addWidget(self.label_Time, 0)
+
+        # To Apply Theme
+        self.Setting = Setting.SettingWindow(self)
+        self.Setting.Theme_apply()
 
         # PushButtton
         self.pushButton_Start.setEnabled(False)
@@ -87,6 +91,10 @@ class MediaPlayer(QMainWindow, Form):
 
         self.pushButton_Setting.clicked.connect(self.Settingshow)
         self.pushButton_Setting.setToolTip("Setting")
+
+        self.pushButton_Playlist.clicked.connect(self.Play_list)
+        self.pushButton_Playlist.setToolTip("Play list")
+        self.PlaylistW = Playlist.PlaylistWindow(self)
 
         # Slider Play
         self.Slider_Play.setRange(0, 0)
@@ -173,8 +181,7 @@ class MediaPlayer(QMainWindow, Form):
             self.showNormal()
 
     def Settingshow(self):
-        settingw = Setting.SettingWindow(self)
-        settingw.show()
+        self.Setting.show()
 
     def start(self):
         if self.player.state() == QMediaPlayer.PlayingState:
@@ -422,6 +429,12 @@ class MediaPlayer(QMainWindow, Form):
         self.close()
         self.player.stop()
         subprocess.call(['python', 'MediaPlayer.py'])
+
+    def Play_list(self):
+
+        self.PlaylistW.show()
+        self.PlaylistW.move(QtGui.QCursor().pos().x(),
+                            QtGui.QCursor().pos().y()-310)
 
 
 # Custome play slider
