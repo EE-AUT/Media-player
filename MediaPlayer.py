@@ -33,7 +33,7 @@ class MediaPlayer(QMainWindow, Form):
         self.search_Thread = None
         self.write_Bookmark = QLineEdit(self)
         self.write_Bookmark.setVisible(False)
-        self.write_Bookmark.returnPressed.connect(self.save_Bookmarks)
+        # self.write_Bookmark.returnPressed.connect(self.save_Bookmarks)
         self.movie_Name = None
 
         self.search_lineEdit.setPlaceholderText("search Tags here")
@@ -207,30 +207,42 @@ class MediaPlayer(QMainWindow, Form):
             self.pushButton_BookMark.setVisible(False)
 
     def next(self):
-        self.FileName = self.Files[self.Files.index(self.FileName)+1]
+        self.PlaylistW.listWidget_Playlist.setCurrentRow(
+            self.PlaylistW.listWidget_Playlist.currentRow()+1)
+        self.PlaylistW.spliter = len(str(self.PlaylistW.listWidget_Playlist.currentRow()+1)) + 3
+
         self.player.setMedia(QMediaContent(QUrl.fromLocalFile(
-            os.path.join(self.File_Path, self.FileName))))
-        self.setWindowTitle(f" Media Player - {self.FileName}")
+            self.PlaylistW.Files[self.PlaylistW.listWidget_Playlist.currentItem().text()[self.PlaylistW.spliter:]])))
+        self.setWindowTitle(
+            f" Media Player - {self.PlaylistW.listWidget_Playlist.currentItem().text()[self.PlaylistW.spliter:]}")
         self.start()
-        if self.FileName == self.Files[-1]:
+
+        if self.PlaylistW.listWidget_Playlist.currentRow() == self.PlaylistW.listWidget_Playlist.count()-1:
             self.pushButton_next.setEnabled(False)
-        else:
-            self.pushButton_previous.setEnabled(True)
+
+        self.pushButton_previous.setEnabled(True)
 
     def previous(self):
-        self.FileName = self.Files[self.Files.index(self.FileName)-1]
+        # Set previous file as Current item in listWidget
+        self.PlaylistW.listWidget_Playlist.setCurrentRow(
+            self.PlaylistW.listWidget_Playlist.currentRow()-1)
+        self.PlaylistW.spliter = len(str(self.PlaylistW.listWidget_Playlist.currentRow()+1)) + 3
+        
         self.player.setMedia(QMediaContent(QUrl.fromLocalFile(
-            os.path.join(self.File_Path, self.FileName))))
-        self.setWindowTitle(f" Media Player - {self.FileName}")
+            self.PlaylistW.Files[self.PlaylistW.listWidget_Playlist.currentItem().text()[self.PlaylistW.spliter:]])))
+        self.setWindowTitle(
+            f" Media Player - {self.PlaylistW.listWidget_Playlist.currentItem().text()[self.PlaylistW.spliter:]}")
         self.start()
-        if self.FileName == self.Files[0]:
+
+        # To Enable Next and previous PushButton According to current file
+        if not self.PlaylistW.listWidget_Playlist.currentRow():
             self.pushButton_previous.setEnabled(False)
-        else:
-            self.pushButton_next.setEnabled(True)
+        self.pushButton_next.setEnabled(True)
 
     def Load_video(self):
+
         file_path, _ = QFileDialog.getOpenFileName(
-            self, "Open video", directory=os.path.join(os.getcwd(), 'Video'))
+            self, "Open video", directory=os.path.join(os.getcwd(), 'Video'), filter='*.mp4 *.mkv *.mp3')
 
         if file_path:
             self.player.setMedia(QMediaContent(QUrl.fromLocalFile(file_path)))
@@ -243,14 +255,9 @@ class MediaPlayer(QMainWindow, Form):
             self.pushButton_stop.setEnabled(True)
             self.Slider_Volume.setRange(0, self.player.volume())
             self.Set_volume(80)
-            self.FileName = file_path.split("/")[-1]
-            self.setWindowTitle(f" Media Player - {self.FileName}")
-            self.File_Path = file_path.replace(f"/{self.FileName}", "")
-            self.Files = os.listdir(self.File_Path)
-            if not self.FileName == self.Files[0]:
-                self.pushButton_previous.setEnabled(True)
-            if not self.FileName == self.Files[-1]:
-                self.pushButton_next.setEnabled(True)
+
+            # Create Playlist
+            self.PlaylistW.Create_Playlist(file_path)
 
     def Position_changed(self, position):
         if position > self.player.duration():
@@ -317,26 +324,26 @@ class MediaPlayer(QMainWindow, Form):
                 self.pushButton_volume.setIcon(QIcon('./Icons/mute.png'))
                 self.pushButton_volume.setToolTip("UnMute")
 
-    def save_Bookmarks(self):
-        self.write_Bookmark.setVisible(False)
-        try:
-            path = os.path.join(os.getcwd(), "bookmarks")
-            os.mkdir(path)
-        except:
-            pass
+    # def save_Bookmarks(self):
+    #     self.write_Bookmark.setVisible(False)
+    #     try:
+    #         path = os.path.join(os.getcwd(), "bookmarks")
+    #         os.mkdir(path)
+    #     except:
+    #         pass
 
-        try:
-            with open("LoginPart/User.csv") as iFile:
-                User = csv.reader(iFile, delimiter=',')
-                for row in User:
-                    admin = row[0]
-            with open(f"{os.getcwd()}/bookmarks/{admin}.csv", "a", newline="") as csvfile:
-                employee_writer = csv.writer(csvfile, delimiter=',')
-                employee_writer.writerow(
-                    [self.FileName, self.write_Bookmark.text(), self.label_Time.text()])
-        except:
-            pass
-        self.write_Bookmark.setText("")
+    #     try:
+    #         with open("LoginPart/User.csv") as iFile:
+    #             User = csv.reader(iFile, delimiter=',')
+    #             for row in User:
+    #                 admin = row[0]
+    #         with open(f"{os.getcwd()}/bookmarks/{admin}.csv", "a", newline="") as csvfile:
+    #             employee_writer = csv.writer(csvfile, delimiter=',')
+    #             employee_writer.writerow(
+    #                 [self.FileName, self.write_Bookmark.text(), self.label_Time.text()])
+    #     except:
+    #         pass
+    #     self.write_Bookmark.setText("")
 
     def sch_icon_Event(self):
 
@@ -346,12 +353,12 @@ class MediaPlayer(QMainWindow, Form):
         # Is not FullScreen
         if not self.isFullScreen():
             self.search_lineEdit.move(
-                int(self.pushButton_Search.x() - (200 / 800) * self.size().width()), 31)
+                int(self.pushButton_Search.x() - (200 / 800) * self.size().width()), self.pushButton_Search.y()+self.pushButton_Search.size().height()+1)
 
         # Is FullScreen
         else:
             self.search_lineEdit.move(
-                int((600 / 800) * self.size().width())-self.pushButton_Search.geometry().width(), 31)
+                int((600 / 800) * self.size().width())-self.pushButton_Search.geometry().width(), self.pushButton_Search.y()+self.pushButton_Search.size().height()+1)
 
         self.search_lineEdit.setVisible(True)
         self.search_lineEdit.setFocus()
@@ -372,7 +379,7 @@ class MediaPlayer(QMainWindow, Form):
         self.write_Bookmark.resize(
             int((200 / 800) * self.size().width()), self.pushButton_Search.geometry().height())
         self.write_Bookmark.move(
-            int(self.pushButton_BookMark.x() + self.pushButton_Search.geometry().width()), 31)
+            int(self.pushButton_BookMark.x() + self.pushButton_Search.geometry().width()), self.pushButton_Search.y()+self.pushButton_Search.size().height()+1)
 
         self.sch_listWidget.resize(
             int((200 / 800) * self.size().width()), int((200 / 600) * self.size().height()))
@@ -382,7 +389,7 @@ class MediaPlayer(QMainWindow, Form):
         self.search_lineEdit.resize(
             int((200 / 800) * self.size().width()), self.pushButton_Search.geometry().height())
         self.search_lineEdit.move(
-            int(self.pushButton_Search.x() - (200 / 800) * self.size().width()), 31)
+            int(self.pushButton_Search.x() - (200 / 800) * self.size().width()), self.pushButton_Search.y()+self.pushButton_Search.size().height()+1)
 
     def item_Event(self, item):
         print(item.text())
@@ -431,10 +438,9 @@ class MediaPlayer(QMainWindow, Form):
         subprocess.call(['python', 'MediaPlayer.py'])
 
     def Play_list(self):
-
         self.PlaylistW.show()
         self.PlaylistW.move(QtGui.QCursor().pos().x(),
-                            QtGui.QCursor().pos().y()-310)
+                            QtGui.QCursor().pos().y()-self.PlaylistW.size().height()-25)
 
 
 # Custome play slider
