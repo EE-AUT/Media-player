@@ -32,6 +32,7 @@ class PlaylistWindow(QMainWindow, Form, QtCore.QThread):
         self.pushButton_Add.clicked.connect(self.add_file)
         self.pushButton_Delete.clicked.connect(self.del_file)
 
+
     def Create_Playlist(self, file_path):
         self.listWidget_Playlist.clear()
         self.FileName = file_path.split("/")[-1]
@@ -59,6 +60,10 @@ class PlaylistWindow(QMainWindow, Form, QtCore.QThread):
             self.MediaPlayer.pushButton_previous.setEnabled(True)
         if self.listWidget_Playlist.currentRow() != self.listWidget_Playlist.count()-1:
             self.MediaPlayer.pushButton_next.setEnabled(True)
+
+        #To update part of Tags of file  Dackwidget 
+        self.MediaPlayer.ComboBox_Tags_of_file.clear()
+        self.MediaPlayer.ComboBox_Tags_of_file.addItems(self.Files.keys())
 
     def listview_clicked(self, val):
         self.spliter = len(str(self.listWidget_Playlist.currentRow()+1)) + 3
@@ -94,9 +99,14 @@ class PlaylistWindow(QMainWindow, Form, QtCore.QThread):
             self, "Open video", directory=self.File_Path, filter='*.mp4 *.mkv *.mp3')
         if file_path:
             file_name = file_path.split("/")[-1]
-            self.Files[file_name] = file_path
-            self.listWidget_Playlist.addItem(
-                f'{self.listWidget_Playlist.count()+1} . {file_name}')
+            if not file_name in self.Files.keys():
+                self.Files[file_name] = file_path
+                self.listWidget_Playlist.addItem(
+                    f'{self.listWidget_Playlist.count()+1} . {file_name}')
+
+        #To update part of Tags of file  Dackwidget 
+        self.MediaPlayer.ComboBox_Tags_of_file.clear()
+        self.MediaPlayer.ComboBox_Tags_of_file.addItems(self.Files.keys())
 
     def del_file(self):
         
@@ -105,3 +115,7 @@ class PlaylistWindow(QMainWindow, Form, QtCore.QThread):
             self.Files.pop(self.listWidget_Playlist.currentItem().text()[self.spliter:])
             self.listWidget_Playlist.takeItem(
                 self.listWidget_Playlist.currentRow())
+
+        #To update part of Tags of file  Dackwidget 
+        self.MediaPlayer.ComboBox_Tags_of_file.clear()
+        self.MediaPlayer.ComboBox_Tags_of_file.addItems(self.Files.keys())

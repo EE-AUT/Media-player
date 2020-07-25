@@ -2,11 +2,12 @@ import sys
 import os
 import csv
 import subprocess
+from time import sleep
 import LoginPart.Login as Login
 import SearchPart.tag as Tag
 import SettingPart.Setting as Setting
 import PlayListPart.Playlist as Playlist
-from PyQt5.QtWidgets import QApplication, QMainWindow, QMenuBar, QFileDialog, QLineEdit, QListWidget, QSlider, QShortcut
+from PyQt5.QtWidgets import QApplication, QWidget, QMainWindow, QComboBox, QVBoxLayout, QDockWidget, QMenuBar, QFileDialog, QLineEdit, QListWidget, QSlider, QShortcut
 from PyQt5 import uic, QtCore, QtGui
 from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
 from PyQt5.QtCore import Qt, QUrl
@@ -24,20 +25,19 @@ class MediaPlayer(QMainWindow, Form):
         self.player = QMediaPlayer(None, QMediaPlayer.VideoSurface)
         self.player.setVideoOutput(self.videowidget)
         self.setWindowTitle(" Media Player")
+
         self.sch_listWidget = QListWidget(self)
-        self.search_lineEdit = QLineEdit(self)
         self.sch_listWidget.setVisible(False)
         self.search_lineEdit.setVisible(False)
+
         self.mouseReleaseEvent = self.MainWindow_Event
         self.resizeEvent = self.main_size_Change
         self.search_Thread = None
-        self.write_Bookmark = QLineEdit(self)
-        self.write_Bookmark.setVisible(False)
-        # self.write_Bookmark.returnPressed.connect(self.save_Bookmarks)
-        self.movie_Name = None
+        self.lineEdit_Bookmark.setVisible(False)
+        # self.lineEdit_Bookmark.returnPressed.connect(self.save_Bookmarks)
 
         self.search_lineEdit.setPlaceholderText("search Tags here")
-        self.write_Bookmark.setPlaceholderText("write bookmark here")
+        self.lineEdit_Bookmark.setPlaceholderText("write bookmark here")
 
         # Create Tags
         self.TagDB = None
@@ -96,6 +96,26 @@ class MediaPlayer(QMainWindow, Form):
         self.pushButton_Playlist.setToolTip("Play list")
         self.PlaylistW = Playlist.PlaylistWindow(self)
 
+        # Create Tags of file Dockwidget
+        self.pushButton_Tag_of_file.clicked.connect(self.Show_Tags_of_file)
+        self.DockWidget_Tags_of_file = QDockWidget("Tags of file", self)
+        self.DockWidget_Tags_of_file.setVisible(False)
+        self.DockWidget_Tags_of_file.setMinimumWidth(150)
+        self.ComboBox_Tags_of_file = QComboBox(self)
+        self.ListWidget_Tags_of_file = QListWidget()
+        widget = QWidget()  # Create Widget for Tags of file DockWidget
+        layout = QVBoxLayout()  # Create Layout for Tags of file DockWidget
+        # Add Listwiget and ComboBox to layout
+        layout.addWidget(self.ComboBox_Tags_of_file)
+        layout.addWidget(self.ListWidget_Tags_of_file)
+        widget.setLayout(layout)  # Set layout on the widget
+        # set Widget on Tags of file DockWidget
+        self.DockWidget_Tags_of_file.setWidget(widget)
+        self.addDockWidget(Qt.RightDockWidgetArea,
+                           self.DockWidget_Tags_of_file)
+        self.ComboBox_Tags_of_file.activated.connect(self.ListWidget_Tag)
+        # self.ListWidget_Tags_of_file.itemActivated.connect(self.GoTo)
+
         # Slider Play
         self.Slider_Play.setRange(0, 0)
         self.player.positionChanged.connect(self.Position_changed)
@@ -130,16 +150,8 @@ class MediaPlayer(QMainWindow, Form):
         QShortcut(QKeySequence('Ctrl+O'),
                   self).activated.connect(self.Load_video)
 
-    def add_BookMarks(self):
-        if self.player.isVideoAvailable() or self.player.isAudioAvailable():
-            self.write_Bookmark.resize(
-                int((200 / 800) * self.size().width()), self.pushButton_BookMark.geometry().height())
-            self.write_Bookmark.move(
-                int(self.pushButton_BookMark.x()+25), 31)
-            self.write_Bookmark.setVisible(True)
-            self.write_Bookmark.setFocus()
-
     # KeyPress Event
+
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_Space and self.pushButton_Start.isEnabled():
             self.start()
@@ -208,8 +220,9 @@ class MediaPlayer(QMainWindow, Form):
 
     def next(self):
         self.PlaylistW.listWidget_Playlist.setCurrentRow(
-            self.PlaylistW.listWidget_Playlist.currentRow()+1)
-        self.PlaylistW.spliter = len(str(self.PlaylistW.listWidget_Playlist.currentRow()+1)) + 3
+            list(self.PlaylistW.Files.keys()).index(self.windowTitle()[16:])+1)
+        self.PlaylistW.spliter = len(
+            str(self.PlaylistW.listWidget_Playlist.currentRow()+1)) + 3
 
         self.player.setMedia(QMediaContent(QUrl.fromLocalFile(
             self.PlaylistW.Files[self.PlaylistW.listWidget_Playlist.currentItem().text()[self.PlaylistW.spliter:]])))
@@ -225,9 +238,10 @@ class MediaPlayer(QMainWindow, Form):
     def previous(self):
         # Set previous file as Current item in listWidget
         self.PlaylistW.listWidget_Playlist.setCurrentRow(
-            self.PlaylistW.listWidget_Playlist.currentRow()-1)
-        self.PlaylistW.spliter = len(str(self.PlaylistW.listWidget_Playlist.currentRow()+1)) + 3
-        
+            list(self.PlaylistW.Files.keys()).index(self.windowTitle()[16:])-1)
+        self.PlaylistW.spliter = len(
+            str(self.PlaylistW.listWidget_Playlist.currentRow()+1)) + 3
+
         self.player.setMedia(QMediaContent(QUrl.fromLocalFile(
             self.PlaylistW.Files[self.PlaylistW.listWidget_Playlist.currentItem().text()[self.PlaylistW.spliter:]])))
         self.setWindowTitle(
@@ -325,7 +339,7 @@ class MediaPlayer(QMainWindow, Form):
                 self.pushButton_volume.setToolTip("UnMute")
 
     # def save_Bookmarks(self):
-    #     self.write_Bookmark.setVisible(False)
+    #     self.lineEdit_Bookmark.setVisible(False)
     #     try:
     #         path = os.path.join(os.getcwd(), "bookmarks")
     #         os.mkdir(path)
@@ -340,56 +354,61 @@ class MediaPlayer(QMainWindow, Form):
     #         with open(f"{os.getcwd()}/bookmarks/{admin}.csv", "a", newline="") as csvfile:
     #             employee_writer = csv.writer(csvfile, delimiter=',')
     #             employee_writer.writerow(
-    #                 [self.FileName, self.write_Bookmark.text(), self.label_Time.text()])
+    #                 [self.FileName, self.lineEdit_Bookmark.text(), self.label_Time.text()])
     #     except:
     #         pass
-    #     self.write_Bookmark.setText("")
+    #     self.lineEdit_Bookmark.setText("")
 
     def sch_icon_Event(self):
+        self.search_lineEdit.setFixedWidth(0)
 
-        # create QLineEdit
-        self.search_lineEdit.resize(
-            int((200 / 800) * self.size().width()), self.pushButton_Search.geometry().height())
-        # Is not FullScreen
-        if not self.isFullScreen():
-            self.search_lineEdit.move(
-                int(self.pushButton_Search.x() - (200 / 800) * self.size().width()), self.pushButton_Search.y()+self.pushButton_Search.size().height()+1)
-
-        # Is FullScreen
-        else:
-            self.search_lineEdit.move(
-                int((600 / 800) * self.size().width())-self.pushButton_Search.geometry().width(), self.pushButton_Search.y()+self.pushButton_Search.size().height()+1)
+        self.SearchAnimation = Search_Animation(self)
+        self.SearchAnimation.update_Animation.connect(
+            self.Update_Search_Animation)
+        self.SearchAnimation.start()
 
         self.search_lineEdit.setVisible(True)
-        self.search_lineEdit.setFocus()
+        self.search_lineEdit.setFocus(True)
+
+    def Update_Search_Animation(self, size):
+        self.search_lineEdit.setFixedWidth(size)
+
+    def add_BookMarks(self):
+        if self.player.isVideoAvailable() or self.player.isAudioAvailable():
+            self.lineEdit_Bookmark.setFixedWidth(0)
+
+            self.BookMarkAnimation = BookMark_Animation(self)
+            self.BookMarkAnimation.update_Animation.connect(
+                self.Update_BookMark_Animation)
+            self.BookMarkAnimation.start()
+
+            self.lineEdit_Bookmark.setVisible(True)
+            self.lineEdit_Bookmark.setFocus(True)
+
+    def Update_BookMark_Animation(self, size):
+
+        self.lineEdit_Bookmark.setFixedWidth(size)
 
     def MainWindow_Event(self, type):
 
         self.search_lineEdit.setText("")
         self.search_lineEdit.setVisible(False)
 
-        self.write_Bookmark.setText("")
-        self.write_Bookmark.setVisible(False)
+        self.lineEdit_Bookmark.setText("")
+        self.lineEdit_Bookmark.setVisible(False)
 
         self.sch_listWidget.setVisible(False)
         self.sch_listWidget.clear()
 
     def main_size_Change(self, val):
-
-        self.write_Bookmark.resize(
-            int((200 / 800) * self.size().width()), self.pushButton_Search.geometry().height())
-        self.write_Bookmark.move(
-            int(self.pushButton_BookMark.x() + self.pushButton_Search.geometry().width()), self.pushButton_Search.y()+self.pushButton_Search.size().height()+1)
+        self.lineEdit_Bookmark.setFixedWidth(int(self.size().width()/4))
 
         self.sch_listWidget.resize(
-            int((200 / 800) * self.size().width()), int((200 / 600) * self.size().height()))
+            int(self.size().width()/4), int((200 / 600) * self.size().height()))
         self.sch_listWidget.move(
-            int(self.pushButton_Search.x() - (200 / 800) * self.size().width()), 52)
+            int(self.pushButton_Search.x() - (200 / 800) * self.size().width())-5, 52)
 
-        self.search_lineEdit.resize(
-            int((200 / 800) * self.size().width()), self.pushButton_Search.geometry().height())
-        self.search_lineEdit.move(
-            int(self.pushButton_Search.x() - (200 / 800) * self.size().width()), self.pushButton_Search.y()+self.pushButton_Search.size().height()+1)
+        self.search_lineEdit.setFixedWidth(int(self.size().width()/4))
 
     def item_Event(self, item):
         print(item.text())
@@ -402,7 +421,7 @@ class MediaPlayer(QMainWindow, Form):
         # Is Not FullScreen
         if not self.isFullScreen():
             self.sch_listWidget.move(
-                int(self.pushButton_Search.x() - (200 / 800) * self.size().width()), 52)
+                int(self.pushButton_Search.x() - (200 / 800) * self.size().width()-5), 52)
 
         # Is FullScreen
         else:
@@ -438,12 +457,24 @@ class MediaPlayer(QMainWindow, Form):
         subprocess.call(['python', 'MediaPlayer.py'])
 
     def Play_list(self):
+        #To show current Row for every time it opens
+        if self.PlaylistW.listWidget_Playlist.count():
+            self.PlaylistW.listWidget_Playlist.setCurrentRow(
+                list(self.PlaylistW.Files.keys()).index(self.windowTitle()[16:]))
+                
         self.PlaylistW.show()
         self.PlaylistW.move(QtGui.QCursor().pos().x(),
                             QtGui.QCursor().pos().y()-self.PlaylistW.size().height()-25)
 
+    def Show_Tags_of_file(self):
+        self.DockWidget_Tags_of_file.setVisible(
+            not self.DockWidget_Tags_of_file.isVisible())
 
-# Custome play slider
+    def ListWidget_Tag(self, index):
+        # print Sesion
+        print(list(self.PlaylistW.Files.keys())[index])
+
+
 class Slider(QSlider):
     setUP_Slider = QtCore.pyqtSignal(int)
 
@@ -456,8 +487,9 @@ class Slider(QSlider):
     def mouseMoveEvent(self, position):
         self.setUP_Slider.emit(position.x())
 
+# Thread for searching in tags
 
-# thread for searching in tags
+
 class search_thread(QtCore.QThread):
     update_schTag = QtCore.pyqtSignal(list)
 
@@ -472,6 +504,31 @@ class search_thread(QtCore.QThread):
             self.update_schTag.emit(sch_Tags)
         else:
             self.update_schTag.emit([])
+
+
+class Search_Animation(QtCore.QThread):
+    update_Animation = QtCore.pyqtSignal(int)
+
+    def __init__(self, window):
+        QtCore.QThread.__init__(self, parent=window)
+
+    def run(self):
+        for i in range(int(Mainw.size().width()/4)):
+            self.update_Animation.emit(i)
+            sleep(0.00001)
+
+
+class BookMark_Animation(QtCore.QThread):
+    update_Animation = QtCore.pyqtSignal(int)
+
+    def __init__(self, window):
+        QtCore.QThread.__init__(self, parent=window)
+
+    def run(self):
+
+        for i in range(int(Mainw.size().width()/4)):
+            self.update_Animation.emit(i)
+            sleep(0.00001)
 
 
 if __name__ == '__main__':
