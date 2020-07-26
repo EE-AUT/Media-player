@@ -10,7 +10,7 @@ def edit_Tags(befor, after, filename):
         string = csvfile.read()
 
     with open(filename, "w") as csvfile:
-        csvfile.write(re.sub(befor+",", after+",", string))
+        csvfile.write(re.sub(befor+"#", after+"#", string))
 
 
 

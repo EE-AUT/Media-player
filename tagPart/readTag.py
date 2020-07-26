@@ -13,7 +13,7 @@ def read_csv(filename):
     movie_Session = ""
     output = {}
     with open(filename) as csvfile:
-        file_reader = csv.reader(csvfile, delimiter=',')
+        file_reader = csv.reader(csvfile, delimiter='#')
 
         for row in file_reader:
             if len(row) == 1:
