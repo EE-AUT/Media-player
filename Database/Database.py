@@ -25,7 +25,6 @@ def get_Database():
         return data
 
     except:
-        print("error occured")
         return None
 
 
@@ -52,12 +51,13 @@ def add_User(user):
         creds = ServiceAccountCredentials.from_json_keyfile_name("Database/json/creds.json", scope)
         client = gspread.authorize(creds)
         sheet = client.open("test").sheet1
-        data = sheet.get_all_records()  
+        data = sheet.get_all_records()
 
         sheet.insert_row(user, len(data) + 2)
         return True
 
-    except:
+    except Exception as e:
+        print(e)
         return False
 
                 

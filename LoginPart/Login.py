@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QApplication, QMainWindow, QDialog, QInputDialog, QLabel
+from PyQt5.QtWidgets import QApplication, QMainWindow, QDialog, QInputDialog, QLabel, QLineEdit
 import os
 import sys
 import csv
@@ -8,6 +8,7 @@ from time import sleep
 from signupPart.signUp import signUpWindow
 import Database.Database as get_Database
 import SettingPart.Setting as Setting
+import socket
 
 
 Form = uic.loadUiType(os.path.join(os.getcwd(), 'LoginPart/Login.ui'))[0]
@@ -45,12 +46,21 @@ class LoginWindow(QDialog, Form):
         self.GetData.data_isReady.connect(self.checkData)
         self.wait = wait_Toclear_thread(self)
         self.wait.isFinished.connect(self.clear_msg)
+        self.check_net = is_connected(self)
+        self.check_net.isConnected.connect(self.check_connection)
 
         self.closeEvent = self.closeThreads  # stop all thread
+        self.signUpwin = None
         self.AcceptKey = False
 
+        # lineEdit pass
+        self.lineEdit_StudentID.setEchoMode(QLineEdit.Password)
+
+
+
+
     def StudentID_update(self, val):
-        self.StudentID = val
+        self.Pass = str(val)
         self.lineEdit_StudentID.setStyleSheet("")
         if self.StudentID:
             self.clearButton.setEnabled(True)
@@ -78,23 +88,26 @@ class LoginWindow(QDialog, Form):
         self.lineEdit_Email.clear()
 
     def Login(self):
-        if self.GetData:
-            self.user_Message("please wait ...", "rgb(0, 170, 0)", wait=False)
-            self.LoginButton.setEnabled(False)
-            self.GetData.start()
+        self.check_net.start()
+
 
     def checkData(self, Data):
-        self.check = checkData_Thread(
-            self, Data=Data, Email=self.Email, StNo=self.StudentID)
-        self.check.check_Key.connect(self.isAccept)
-        self.check.start()
+        if len(Data) == 0:
+            self.user_Message("connection failed", "rgb(255, 0, 0)")
+            self.LoginButton.setEnabled(True)
+        else:
+            self.check = checkData_Thread(
+                self, Data=Data, Email=self.Email, Pass="#" + self.Pass)
+            self.check.check_Key.connect(self.isAccept)
+            self.check.start()
 
     def isAccept(self, key):
         if key:
-            open("LoginPart/User.csv", "w")
+            open("LoginPart/User.csv", "w").write(f"{self.Email},{self.Pass}")
             self.GetData = None
             self.check = None
             self.wait = None
+            self.check_net = None
             self.close()
             self.AcceptKey = True
         else:
@@ -116,10 +129,12 @@ class LoginWindow(QDialog, Form):
     def close_Sign(self, val):
         self.setVisible(True)
 
+
     def closeThreads(self, val):
         self.GetData = None
         self.check = None
         self.wait = None
+
 
     def clear_msg(self, check):
         if check:
@@ -131,6 +146,18 @@ class LoginWindow(QDialog, Form):
     def clear_msg(self, check):
         if check:
             self.Label_Msg.setVisible(False)
+
+    def check_connection(self, val):
+        if val:
+            if self.GetData:
+                self.user_Message("please wait ...", "rgb(0, 170, 0)", wait=False)
+                self.LoginButton.setEnabled(False)
+                self.GetData.start()
+        else:
+            self.user_Message("Connection failed", "rgb(255, 0, 0)")
+
+
+
 
     def user_Message(self, msg, color, font=12, wait=True):
         self.Label_Msg.setVisible(True)
@@ -166,16 +193,16 @@ class GetData_Thread(QtCore.QThread):
 class checkData_Thread(QtCore.QThread):
     check_Key = QtCore.pyqtSignal(bool)
 
-    def __init__(self, window, Data, Email, StNo):
+    def __init__(self, window, Data, Email, Pass):
         self.Data = Data
         self.Email = Email
-        self.StNo = StNo
+        self.Pass = Pass
         QtCore.QThread.__init__(self, parent=window)
 
     def run(self):
         for user in self.Data:
             if str(user["Email"]) == str(self.Email):
-                if str(user["sudentNO"]) == str(self.StNo):
+                if str(user["password"]) == str(self.Pass):
                     self.check_Key.emit(True)
                     break
             self.check_Key.emit(False)
@@ -190,6 +217,26 @@ class wait_Toclear_thread(QtCore.QThread):
     def run(self):
         sleep(2.5)
         self.isFinished.emit(True)
+
+
+
+
+class is_connected(QtCore.QThread):
+    isConnected = QtCore.pyqtSignal(bool)
+
+    def __init__(self, window):
+        QtCore.QThread.__init__(self, parent=window)
+
+    def run(self):
+        try:
+            socket.create_connection(("1.1.1.1", 53))
+            self.isConnected.emit(True)
+            return
+        except Exception as e:
+            pass
+        self.isConnected.emit(False)
+
+
 
 
 if __name__ == "__main__":

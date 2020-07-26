@@ -65,7 +65,7 @@
        </font>
       </property>
       <property name="text">
-       <string>StudentID</string>
+       <string>Password</string>
       </property>
      </widget>
     </item>

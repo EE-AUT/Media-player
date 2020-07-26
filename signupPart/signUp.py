@@ -58,7 +58,7 @@ class signUpWindow(QMainWindow, Form):
         self.confirm_LineEdit = CustomLineEdit(self)
         self.confirm_LineEdit.returnPressed.connect(self.check_rightKey)
         self.confirm_LineEdit.setVisible(False)
-        self.confirm_LineEdit.setPlaceholderText("Enter Key here: 60' remain")
+        self.confirm_LineEdit.setPlaceholderText("Enter Key here: 180' remain")
 
 
 
@@ -76,6 +76,10 @@ class signUpWindow(QMainWindow, Form):
 
         self.submit_Button.clicked.connect(self.submit_Email)
         self.clear_Button.clicked.connect(self.clearall)
+
+
+
+
 
 
 
@@ -125,13 +129,10 @@ class signUpWindow(QMainWindow, Form):
         
 
 
-    # function for threads
     def clear_Msg(self, ckeck_Key):
         if ckeck_Key:
             self.Label_Msg.setVisible(False)
 
-
-    # ****
 
 
 
@@ -155,7 +156,8 @@ class signUpWindow(QMainWindow, Form):
     def _check_Exist(self):
         self.check_Mail = checkEmail_Exist(self, self.Email)
         self.check_Mail.check_Exist.connect(self._check_Exist_Key)
-        self.check_Mail.start()
+        if self.check_Mail:
+            self.check_Mail.start()
 
     def _check_Exist_Key(self, key):
         if key == 0:
@@ -166,6 +168,7 @@ class signUpWindow(QMainWindow, Form):
         if key == 2:
             self.submit_Button.setEnabled(True)
             self.user_Message("Connection failed", "rgb(255, 0, 0)") 
+
 
 
 
@@ -184,7 +187,8 @@ class signUpWindow(QMainWindow, Form):
         try:
             self.send_Email_Thread = send_Email(self, receiver= self.Email)
             self.send_Email_Thread.Finished.connect(self.check_verify)
-            self.send_Email_Thread.start()
+            if self.send_Email_Thread:
+                self.send_Email_Thread.start()
         except:
             self.submit_Button.setEnabled(False)
             self.user_Message("Invalid Email", "rgb(255, 0, 0)")
@@ -197,7 +201,8 @@ class signUpWindow(QMainWindow, Form):
             self.Confirm_key = key
             self.user_Message("message sent", "rgb(0, 170, 0)")
             self.setVisibleAll(False)
-            self.wait_Toconfirm.start()
+            if self.wait_Toconfirm:
+                self.wait_Toconfirm.start()
             
         else:
             self.user_Message("Connection Faild, or invalid Email address", "rgb(255, 0, 0)", font=8)
@@ -220,6 +225,7 @@ class signUpWindow(QMainWindow, Form):
 
     def Time_Ended(self, key):
         if key:
+            self.confirm_LineEdit.clear()
             self.setVisibleAll(True)
 
     def check_rightKey(self):
@@ -230,17 +236,19 @@ class signUpWindow(QMainWindow, Form):
                 self.Confirmation()
             else:
                 self.user_Message("Invalid Key", "rgb(255, 0, 0)")
-        except:
+        except Exception as e:
+            print(e)
             self.user_Message("Just Number Please", "rgb(255, 0, 0)", font= 10)
 
         
         
     def Confirmation(self):
-        user_Info = [str(self.Email), str(self.StudentNo), str(self.UPass)
+        user_Info = [str(self.Email), str(self.StudentNo), "#" + str(self.UPass)
                     , str(self.FName), str(self.LName)]
         self.Confirm_thread = Confimation_Thread(self, user= user_Info)
         self.Confirm_thread.Confirm_Complete.connect(self.signUp_Ended)
-        self.Confirm_thread.start()
+        if self.Confirm_thread:
+            self.Confirm_thread.start()
 
 
     def signUp_Ended(self, key):
@@ -268,7 +276,9 @@ class signUpWindow(QMainWindow, Form):
         )
         self.Label_Msg.setStyleSheet(stylesheet1 + stylesheet2)
         if wait:
-            self.wait_To_clearMsg.start()
+            if self.wait_To_clearMsg:
+                self.wait_To_clearMsg.start()
+
 
 
         
@@ -285,6 +295,9 @@ class wait_Toclear_thread(QtCore.QThread):
         sleep(2.5)
         self.isFinished.emit(True)
 
+    def stop(self):
+        self.threadactive = False
+        self.wait()
 
 class send_Email(QtCore.QThread):
     Finished = QtCore.pyqtSignal(int)
@@ -295,6 +308,10 @@ class send_Email(QtCore.QThread):
         confirm_key = sendEmail.Send_Email(self.receiver)
         self.Finished.emit(confirm_key)
 
+    def stop(self):
+        self.threadactive = False
+        self.wait()
+
 
 class wait_Toconfirm(QtCore.QThread):
     Finished_1s = QtCore.pyqtSignal(int)
@@ -303,10 +320,14 @@ class wait_Toconfirm(QtCore.QThread):
         QtCore.QThread.__init__(self, parent= window)
     
     def run(self):
-        for i in range(30):
+        for i in range(180): # time for clearing confirmation lineEdit
             sleep(1)
-            self.Finished_1s.emit(60 - (i + 1))
+            self.Finished_1s.emit(180 - (i + 1))
         self.Finished_Time.emit(True)
+
+    def stop(self):
+        self.threadactive = False
+        self.wait()
 
 
 class checkEmail_Exist(QtCore.QThread):
@@ -322,6 +343,10 @@ class checkEmail_Exist(QtCore.QThread):
         check = get_Database.exist_Email(self.Email)
         self.check_Exist.emit(check)
 
+    def stop(self):
+        self.threadactive = False
+        self.wait()
+
 
 class Confimation_Thread(QtCore.QThread):
     Confirm_Complete = QtCore.pyqtSignal(bool)
@@ -332,6 +357,10 @@ class Confimation_Thread(QtCore.QThread):
     def run(self):
         check = get_Database.add_User(self.user)
         self.Confirm_Complete.emit(check)
+
+    def stop(self):
+        self.threadactive = False
+        self.wait()
 
 
 
