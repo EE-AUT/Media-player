@@ -39,7 +39,7 @@ class PlaylistWindow(QMainWindow, Form, QtCore.QThread):
         File_format = self.FileName.split(".")[-1]
         self.MediaPlayer.setWindowTitle(f" Media Player - {self.FileName}")
         self.File_Path = file_path.replace(f"{self.FileName}", "")
-        # Create a dictionary for Files that keys of it are files name and values of if is file path
+        # Create a dictionary for Files that keys of it are files name and values of it is file path
         self.Files = dict((file, f'{self.File_Path}{file}') for file in os.listdir(
             self.File_Path) if re.search(f'.{File_format}', file))
         for file in self.Files:
@@ -64,9 +64,12 @@ class PlaylistWindow(QMainWindow, Form, QtCore.QThread):
         #To update part of Tags of file  Dackwidget 
         self.MediaPlayer.ComboBox_Tags_of_file.clear()
         self.MediaPlayer.ComboBox_Tags_of_file.addItems(self.Files.keys())
+        index = self.MediaPlayer.ComboBox_Tags_of_file.findText(self.FileName)
+        self.MediaPlayer.ComboBox_Tags_of_file.setCurrentIndex(index)
 
     def listview_clicked(self, val):
         self.spliter = len(str(self.listWidget_Playlist.currentRow()+1)) + 3
+
         # Set Media in MediaPlayer and play it
         self.MediaPlayer.player.setMedia(QMediaContent(
             QtCore.QUrl.fromLocalFile(self.Files[val.text()[self.spliter:]])))
@@ -94,6 +97,13 @@ class PlaylistWindow(QMainWindow, Form, QtCore.QThread):
             0, self.MediaPlayer.player.volume())
         self.MediaPlayer.Set_volume(80)
 
+        # updata combo and listwidget of tags
+        currentText = val.text()[self.spliter:]
+        index = self.MediaPlayer.ComboBox_Tags_of_file.findText(currentText)
+        self.MediaPlayer.ComboBox_Tags_of_file.setCurrentIndex(index)
+        self.MediaPlayer.set_TagonListwidget(currentText.split(".")[0])
+
+
     def add_file(self):
         file_path, _ = QFileDialog.getOpenFileName(
             self, "Open video", directory=self.File_Path, filter='*.mp4 *.mkv *.mp3')
@@ -119,3 +129,4 @@ class PlaylistWindow(QMainWindow, Form, QtCore.QThread):
         #To update part of Tags of file  Dackwidget 
         self.MediaPlayer.ComboBox_Tags_of_file.clear()
         self.MediaPlayer.ComboBox_Tags_of_file.addItems(self.Files.keys())
+        

@@ -58,6 +58,10 @@ class LoginWindow(QDialog, Form):
 
 
 
+        # first definition of threads
+        self.check = None
+
+
 
     def StudentID_update(self, val):
         self.Pass = str(val)
@@ -128,12 +132,27 @@ class LoginWindow(QDialog, Form):
 
     def close_Sign(self, val):
         self.setVisible(True)
+        if self.signUpwin.check_Mail:
+            self.signUpwin.check_Mail.terminate()
+        if self.signUpwin.send_Email_Thread: 
+            self.signUpwin.send_Email_Thread.stop()
+        if self.signUpwin.wait_Toconfirm:
+            self.signUpwin.wait_Toconfirm.stop()
+        if self.signUpwin.Confirm_thread:
+            self.signUpwin.Confirm_thread.stop()
+        if self.signUpwin.wait_To_clearMsg:
+            self.signUpwin.wait_To_clearMsg.stop()
 
 
     def closeThreads(self, val):
-        self.GetData = None
-        self.check = None
-        self.wait = None
+        if self.GetData: 
+            self.GetData.stop()
+        if self.check:
+            self.check.stop()
+        if self.wait:
+            self.wait.stop()
+        if self.check_net:
+            self.check_net.stop()
 
 
     def clear_msg(self, check):
@@ -189,6 +208,10 @@ class GetData_Thread(QtCore.QThread):
         else:
             self.data_isReady.emit(data)
 
+    def stop(self):
+        self.terminate()
+        self.wait()
+
 
 class checkData_Thread(QtCore.QThread):
     check_Key = QtCore.pyqtSignal(bool)
@@ -207,6 +230,10 @@ class checkData_Thread(QtCore.QThread):
                     break
             self.check_Key.emit(False)
 
+    def stop(self):
+        self.terminate()
+        self.wait()
+
 
 class wait_Toclear_thread(QtCore.QThread):
     isFinished = QtCore.pyqtSignal(bool)
@@ -217,6 +244,10 @@ class wait_Toclear_thread(QtCore.QThread):
     def run(self):
         sleep(2.5)
         self.isFinished.emit(True)
+
+    def stop(self):
+        self.terminate()
+        self.wait()
 
 
 
@@ -235,6 +266,9 @@ class is_connected(QtCore.QThread):
         except Exception as e:
             pass
         self.isConnected.emit(False)
+    def stop(self):
+        self.terminate()
+        self.wait()
 
 
 

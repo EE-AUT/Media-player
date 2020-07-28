@@ -12,6 +12,9 @@ from PyQt5 import uic, QtCore, QtGui
 from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
 from PyQt5.QtCore import Qt, QUrl
 from PyQt5.QtGui import QIcon, QKeySequence
+from tagPart import readTag
+from bookmarkPart.bookmark import add_Bookmark
+from editPart import timeconvert as tc
 
 Form = uic.loadUiType(os.path.join(os.getcwd(), 'Mediaplayer.ui'))[0]
 
@@ -34,10 +37,14 @@ class MediaPlayer(QMainWindow, Form):
         self.resizeEvent = self.main_size_Change
         self.search_Thread = None
         self.lineEdit_Bookmark.setVisible(False)
-        # self.lineEdit_Bookmark.returnPressed.connect(self.save_Bookmarks)
+        self.lineEdit_Bookmark.returnPressed.connect(self.save_Bookmarks)
 
         self.search_lineEdit.setPlaceholderText("search Tags here")
         self.lineEdit_Bookmark.setPlaceholderText("write bookmark here")
+
+
+        # threads part
+        self.tag_thread = None
 
         # Create Tags
         self.TagDB = None
@@ -114,7 +121,9 @@ class MediaPlayer(QMainWindow, Form):
         self.addDockWidget(Qt.RightDockWidgetArea,
                            self.DockWidget_Tags_of_file)
         self.ComboBox_Tags_of_file.activated.connect(self.ListWidget_Tag)
-        # self.ListWidget_Tags_of_file.itemActivated.connect(self.GoTo)
+        self.ListWidget_Tags_of_file.itemActivated.connect(self.GoToTagtime)
+
+
 
         # Slider Play
         self.Slider_Play.setRange(0, 0)
@@ -131,6 +140,7 @@ class MediaPlayer(QMainWindow, Form):
         self.actionLogOut.triggered.connect(self.Logout)
         self.actionExit.triggered.connect(lambda: self.close())
         self.actionFullScreen.triggered.connect(self.fullscreen)
+        self.actionOpen_Tag.triggered.connect(self.openTags)
 
         # Search
         self.sch_listWidget.itemDoubleClicked.connect(self.item_Event)
@@ -228,6 +238,10 @@ class MediaPlayer(QMainWindow, Form):
             self.PlaylistW.Files[self.PlaylistW.listWidget_Playlist.currentItem().text()[self.PlaylistW.spliter:]])))
         self.setWindowTitle(
             f" Media Player - {self.PlaylistW.listWidget_Playlist.currentItem().text()[self.PlaylistW.spliter:]}")
+        currentText = self.PlaylistW.listWidget_Playlist.currentItem().text()[self.PlaylistW.spliter:] 
+        index = self.ComboBox_Tags_of_file.findText(currentText)
+        self.ComboBox_Tags_of_file.setCurrentIndex(index)
+        self.set_TagonListwidget((currentText.split("."))[0])
         self.start()
 
         if self.PlaylistW.listWidget_Playlist.currentRow() == self.PlaylistW.listWidget_Playlist.count()-1:
@@ -246,6 +260,10 @@ class MediaPlayer(QMainWindow, Form):
             self.PlaylistW.Files[self.PlaylistW.listWidget_Playlist.currentItem().text()[self.PlaylistW.spliter:]])))
         self.setWindowTitle(
             f" Media Player - {self.PlaylistW.listWidget_Playlist.currentItem().text()[self.PlaylistW.spliter:]}")
+        currentText = self.PlaylistW.listWidget_Playlist.currentItem().text()[self.PlaylistW.spliter:] 
+        index = self.ComboBox_Tags_of_file.findText(currentText)
+        self.ComboBox_Tags_of_file.setCurrentIndex(index)
+        self.set_TagonListwidget((currentText.split("."))[0])
         self.start()
 
         # To Enable Next and previous PushButton According to current file
@@ -332,32 +350,26 @@ class MediaPlayer(QMainWindow, Form):
                 self.player.setMuted(False)
                 self.pushButton_volume.setIcon(QIcon('./Icons/unmute.png'))
                 self.pushButton_volume.setToolTip("Mute")
-
             else:
                 self.player.setMuted(True)
                 self.pushButton_volume.setIcon(QIcon('./Icons/mute.png'))
                 self.pushButton_volume.setToolTip("UnMute")
 
-    # def save_Bookmarks(self):
-    #     self.lineEdit_Bookmark.setVisible(False)
-    #     try:
-    #         path = os.path.join(os.getcwd(), "bookmarks")
-    #         os.mkdir(path)
-    #     except:
-    #         pass
 
-    #     try:
-    #         with open("LoginPart/User.csv") as iFile:
-    #             User = csv.reader(iFile, delimiter=',')
-    #             for row in User:
-    #                 admin = row[0]
-    #         with open(f"{os.getcwd()}/bookmarks/{admin}.csv", "a", newline="") as csvfile:
-    #             employee_writer = csv.writer(csvfile, delimiter=',')
-    #             employee_writer.writerow(
-    #                 [self.FileName, self.lineEdit_Bookmark.text(), self.label_Time.text()])
-    #     except:
-    #         pass
-    #     self.lineEdit_Bookmark.setText("")
+    # save bookmarks and updatae tag list widget 
+    def save_Bookmarks(self):
+        try:
+            add_Bookmark(
+                self.lineEdit_Bookmark.text() + "#" + tc.millis_to_format(self.player.position()) , 
+                self.windowTitle()[16:].split(".")[0], self.tag_Path) #use add bookmark function to add bookmarks in tag part
+            self.allTag[self.windowTitle()[16:].split(".")[0]].update(
+                {self.lineEdit_Bookmark.text() : tc.millis_to_format(self.player.position())})
+            self.set_TagonListwidget(self.windowTitle()[16:].split(".")[0]) # update tag listwidget
+            self.lineEdit_Bookmark.clear()
+            self.lineEdit_Bookmark.setVisible(False)
+        except Exception as e:
+            print(e)
+
 
     def sch_icon_Event(self):
         self.search_lineEdit.setFixedWidth(0)
@@ -469,10 +481,72 @@ class MediaPlayer(QMainWindow, Form):
     def Show_Tags_of_file(self):
         self.DockWidget_Tags_of_file.setVisible(
             not self.DockWidget_Tags_of_file.isVisible())
+        index = self.ComboBox_Tags_of_file.findText(self.windowTitle()[16:])
+        self.ComboBox_Tags_of_file.setCurrentIndex(index)
+            
+        
 
+    # tag combo box item clicked function
     def ListWidget_Tag(self, index):
-        # print Sesion
-        print(list(self.PlaylistW.Files.keys())[index])
+        videoName = (list(self.PlaylistW.Files.keys())[index].split("."))[0]
+        self.set_TagonListwidget(videoName) 
+
+
+    # openTag in csv, pptx, docx format and start tag thread for reading data
+    def openTags(self):
+        self.tag_Path, _ = QFileDialog.getOpenFileName(
+            self, "Open Tag", directory=os.path.join(os.getcwd(), 'Tags'), filter='*.csv *.pptx *.docx')
+        if self.tag_Path:
+            self.Tagname = self.tag_Path.split("/")[-1]
+            fileFormat = self.Tagname.split(".")[-1]
+            self.tag_thread = read_Tag(self, self.tag_Path, fileFormat)
+            self.tag_thread.Tag_Ready.connect(self.getTag)
+            self.tag_thread.start()
+
+
+    # tag is ready to use 
+    def getTag(self, tags):
+        self.allTag = tags
+        index = self.ComboBox_Tags_of_file.findText(self.windowTitle()[16:])
+        self.ComboBox_Tags_of_file.setCurrentIndex(index)
+        self.set_TagonListwidget((self.windowTitle()[16:].split("."))[0])
+
+
+
+    # set tags on tag listwidget using vedio name
+    def set_TagonListwidget(self, videoName):
+        self.ListWidget_Tags_of_file.clear()
+        try:
+            if videoName in self.allTag:
+                sessionTag = self.allTag[videoName]
+                # sorted tags by time
+                sessionTag = {text: time for text, time in sorted(sessionTag.items(), key= lambda item: tc.to_second(item[1]))} 
+                for tagText in sessionTag:
+                    self.ListWidget_Tags_of_file.addItem(
+                        f'{self.ListWidget_Tags_of_file.count()+1} . {tagText}')
+            else:
+                print("Fault in Tags")
+        except Exception as e:
+            print(e)
+
+
+
+    # item clicked event to go to time correlate clicked tag in video
+    def GoToTagtime(self, item):
+        spliter = len(str(self.ListWidget_Tags_of_file.currentRow()+1)) + 3
+        tag_Text = item.text()[spliter:]
+        if self.windowTitle()[16:] == self.ComboBox_Tags_of_file.currentText():
+            session = self.windowTitle()[16:].split(".")[0]
+            # time_second = 
+            try:
+                time_second = tc.to_second(self.allTag[session][tag_Text])
+            except Exception as e:
+                print(e)
+            self.Slider_Play.setValue(int(time_second)*1000) # change slider position using item time
+            self.player.setPosition(int(time_second)*1000) # change video position using item time
+
+
+
 
 
 class Slider(QSlider):
@@ -487,9 +561,29 @@ class Slider(QSlider):
     def mouseMoveEvent(self, position):
         self.setUP_Slider.emit(position.x())
 
+
+
+class read_Tag(QtCore.QThread):
+    Tag_Ready = QtCore.pyqtSignal(dict)
+    def __init__(self, window, filepath, fileFormat):
+        self.filepath = filepath
+        self.fileFormat = fileFormat
+        QtCore.QThread.__init__(self, parent=window)
+
+    def run(self):
+        func = getattr(readTag, "read_" + str(self.fileFormat))
+        tags = func(self.filepath)
+        self.Tag_Ready.emit(tags)
+
+    def stop(self):
+        self.terminate()
+        self.wait()
+
+
+
+
+
 # Thread for searching in tags
-
-
 class search_thread(QtCore.QThread):
     update_schTag = QtCore.pyqtSignal(list)
 
@@ -505,6 +599,10 @@ class search_thread(QtCore.QThread):
         else:
             self.update_schTag.emit([])
 
+    def stop(self):
+        self.terminate()
+        self.wait()
+
 
 class Search_Animation(QtCore.QThread):
     update_Animation = QtCore.pyqtSignal(int)
@@ -516,6 +614,9 @@ class Search_Animation(QtCore.QThread):
         for i in range(int(Mainw.size().width()/4)):
             self.update_Animation.emit(i)
             sleep(0.00001)
+    def stop(self):
+        self.terminate()
+        self.wait()
 
 
 class BookMark_Animation(QtCore.QThread):
@@ -529,6 +630,9 @@ class BookMark_Animation(QtCore.QThread):
         for i in range(int(Mainw.size().width()/4)):
             self.update_Animation.emit(i)
             sleep(0.00001)
+    def stop(self):
+        self.terminate()
+        self.wait()
 
 
 if __name__ == '__main__':

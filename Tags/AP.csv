@@ -1,274 +1,272 @@
 S01-981120
-Introduction to docker and vs code,01:25
-Reason of using �Makefile�,07:48
-How to make a �Makefile�,09:27
-Using docker in vs code and make an Linux image,14:50
-mount a directory in docker,28:00
-Open vs code in docker environment(Reopen in container),32:45
-Reminding variables(int, float,...) from BP,38:00
-sizeof(),38:31
-long int variables,39:40
-wchar_t variables,39:55
-float variables,40:51
-long double variables,41:58
-long long variables,43:00
-bool,43:30
-Difference between const & constexpr,45:09
+Introduction to docker and vs code#01:25
+Reason of using �Makefile�#07:48
+How to make a �Makefile�#09:27
+Using docker in vs code and make an Linux image#14:50
+mount a directory in docker#28:00
+Open vs code in docker environment(Reopen in container)#32:45
+Reminding variables(int, float,...) from BP#38:00
+sizeof()#38:31
+long int variables#39:40
+wchar_t variables#39:55
+float variables#40:51
+long double variables#41:58
+long long variables#43:00
+bool#43:30
+Difference between const & constexpr#45:09
 S02-981127
-typedef & using,10:35
-namespace pollution,15:29
-working with files,18:45
-iomanip library,27:23
-\b  ,32:27
-enum,33:50
-Lifetime & Scope,44:54
-Resolution Operator,52:17
-Auto - Range Based for loops,53:40
+typedef & using#10:35
+namespace pollution#15:29
+working with files#18:45
+iomanip library#27:23
+\b  #32:27
+enum#33:50
+Lifetime & Scope#44:54
+Resolution Operator#52:17
+Auto - Range Based for loops#53:40
 S03-981129
-namespace,01:05
-vector,09:10
-array,12:56
-pointer,24:20
-new in pointer,58:55
-pointer in pointer,05:06
+namespace#00:01:05
+vector#00:09:10
+array#00:12:56
+pointer#00:24:20
+new in pointer#00:58:55
+pointer in pointer#00:05:06
 S04-981213
-Reviewing Previous Session int**,01:30
-Visualizing dynamic array and allocating memory using �new�,02:40
-( Dangling arrays ) Sequence of deleting arrays,08:30
-Dynamic vs static allocation ( reviewing the difference),11:00
-Getting started with � References�,13:50
-Rvalue references,18:20
-pass by value,25:00
-pass by reference,26:30
-pass by pointer,29:50
-Notes on passing arrays to a function,39:00
-pointer reference ( *& ),42:00
-Pointer notation and array notation,43:30
-Function with Lvalue return type,49:00
-Notes on return type of a function ( returning address of a variable within function scope),52:50
-Function overloading,59:00
-Function ambiguity - Function signature,00:00
-Pointer to function,02:30
+Reviewing Previous Session int**#01:30
+Visualizing dynamic array and allocating memory using �new�#02:40
+( Dangling arrays ) Sequence of deleting arrays#08:30
+Dynamic vs static allocation ( reviewing the difference)#11:00
+Getting started with � References�#13:50
+Rvalue references#18:20
+pass by value#25:00
+pass by reference#26:30
+pass by pointer#29:50
+Notes on passing arrays to a function#39:00
+pointer reference ( *& )#42:00
+Pointer notation and array notation#43:30
+Function with Lvalue return type#49:00
+Notes on return type of a function ( returning address of a variable within function scope)#52:50
+Function overloading#59:00
+Function ambiguity - Function signature#00:00
+Pointer to function#02:30
 S05-981220
-String class and its functions ,00:22
-Function templates,22:15
-Return type Deduction ,44:42
-Default Values for temlates,55:36
+String class and its functions #00:22
+Function templates#22:15
+Return type Deduction #44:42
+Default Values for temlates#55:36
 S06-981222
-Defining  Class and Struct,00:02:30
-Introducing method ,00:10:00
-Makefile changes,00:19:55
-Constructor,00:27:03
-Redeclaration Error,00:34:20
-Private class members,00:39:10
-setter and getter methods,00:40:41
-constructor and variable delegation,00:48:35
-Default constructor,00:51:25
-Copy constructor,00:56:10
-Review rvalue variable,01:03:45
-Difference between *arr and arr[ ],01:09:10
+Defining  Class and Struct#00:02:30
+Introducing method #00:10:00
+Makefile changes#00:19:55
+Constructor#00:27:03
+Redeclaration Error#00:34:20
+Private class members#00:39:10
+setter and getter methods#00:40:41
+constructor and variable delegation#00:48:35
+Default constructor#00:51:25
+Copy constructor#00:56:10
+Review rvalue variable#01:03:45
+Difference between *arr and arr[ ]#01:09:10
 S07-981223
-setter & getter in class ,00:01:39
-colon(:) operator (delegate & const member variables!),00:04:11
-copy constructor,00:04:44
-pointer to class,00:17:02
-arrow(->) operator,00:19:41
-passing an object of a class by reference,00:22:30
-�this� pointer in class,00:24:33
-main application of �this� pointer ,00:29:23
-the array of type class,00:39:06
-destructor,00:48:09
-dynamic arrays inside a class,00:56:09
-deleting the dynamic arrays in the destructor,01:07:20
-compiler built in! copy constructor error while having dynamic arrays,01:11:34
-S08-981226
+setter & getter in class #00:01:39
+colon(:) operator (delegate & const member variables!)#00:04:11
+copy constructor#00:04:44
+pointer to class#00:17:02
+arrow(->) operator#00:19:41
+passing an object of a class by reference#00:22:30
+�this� pointer in class#00:24:33
+main application of �this� pointer #00:29:23
+the array of type class#00:39:06
+destructor#00:48:09
+dynamic arrays inside a class#00:56:09
+deleting the dynamic arrays in the destructor#01:07:20
+compiler built in! copy constructor error while having dynamic arrays#01:11:34
 S09-981227
-class static variables,04:31
-static functions,12:54
-introduction to class operators,20:53
-vector < operator,21:55
-overloading the < operator for integers,35:00
-< operator for integers (non-member operators),40:31
-�explicit� keyword for constructors,49:15
-friend functions,51:45
-vector == operator and std::rel_ops,53:40
-vector + operator,01:01:01
-S10-981229
+class static variables#04:31
+static functions#12:54
+introduction to class operators#20:53
+vector < operator#21:55
+overloading the < operator for integers#35:00
+< operator for integers (non-member operators)#40:31
+�explicit� keyword for constructors#49:15
+friend functions#51:45
+vector == operator and std::rel_ops#53:40
+vector + operator#01:01:01
 S11-990117
-Some additional info on declaring a function as friend to a class, and lvalue referencing in function outputs.,00:03:30
-A slight edit in the copy constructor of the vector class(to avoid the scenario � v = v; � ),00:05:20
-Omitting(and editing) the unnecessary copying(use of copy constructor) in the operator+(where previously += operator was used),00:11:40
-Introducing the need for the move version of operator=(and move semantics in general),00:19:22
-Started writing move version of operator=,00:23:00
-Introducing the need for the move constructor in a swap operation,00:32:00
-Introducing the std::move() method,00:35:15
-Starting writing the move constructor,00:39:40
-Using std::swap() method,00:43:15
-overloading the operator int(); (for casting into another type),00:47:20
-Started Inheritance(with the Carton class),00:50:20
-The effect of the base class specifier on the accessibility of inherited members,01:05:50
+Some additional info on declaring a function as friend to a class, and lvalue referencing in function outputs.#00:03:30
+A slight edit in the copy constructor of the vector class(to avoid the scenario � v = v; � )#00:05:20
+Omitting(and editing) the unnecessary copying(use of copy constructor) in the operator+(where previously += operator was used)#00:11:40
+Introducing the need for the move version of operator=(and move semantics in general)#00:19:22
+Started writing move version of operator=#00:23:00
+Introducing the need for the move constructor in a swap operation#00:32:00
+Introducing the std::move() method#00:35:15
+Starting writing the move constructor#00:39:40
+Using std::swap() method#00:43:15
+overloading the operator int(); (for casting into another type)#00:47:20
+Started Inheritance(with the Carton class)#00:50:20
+The effect of the base class specifier on the accessibility of inherited members#01:05:50
 S12-990119
-Class inheritance types (review),01:45
-Inherited class implementation,03:01
-Makefile modification ,06:34
-Constructor ,08:15
-Destructor,14:05
-Copy constructor,14:40
-Deligation,18:00
-Protected variable,19:40
-Operator = copy version,23:32
-Move,29:15
-Swap,29:33
-Operator = move version,30:04
-std::move,34:03
-Move constructor,35:06
-Function overriding in the derived class ,40:23
-Late(dynamic) binding concept Virtual functions,47:28
-Using �override�,54:42
-Base class and derived class pointer Polymorphic,57:00
-Dynamic variable ,02:59
-Inheritance applications,04:29
-Dynamic cast usage ,05:24
-Preventing function overriding,09:42
-Preventing class inheritance,10:40
-Book review,11:37
+Class inheritance types (review)#01:45
+Inherited class implementation#03:01
+Makefile modification #06:34
+Constructor #08:15
+Destructor#14:05
+Copy constructor#14:40
+Deligation#18:00
+Protected variable#19:40
+Operator = copy version#23:32
+Move#29:15
+Swap#29:33
+Operator = move version#30:04
+std::move#34:03
+Move constructor#35:06
+Function overriding in the derived class #40:23
+Late(dynamic) binding concept Virtual functions#47:28
+Using �override�#54:42
+Base class and derived class pointer Polymorphic#57:00
+Dynamic variable #02:59
+Inheritance applications#04:29
+Dynamic cast usage #05:24
+Preventing function overriding#09:42
+Preventing class inheritance#10:40
+Book review#11:37
 S13-990124
-class templates,00:07:44
-pure virtual functions & abstract class,00:10:45
-continuation of class templates,00:21:20
-constructor for class template,00:24:00
-copy constructor for class template,00:27:50
-move constructor for class template,00:29:30
-destructor for class template,00:30:45
-disp function for class template,00:31:00
-fill function for class template,00:32:30
-operator [ ] for class template,00:36:00
-operator = (copy version) for class template,00:46:10
-operator = (move version) for class template,00:48:00
-class template on book,page 612,00:52:00
-subscript operator on book,page 616,00:53:20
-explanation about  const_cast on subscript operator on book,01:00:00
+class templates#00:07:44
+pure virtual functions & abstract class#00:10:45
+continuation of class templates#00:21:20
+constructor for class template#00:24:00
+copy constructor for class template#00:27:50
+move constructor for class template#00:29:30
+destructor for class template#00:30:45
+disp function for class template#00:31:00
+fill function for class template#00:32:30
+operator [ ] for class template#00:36:00
+operator = (copy version) for class template#00:46:10
+operator = (move version) for class template#00:48:00
+class template on book,page 612#00:52:00
+subscript operator on book,page 616#00:53:20
+explanation about  const_cast on subscript operator on book#01:00:00
 S14-990126
-check input type in template functions,00:25
-static_assert,03:00
-nested class,04:00
-Stack,04:50
-push function,16:26
-is_empty function,34:00
-Swap function,35:23
-explanation noexept,37:58
-pop function,42:24
-destructor,53:44
+check input type in template functions#00:25
+static_assert#03:00
+nested class#04:00
+Stack#04:50
+push function#16:26
+is_empty function#34:00
+Swap function#35:23
+explanation noexept#37:58
+pop function#42:24
+destructor#53:44
 S15-990131
-Move Semantics,00:01:23
-First-Class Function Approach,00:03:22
-First-Class Function definition,00:26:22
-Function object,00:41:26
-include <algorithm>,00:47:39
-Function Object ,00:53:00
-Lambda Expression,00:59:28
+Move Semantics#00:01:23
+First-Class Function Approach#00:03:22
+First-Class Function definition#00:26:22
+Function object#00:41:26
+include <algorithm>#00:47:39
+Function Object #00:53:00
+Lambda Expression#00:59:28
 S16-990202
-little change in Dockerfile,01:31
-template function pointer review,02:20
-Class function object review,03:53
-Lambda Expressions,13:21
-The std::function<> template,33:55
-Containers,44:00
-Example : Priority Queues,53:40
+little change in Dockerfile#01:31
+template function pointer review#02:20
+Class function object review#03:53
+Lambda Expressions#13:21
+The std::function<> template#33:55
+Containers#44:00
+Example : Priority Queues#53:40
 S17-990207
-std::set and its properties,08:04
-tips about  when to define  operator=,13:10
-std::map and its properties,15:00
-Iterators and their specifications 1,26:30
-tips on abstract classes and a simple schematic of how iterators are inherited by different containers,39:10
-Iterators specifications 2 aside using some std::�ALGORITHMS�,41:20
-std::find & std::find_if and other �find�s,02:00
-std::copy_if ,09:17
-std::sort & how to measure runtime ,11:06
+std::set and its properties#08:04
+tips about  when to define  operator=#13:10
+std::map and its properties#15:00
+Iterators and their specifications 1#26:30
+tips on abstract classes and a simple schematic of how iterators are inherited by different containers#39:10
+Iterators specifications 2 aside using some std::�ALGORITHMS�#41:20
+std::find & std::find_if and other �find�s#02:00
+std::copy_if #09:17
+std::sort & how to measure runtime #11:06
 S18-990214
-how to install python,00:01:48
-how to install libraries python ,00:02:46
-how to install Anaconda ,00:03:00
-what is Miniconda and how to install it ,00:05:13
-an introduction to python language ,00:06:34
-what does open source mean,00:10:07
-what is Scripting language,00:11:10
-writing some easy codes using command line ,00:11:43
-an explanation about Docker ,00:16:51
-Dockerfile ,00:24:35
-how to make an image ,00:26:05
-an explanation about tasks.json ,00:27:43
-an explanation about ipython,00:34:39
-variables in python ,00:40:32
-strings,00:46:25
-string formatting,00:52:30
-source for studying python,00:56:02
-Indentations in python ,00:57:28
-operators,01:02:34
-using array , while , for ,01:04:39
-how to define function in python ,01:06:36
-how to use if in python ,01:07:55
-recommending a book,01:09:28
+how to install python#00:01:48
+how to install libraries python #00:02:46
+how to install Anaconda #00:03:00
+what is Miniconda and how to install it #00:05:13
+an introduction to python language #00:06:34
+what does open source mean#00:10:07
+what is Scripting language#00:11:10
+writing some easy codes using command line #00:11:43
+an explanation about Docker #00:16:51
+Dockerfile #00:24:35
+how to make an image #00:26:05
+an explanation about tasks.json #00:27:43
+an explanation about ipython#00:34:39
+variables in python #00:40:32
+strings #00:46:25
+string formatting#00:52:30
+source for studying python#00:56:02
+Indentations in python #00:57:28
+operators#01:02:34
+using array , while , for #01:04:39
+how to define function in python #01:06:36
+how to use if in python #01:07:55
+recommending a book#01:09:28
 S19-990216
-Importing Python modules,00:05:30
-Private Variables in Python,00:15:40
-Creating a module in Python,00:18:20
-using  �__name__� Variable,00:20:40
-Python Data Types : List,00:26:30
-Python Data Types : Tuple,00:37:20
-Python Data Types : Dictionary,00:41:35
-enumerate(),00:54:40
-Python Data Types : Set,01:00:40
-eval() & exec(),01:04:40
-List Comprehension,01:06:10
-read/write Files in Python,01:13:00
+Importing Python modules#00:05:30
+Private Variables in Python#00:15:40
+Creating a module in Python#00:18:20
+using  �__name__� Variable#00:20:40
+Python Data Types : List#00:26:30
+Python Data Types : Tuple#00:37:20
+Python Data Types : Dictionary#00:41:35
+enumerate()#00:54:40
+Python Data Types : Set#01:00:40
+eval() & exec()#01:04:40
+List Comprehension#01:06:10
+read/write Files in Python#01:13:00
 S22-990228
-numpy library (arrange(), reshape(), tolist(), fill(), transpose(), flatten(), concatenate(), zeros(), ones(), zeros_like(), ones_like(), identity()),00:01:23
-slicing in numpy,00:14:54
-The other numpy functions (sum(), prod(), mean(), var(), argmin(), clip(), operators, where(), any(), all(), dot()),00:18:53
-linalg module (det(), eig(), svd()),00:32:36
-equations (poly(), roots(), polyval(), polyfit()),00:33:43
-random module,00:35:45
-scipy library,00:38:23
-Lambda function in python,00:39:49
-Jupyter notebook,00:41:26
-matplotlib basic functions (plot(), setp(), figure(), subplot(), text()),00:44:28
-docker test and task .json file,01:13:02
+numpy library (arrange(), reshape(), tolist(), fill(), transpose(), flatten(), concatenate(), zeros(), ones(), zeros_like(), ones_like(), identity())#00:01:23
+slicing in numpy#00:14:54
+The other numpy functions (sum(), prod(), mean(), var(), argmin(), clip(), operators, where(), any(), all(), dot())#00:18:53
+linalg module (det(), eig(), svd())#00:32:36
+equations (poly(), roots(), polyval(), polyfit())#00:33:43
+random module#00:35:45
+scipy library#00:38:23
+Lambda function in python#00:39:49
+Jupyter notebook#00:41:26
+matplotlib basic functions (plot(), setp(), figure(), subplot(), text())#00:44:28
+docker test and task .json file#01:13:02
 S24-990306
-Popen and wait example,00:00:00
-threading module,00:02:29
-threading definition,00:03:45
-multi processing,00:06:54
-gpu cores,00:08:35
-powershell / powershell core,00:10:26
-windows Terminal,00:10:48
-thread and process difference,00:11:40
-windows api,00:12:38
-examples for multi processing and multi threading ,00:14:20
-I/O bound example,00:15:32
-multi processing problem,00:16:37
-cpu bound and I/O bound definitions,00:17:58
-Run  a function with different threads,00:21:50
-wsl,00:24:00
-use sleep module in multi threading,00:29:32
-changing priorities in multi threading,00:41:38
-logging module,00:43:37
-use join() in example,01:01:36
-use is_alive() in example,01:03:17
-join one thread to  another thread,01:07:50
+Popen and wait example#00:00:00
+threading module#00:02:29
+threading definition#00:03:45
+multi processing#00:06:54
+gpu cores#00:08:35
+powershell / powershell core#00:10:26
+windows Terminal#00:10:48
+thread and process difference#00:11:40
+windows api#00:12:38
+examples for multi processing and multi threading #00:14:20
+I/O bound example#00:15:32
+multi processing problem#00:16:37
+cpu bound and I/O bound definitions#00:17:58
+Run  a function with different threads#00:21:50
+wsl#00:24:00
+use sleep module in multi threading#00:29:32
+changing priorities in multi threading#00:41:38
+logging module#00:43:37
+use join() in example#01:01:36
+use is_alive() in example#01:03:17
+join one thread to  another thread#01:07:50
 S25-990311
-how to create Thread(review last session),03:26
-logging.debug,04:09
-iterating on threads,04:45
-what daemon means in Thread,06:37
-why MainThread is printed when enumerating on threads,08:02
-setting threads as daemons,13:42
-creating a class for threading,17:02
-defining function run,24:08
-why we use sys.stdout.flush after print,24:35
-asyncio,34:25
-example 2 : using time module,41:50
-creating task,49:10
-difference between awaiting task and awaiting coroutine,56:10
-event loop,01:02:45
-asyncio.gather(),01:08:25
+how to create Thread(review last session)#03:26
+logging.debug#04:09
+iterating on threads#04:45
+what daemon means in Thread#06:37
+why MainThread is printed when enumerating on threads#08:02
+setting threads as daemons#13:42
+creating a class for threading#17:02
+defining function run#24:08
+why we use sys.stdout.flush after print#24:35
+asyncio#34:25
+example 2 : using time module#41:50
+creating task#49:10
+difference between awaiting task and awaiting coroutine#56:10
+event loop#01:02:45
+asyncio.gather()#01:08:25

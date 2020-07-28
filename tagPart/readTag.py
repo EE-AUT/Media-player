@@ -9,88 +9,99 @@ import csv
 
 
 def read_csv(filename):
-    tagsDict = {}
-    movie_Session = ""
-    output = {}
-    with open(filename) as csvfile:
-        file_reader = csv.reader(csvfile, delimiter='#')
+    try:
+        tagsDict = {}
+        movie_Session = ""
+        output = {}
+        with open(filename) as csvfile:
+            file_reader = csv.reader(csvfile, delimiter='#')
 
-        for row in file_reader:
-            if len(row) == 1:
-                output.update({movie_Session : tagsDict})
-                tagsDict = {}
-                movie_Session = row[0]
-            elif len(row) == 2:
-                tagsDict.update({row[0] : row[1]})
-            elif len(row) == 3:
-                tagsDict.update({row[0] : row[1]}) #read from bookmarks
-        output.update({movie_Session : tagsDict})
+            for row in file_reader:
+                if len(row) == 1:
+                    output.update({movie_Session : tagsDict})
+                    tagsDict = {}
+                    movie_Session = row[0]
+                elif len(row) == 2:
+                    tagsDict.update({row[0] : row[1]})
+                elif len(row) == 3:
+                    tagsDict.update({row[0] : row[1]}) #read from bookmarks
+            output.update({movie_Session : tagsDict})
 
-        del output['']
+            del output['']
 
-        return output
+            return output
+    except Exception as e:
+        print(e)
+        return {}
 
 
 
 def read_doc(filename):
-    # read from word tables
-    wordDoc = Document(filename)
-    output = {}
-    tagsDict = {}
-    name = []
-    movie_Session = ""
-    for table in wordDoc.tables:
-        for row in table.rows:
-            for cell in row.cells:
-                if cell.text != "":
-                    if re.search("Session = ", cell.text):
-                        try:
-                            tagsDict = {name[i]: name[i+1] for i in range(0, len(name), 2)} # create dictionary
-                        except:
-                            print("error")
-                            tagsDict = {}
-                        output.update({movie_Session: tagsDict})
-                        name = []
-                        movie_Session = re.split("Session = ", cell.text)[1]
+    try:
+        # read from word tables
+        wordDoc = Document(filename)
+        output = {}
+        tagsDict = {}
+        name = []
+        movie_Session = ""
+        for table in wordDoc.tables:
+            for row in table.rows:
+                for cell in row.cells:
+                    if cell.text != "":
+                        if re.search("Session = ", cell.text):
+                            try:
+                                tagsDict = {name[i]: name[i+1] for i in range(0, len(name), 2)} # create dictionary
+                            except:
+                                print("error")
+                                tagsDict = {}
+                            output.update({movie_Session: tagsDict})
+                            name = []
+                            movie_Session = re.split("Session = ", cell.text)[1]
 
-                    else:
-                        name.append(cell.text)
+                        else:
+                            name.append(cell.text)
 
-    tagsDict = {name[i]: name[i+1] for i in range(0, len(name), 2)}
-    output.update({movie_Session : tagsDict})
+        tagsDict = {name[i]: name[i+1] for i in range(0, len(name), 2)}
+        output.update({movie_Session : tagsDict})
 
-    del output[""]
-    return output
+        del output[""]
+        return output
+    except Exception as e:
+        print(e)
+        return {}
 
 
 
 
 # get data from PPtx files
-def pptx(filename):
-    output = {}
-    for eachfile in glob.glob(filename):
-        prs = Presentation(eachfile)
-        movie_Session = ""
-        movie_string = ""
+def read_pptx(filename):
+    try:
+        output = {}
+        for eachfile in glob.glob(filename):
+            prs = Presentation(eachfile)
+            movie_Session = ""
+            movie_string = ""
 
-        a = {}
-        for slide in prs.slides: #get slides
-            for shape in slide.shapes:
-                if hasattr(shape, "text"):
-                    if re.search("S\d\d", shape.text):
-                        a.update({movie_Session : movie_string}) # update dictionary
-                        movie_string = ""
-                        movie_Session = str(re.search("S\d\d", shape.text).group())
-                    else:
-                        movie_string = movie_string + "\n" +  shape.text
-            a.update({movie_Session : movie_string})
-            
+            a = {}
+            for slide in prs.slides: #get slides
+                for shape in slide.shapes:
+                    if hasattr(shape, "text"):
+                        if re.search("S\d\d", shape.text):
+                            a.update({movie_Session : movie_string}) # update dictionary
+                            movie_string = ""
+                            movie_Session = str(re.search("S\d\d", shape.text).group())
+                        else:
+                            movie_string = movie_string + "\n" +  shape.text
+                a.update({movie_Session : movie_string})
+                
 
-    for key in a:
-        output.update({key : _split_text(a[key])})
-    del output['']
-    return output
-
+        for key in a:
+            output.update({key : _split_text(a[key])})
+        del output['']
+        return output
+    except Exception as e:
+        print(e)
+        return {}
 
 
 
