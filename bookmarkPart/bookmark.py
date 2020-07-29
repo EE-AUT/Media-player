@@ -12,10 +12,12 @@ def add_Bookmark(bookmark, session, filename):
             string = csvfile.read()
     except: # file path error
         pass
+
+    
     if re.search(session, string):
         new_text = re.sub(session, session + "\n" + bookmark + "#*", string)
     else:
-        new_text = string + "\n" + session + "\n" + bookmark + "#*"
+        new_text = string + session + "\n" + bookmark + "#*"
     
 
     with open(filename, "w") as csvfile:

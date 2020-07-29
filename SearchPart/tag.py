@@ -2,6 +2,7 @@ import csv
 import difflib
 
 
+
 class tag:
     def __init__(self, sessName):
         self.sessName = sessName # session Name

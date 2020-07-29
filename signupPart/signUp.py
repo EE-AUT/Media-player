@@ -44,6 +44,8 @@ class signUpWindow(QMainWindow, Form):
         self.wait_Toconfirm = wait_Toconfirm(self)
         self.wait_Toconfirm.Finished_1s.connect(self.Update_Time)
         self.wait_Toconfirm.Finished_Time.connect(self.Time_Ended)
+        self.check_Mail = None
+        self.Confirm_thread = None
 
 
         # Visibles
@@ -296,7 +298,7 @@ class wait_Toclear_thread(QtCore.QThread):
         self.isFinished.emit(True)
 
     def stop(self):
-        self.threadactive = False
+        self.terminate()
         self.wait()
 
 class send_Email(QtCore.QThread):
@@ -309,7 +311,7 @@ class send_Email(QtCore.QThread):
         self.Finished.emit(confirm_key)
 
     def stop(self):
-        self.threadactive = False
+        self.terminate()
         self.wait()
 
 
@@ -326,7 +328,7 @@ class wait_Toconfirm(QtCore.QThread):
         self.Finished_Time.emit(True)
 
     def stop(self):
-        self.threadactive = False
+        self.terminate()
         self.wait()
 
 
@@ -344,7 +346,7 @@ class checkEmail_Exist(QtCore.QThread):
         self.check_Exist.emit(check)
 
     def stop(self):
-        self.threadactive = False
+        self.terminate()
         self.wait()
 
 
@@ -359,7 +361,7 @@ class Confimation_Thread(QtCore.QThread):
         self.Confirm_Complete.emit(check)
 
     def stop(self):
-        self.threadactive = False
+        self.terminate()
         self.wait()
 
 

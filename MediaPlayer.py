@@ -4,7 +4,6 @@ import csv
 import subprocess
 from time import sleep
 import LoginPart.Login as Login
-import SearchPart.tag as Tag
 import SettingPart.Setting as Setting
 import PlayListPart.Playlist as Playlist
 from PyQt5.QtWidgets import QApplication, QWidget, QMainWindow, QComboBox, QVBoxLayout, QDockWidget, QMenuBar, QFileDialog, QLineEdit, QListWidget, QSlider, QShortcut
@@ -15,6 +14,7 @@ from PyQt5.QtGui import QIcon, QKeySequence
 from tagPart import readTag
 from bookmarkPart.bookmark import add_Bookmark
 from editPart import timeconvert as tc
+from SearchPart import searchTag as STag
 
 Form = uic.loadUiType(os.path.join(os.getcwd(), 'Mediaplayer.ui'))[0]
 
@@ -47,7 +47,7 @@ class MediaPlayer(QMainWindow, Form):
         self.tag_thread = None
 
         # Create Tags
-        self.TagDB = None
+        self.allTag = {}
 
         # create Volume Slide
         self.Slider_Volume = Slider(self)
@@ -362,13 +362,19 @@ class MediaPlayer(QMainWindow, Form):
             add_Bookmark(
                 self.lineEdit_Bookmark.text() + "#" + tc.millis_to_format(self.player.position()) , 
                 self.windowTitle()[16:].split(".")[0], self.tag_Path) #use add bookmark function to add bookmarks in tag part
+            if not self.windowTitle()[16:].split(".")[0] in self.allTag:
+                self.allTag.update({self.windowTitle()[16:].split(".")[0] : {}})
             self.allTag[self.windowTitle()[16:].split(".")[0]].update(
                 {self.lineEdit_Bookmark.text() : tc.millis_to_format(self.player.position())})
             self.set_TagonListwidget(self.windowTitle()[16:].split(".")[0]) # update tag listwidget
-            self.lineEdit_Bookmark.clear()
-            self.lineEdit_Bookmark.setVisible(False)
+            
         except Exception as e:
             print(e)
+            pass
+    
+        self.lineEdit_Bookmark.clear()
+        self.lineEdit_Bookmark.setVisible(False)
+
 
 
     def sch_icon_Event(self):
@@ -443,9 +449,9 @@ class MediaPlayer(QMainWindow, Form):
         self.sch_listWidget.setVisible(True)
 
         # start search thread
-        self.search_Thread = search_thread(self, val)
-        self.search_Thread.update_schTag.connect(self.update_Tags)
-        self.search_Thread.start()
+        # self.search_Thread = search_thread(self, val)
+        # self.search_Thread.update_schTag.connect(self.update_Tags)
+        # self.search_Thread.start()
 
     def update_Tags(self, tagsList):
         self.sch_listWidget.clear()
@@ -455,12 +461,10 @@ class MediaPlayer(QMainWindow, Form):
 
         self.search_Thread = None
 
-    # def GoTO(self, time):
-    #     self.Slider_Play.setValue(int(time)*1000)
-    #     self.player.setPosition(int(time)*1000)
 
     def Create_Tags(self, directory):
-        self.TagDB = Tag.tag("SearchPart/1")
+        pass
+        # self.TagDB = Tag.tag("SearchPart/1")
 
     def Logout(self):
         os.remove("LoginPart/User.csv")
@@ -565,7 +569,7 @@ class Slider(QSlider):
 
 class read_Tag(QtCore.QThread):
     Tag_Ready = QtCore.pyqtSignal(dict)
-    def __init__(self, window, filepath, fileFormat):
+    def __init__(self, window, filepath, fileFormat = csv):
         self.filepath = filepath
         self.fileFormat = fileFormat
         QtCore.QThread.__init__(self, parent=window)
@@ -587,17 +591,15 @@ class read_Tag(QtCore.QThread):
 class search_thread(QtCore.QThread):
     update_schTag = QtCore.pyqtSignal(list)
 
-    def __init__(self, window, val):
-        self.val = val
-        self.Parent = window
+    def __init__(self, window, Tags, word):
+        self.word = word
+        self.tags = tags
         QtCore.QThread.__init__(self, parent=window)
 
     def run(self):
-        if self.Parent.TagDB:
-            sch_Tags = self.Parent.TagDB.find_Closest_to(self.val)
-            self.update_schTag.emit(sch_Tags)
-        else:
-            self.update_schTag.emit([])
+        suggest = STag(self.tags, self.word)
+        self.update_schTag.emit(suggest)
+
 
     def stop(self):
         self.terminate()
