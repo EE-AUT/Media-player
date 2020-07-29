@@ -15,6 +15,7 @@ from tagPart import readTag
 from bookmarkPart.bookmark import add_Bookmark
 from editPart import timeconvert as tc
 from SearchPart import searchTag as STag
+import SettingPart.Theme as Theme_module
 
 Form = uic.loadUiType(os.path.join(os.getcwd(), 'Mediaplayer.ui'))[0]
 
@@ -42,7 +43,6 @@ class MediaPlayer(QMainWindow, Form):
         self.search_lineEdit.setPlaceholderText("search Tags here")
         self.lineEdit_Bookmark.setPlaceholderText("write bookmark here")
 
-
         # threads part
         self.tag_thread = None
 
@@ -65,7 +65,7 @@ class MediaPlayer(QMainWindow, Form):
 
         # To Apply Theme
         self.Setting = Setting.SettingWindow(self)
-        self.Setting.Theme_apply()
+        Theme_module.Theme_apply(self.Setting)
 
         # PushButtton
         self.pushButton_Start.setEnabled(False)
@@ -122,8 +122,6 @@ class MediaPlayer(QMainWindow, Form):
                            self.DockWidget_Tags_of_file)
         self.ComboBox_Tags_of_file.activated.connect(self.ListWidget_Tag)
         self.ListWidget_Tags_of_file.itemActivated.connect(self.GoToTagtime)
-
-
 
         # Slider Play
         self.Slider_Play.setRange(0, 0)
@@ -203,6 +201,15 @@ class MediaPlayer(QMainWindow, Form):
             self.showNormal()
 
     def Settingshow(self):
+        self.Setting.Tab.setCurrentIndex(0)
+        self.Setting.lineEdit_CurrentPass.clear()
+        self.Setting.lineEdit_NewPass.clear()
+        self.Setting.lineEdit_ReNewpass.clear()
+        self.Setting.label_finish.setVisible(False)
+        self.Setting.label_NotMatch.setVisible(False)
+        self.Setting.label_PassLong.setVisible(False)
+        self.Setting.label_OldPass.setVisible(False)
+        self.Setting.label_Wait.setVisible(False)
         self.Setting.show()
 
     def start(self):
@@ -238,7 +245,8 @@ class MediaPlayer(QMainWindow, Form):
             self.PlaylistW.Files[self.PlaylistW.listWidget_Playlist.currentItem().text()[self.PlaylistW.spliter:]])))
         self.setWindowTitle(
             f" Media Player - {self.PlaylistW.listWidget_Playlist.currentItem().text()[self.PlaylistW.spliter:]}")
-        currentText = self.PlaylistW.listWidget_Playlist.currentItem().text()[self.PlaylistW.spliter:] 
+        currentText = self.PlaylistW.listWidget_Playlist.currentItem().text()[
+            self.PlaylistW.spliter:]
         index = self.ComboBox_Tags_of_file.findText(currentText)
         self.ComboBox_Tags_of_file.setCurrentIndex(index)
         self.set_TagonListwidget((currentText.split("."))[0])
@@ -260,7 +268,8 @@ class MediaPlayer(QMainWindow, Form):
             self.PlaylistW.Files[self.PlaylistW.listWidget_Playlist.currentItem().text()[self.PlaylistW.spliter:]])))
         self.setWindowTitle(
             f" Media Player - {self.PlaylistW.listWidget_Playlist.currentItem().text()[self.PlaylistW.spliter:]}")
-        currentText = self.PlaylistW.listWidget_Playlist.currentItem().text()[self.PlaylistW.spliter:] 
+        currentText = self.PlaylistW.listWidget_Playlist.currentItem().text()[
+            self.PlaylistW.spliter:]
         index = self.ComboBox_Tags_of_file.findText(currentText)
         self.ComboBox_Tags_of_file.setCurrentIndex(index)
         self.set_TagonListwidget((currentText.split("."))[0])
@@ -355,27 +364,26 @@ class MediaPlayer(QMainWindow, Form):
                 self.pushButton_volume.setIcon(QIcon('./Icons/mute.png'))
                 self.pushButton_volume.setToolTip("UnMute")
 
+    # save bookmarks and updatae tag list widget
 
-    # save bookmarks and updatae tag list widget 
     def save_Bookmarks(self):
         try:
             add_Bookmark(
-                self.lineEdit_Bookmark.text() + "#" + tc.millis_to_format(self.player.position()) , 
-                self.windowTitle()[16:].split(".")[0], self.tag_Path) #use add bookmark function to add bookmarks in tag part
+                self.lineEdit_Bookmark.text() + "#" + tc.millis_to_format(self.player.position()),
+                self.windowTitle()[16:].split(".")[0], self.tag_Path)  # use add bookmark function to add bookmarks in tag part
             if not self.windowTitle()[16:].split(".")[0] in self.allTag:
-                self.allTag.update({self.windowTitle()[16:].split(".")[0] : {}})
+                self.allTag.update({self.windowTitle()[16:].split(".")[0]: {}})
             self.allTag[self.windowTitle()[16:].split(".")[0]].update(
-                {self.lineEdit_Bookmark.text() : tc.millis_to_format(self.player.position())})
-            self.set_TagonListwidget(self.windowTitle()[16:].split(".")[0]) # update tag listwidget
-            
+                {self.lineEdit_Bookmark.text(): tc.millis_to_format(self.player.position())})
+            self.set_TagonListwidget(self.windowTitle()[16:].split(".")[
+                                     0])  # update tag listwidget
+
         except Exception as e:
             print(e)
             pass
-    
+
         self.lineEdit_Bookmark.clear()
         self.lineEdit_Bookmark.setVisible(False)
-
-
 
     def sch_icon_Event(self):
         self.search_lineEdit.setFixedWidth(0)
@@ -420,13 +428,12 @@ class MediaPlayer(QMainWindow, Form):
 
     def main_size_Change(self, val):
         self.lineEdit_Bookmark.setFixedWidth(int(self.size().width()/4))
+        self.search_lineEdit.setFixedWidth(int(self.size().width()/4))
 
         self.sch_listWidget.resize(
             int(self.size().width()/4), int((200 / 600) * self.size().height()))
         self.sch_listWidget.move(
-            int(self.pushButton_Search.x() - (200 / 800) * self.size().width())-5, 52)
-
-        self.search_lineEdit.setFixedWidth(int(self.size().width()/4))
+            self.size().width()-self.pushButton_Search.geometry().width()-self.search_lineEdit.geometry().width()-15, self.search_lineEdit.geometry().height()+self.search_lineEdit.pos().y() + self.menubar.geometry().height())
 
     def item_Event(self, item):
         print(item.text())
@@ -437,14 +444,14 @@ class MediaPlayer(QMainWindow, Form):
         self.sch_listWidget.resize(
             int((200 / 800) * self.size().width()), int((200 / 600) * self.size().height()))
         # Is Not FullScreen
-        if not self.isFullScreen():
-            self.sch_listWidget.move(
-                int(self.pushButton_Search.x() - (200 / 800) * self.size().width()-5), 52)
+        # if not self.isFullScreen():
+        self.sch_listWidget.move(
+            self.search_lineEdit.x(), self.search_lineEdit.geometry().height()+self.search_lineEdit.pos().y() + self.menubar.geometry().height())
 
         # Is FullScreen
-        else:
-            self.sch_listWidget.move(
-                int((600 / 800) * self.size().width())-self.pushButton_Search.geometry().width(), 52)
+        # else:
+        #     self.sch_listWidget.move(
+        #         int((600 / 800) * self.size().width())-self.pushButton_Search.geometry().width(), 52)
 
         self.sch_listWidget.setVisible(True)
 
@@ -461,7 +468,6 @@ class MediaPlayer(QMainWindow, Form):
 
         self.search_Thread = None
 
-
     def Create_Tags(self, directory):
         pass
         # self.TagDB = Tag.tag("SearchPart/1")
@@ -473,11 +479,11 @@ class MediaPlayer(QMainWindow, Form):
         subprocess.call(['python', 'MediaPlayer.py'])
 
     def Play_list(self):
-        #To show current Row for every time it opens
+        # To show current Row for every time it opens
         if self.PlaylistW.listWidget_Playlist.count():
             self.PlaylistW.listWidget_Playlist.setCurrentRow(
                 list(self.PlaylistW.Files.keys()).index(self.windowTitle()[16:]))
-                
+
         self.PlaylistW.show()
         self.PlaylistW.move(QtGui.QCursor().pos().x(),
                             QtGui.QCursor().pos().y()-self.PlaylistW.size().height()-25)
@@ -487,16 +493,15 @@ class MediaPlayer(QMainWindow, Form):
             not self.DockWidget_Tags_of_file.isVisible())
         index = self.ComboBox_Tags_of_file.findText(self.windowTitle()[16:])
         self.ComboBox_Tags_of_file.setCurrentIndex(index)
-            
-        
 
     # tag combo box item clicked function
+
     def ListWidget_Tag(self, index):
         videoName = (list(self.PlaylistW.Files.keys())[index].split("."))[0]
-        self.set_TagonListwidget(videoName) 
-
+        self.set_TagonListwidget(videoName)
 
     # openTag in csv, pptx, docx format and start tag thread for reading data
+
     def openTags(self):
         self.tag_Path, _ = QFileDialog.getOpenFileName(
             self, "Open Tag", directory=os.path.join(os.getcwd(), 'Tags'), filter='*.csv *.pptx *.docx')
@@ -507,24 +512,24 @@ class MediaPlayer(QMainWindow, Form):
             self.tag_thread.Tag_Ready.connect(self.getTag)
             self.tag_thread.start()
 
+    # tag is ready to use
 
-    # tag is ready to use 
     def getTag(self, tags):
         self.allTag = tags
         index = self.ComboBox_Tags_of_file.findText(self.windowTitle()[16:])
         self.ComboBox_Tags_of_file.setCurrentIndex(index)
         self.set_TagonListwidget((self.windowTitle()[16:].split("."))[0])
 
-
-
     # set tags on tag listwidget using vedio name
+
     def set_TagonListwidget(self, videoName):
         self.ListWidget_Tags_of_file.clear()
         try:
             if videoName in self.allTag:
                 sessionTag = self.allTag[videoName]
                 # sorted tags by time
-                sessionTag = {text: time for text, time in sorted(sessionTag.items(), key= lambda item: tc.to_second(item[1]))} 
+                sessionTag = {text: time for text, time in sorted(
+                    sessionTag.items(), key=lambda item: tc.to_second(item[1]))}
                 for tagText in sessionTag:
                     self.ListWidget_Tags_of_file.addItem(
                         f'{self.ListWidget_Tags_of_file.count()+1} . {tagText}')
@@ -533,24 +538,22 @@ class MediaPlayer(QMainWindow, Form):
         except Exception as e:
             print(e)
 
-
-
     # item clicked event to go to time correlate clicked tag in video
+
     def GoToTagtime(self, item):
         spliter = len(str(self.ListWidget_Tags_of_file.currentRow()+1)) + 3
         tag_Text = item.text()[spliter:]
         if self.windowTitle()[16:] == self.ComboBox_Tags_of_file.currentText():
             session = self.windowTitle()[16:].split(".")[0]
-            # time_second = 
+            # time_second =
             try:
                 time_second = tc.to_second(self.allTag[session][tag_Text])
             except Exception as e:
                 print(e)
-            self.Slider_Play.setValue(int(time_second)*1000) # change slider position using item time
-            self.player.setPosition(int(time_second)*1000) # change video position using item time
-
-
-
+            # change slider position using item time
+            self.Slider_Play.setValue(int(time_second)*1000)
+            # change video position using item time
+            self.player.setPosition(int(time_second)*1000)
 
 
 class Slider(QSlider):
@@ -566,10 +569,10 @@ class Slider(QSlider):
         self.setUP_Slider.emit(position.x())
 
 
-
 class read_Tag(QtCore.QThread):
     Tag_Ready = QtCore.pyqtSignal(dict)
-    def __init__(self, window, filepath, fileFormat = csv):
+
+    def __init__(self, window, filepath, fileFormat=csv):
         self.filepath = filepath
         self.fileFormat = fileFormat
         QtCore.QThread.__init__(self, parent=window)
@@ -584,9 +587,6 @@ class read_Tag(QtCore.QThread):
         self.wait()
 
 
-
-
-
 # Thread for searching in tags
 class search_thread(QtCore.QThread):
     update_schTag = QtCore.pyqtSignal(list)
@@ -599,7 +599,6 @@ class search_thread(QtCore.QThread):
     def run(self):
         suggest = STag(self.tags, self.word)
         self.update_schTag.emit(suggest)
-
 
     def stop(self):
         self.terminate()
@@ -616,6 +615,7 @@ class Search_Animation(QtCore.QThread):
         for i in range(int(Mainw.size().width()/4)):
             self.update_Animation.emit(i)
             sleep(0.00001)
+
     def stop(self):
         self.terminate()
         self.wait()
@@ -632,6 +632,7 @@ class BookMark_Animation(QtCore.QThread):
         for i in range(int(Mainw.size().width()/4)):
             self.update_Animation.emit(i)
             sleep(0.00001)
+
     def stop(self):
         self.terminate()
         self.wait()
