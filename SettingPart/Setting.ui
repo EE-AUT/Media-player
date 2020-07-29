@@ -965,6 +965,9 @@
         </item>
         <item>
          <widget class="QLineEdit" name="lineEdit_NewPass">
+          <property name="echoMode">
+           <enum>QLineEdit::Password</enum>
+          </property>
           <property name="placeholderText">
            <string>New password</string>
           </property>
@@ -972,6 +975,9 @@
         </item>
         <item>
          <widget class="QLineEdit" name="lineEdit_ReNewpass">
+          <property name="echoMode">
+           <enum>QLineEdit::Password</enum>
+          </property>
           <property name="placeholderText">
            <string>Re-enter new password</string>
           </property>
@@ -1011,6 +1017,24 @@
           <property name="text">
            <string>Your old password was entered incorenctly .
 Please enter it again</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_Error">
+          <property name="font">
+           <font>
+            <pointsize>12</pointsize>
+           </font>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">color: rgb(255, 0, 0);</string>
+          </property>
+          <property name="text">
+           <string>Connection failed</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignCenter</set>

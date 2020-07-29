@@ -97,7 +97,18 @@ class SettingWindow(QMainWindow, Form, QtCore.QThread):
 
     def NewPass(self):
         Account.NewPass(self)
-    
+
+
+    def pass_change_result(self,val):
+        ###To show password has been changed or not 
+        if val:
+            self.label_finish.setVisible(True)
+        else:
+            self.label_Error.setVisible(True)
+
+
+
+
 
     def Font_Change(self, val):
         print(val)
@@ -123,20 +134,19 @@ class SettingWindow(QMainWindow, Form, QtCore.QThread):
                 if not self.label_PassLong.isVisible():
                     if Account.read_Pass('Pass') == self.lineEdit_CurrentPass.text():
                         self.label_OldPass.setVisible(False)
-
+                        self.label_Error.setVisible(False)
                         self.pushButton_OK.setEnabled(False)
                         self.pushButton_Cancel.setEnabled(False)
                         self.label_Wait.setVisible(True)
-                        Account.Apply_Thread(self).start()
+                        connection_part =Account.Apply_Thread(self)
+                        connection_part.start()
+                        connection_part.pass_changed.connect(self.pass_change_result)
                         self.label_Wait.setVisible(False)           
                         self.pushButton_OK.setEnabled(True)
                         self.pushButton_Cancel.setEnabled(True)
-                        self.label_finish.setVisible(True)
                     else:
                         self.Tab.setCurrentIndex(3)
                         self.label_OldPass.setVisible(True)
-
-
         else:
             self.close()
 
@@ -150,6 +160,7 @@ class SettingWindow(QMainWindow, Form, QtCore.QThread):
         self.label_PassLong.setVisible(False)
         self.label_OldPass.setVisible(False)
         self.label_Wait.setVisible(False)
+        self.label_Error.setVisible(False)
         self.lineEdit_CurrentPass.clear()
         self.lineEdit_NewPass.clear()
         self.lineEdit_ReNewpass.clear()

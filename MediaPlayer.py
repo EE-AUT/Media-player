@@ -212,6 +212,8 @@ class MediaPlayer(QMainWindow, Form):
         self.Setting.label_PassLong.setVisible(False)
         self.Setting.label_OldPass.setVisible(False)
         self.Setting.label_Wait.setVisible(False)
+        self.Setting.label_Error.setVisible(False)
+
         self.Setting.show()
 
     def start(self):

@@ -9,7 +9,6 @@ def get_Database():
              "https://www.googleapis.com/auth/drive.file", "https://www.googleapis.com/auth/drive"]
 
     try:
-        # start = time()
 
         creds = ServiceAccountCredentials.from_json_keyfile_name(
             "Database/json/creds.json", scope)
@@ -17,12 +16,7 @@ def get_Database():
         sheet = client.open("test").sheet1
         data = sheet.get_all_records()
 
-        # end = time()
-
-        # print(data)
-        # print(round(end - start, 2))
         return data
-
     except:
         return None
 
@@ -77,9 +71,11 @@ def Change_password(oldPass, NewPass):
         address = sheet.find('#'+oldPass)
         sheet.update_cell(address.row, address.col, '#'+NewPass)
         Edit_user(NewPass)
+        return True
 
     except:
         print('OH')
+        return False
 
 def Edit_user(newPass):
     with open("LoginPart/User.csv") as csvfile:

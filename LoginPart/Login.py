@@ -7,7 +7,7 @@ from PyQt5.QtCore import Qt
 from time import sleep
 from signupPart.signUp import signUpWindow
 import Database.Database as get_Database
-import SettingPart.Setting as Setting
+import LoginPart.ForgetPass as ForgetPass
 import socket
 
 
@@ -20,7 +20,7 @@ class LoginWindow(QDialog, Form):
         QDialog.__init__(self)
         self.setupUi(self)
         self.setWindowTitle("Login")
-        self.StudentID = str('')
+        self.Password = str('')
         self.Email = str('')
 
         # Event
@@ -29,7 +29,7 @@ class LoginWindow(QDialog, Form):
         self.signButton.clicked.connect(self.signUp)
         self.clearButton.clicked.connect(self.clear)
         self.clearButton.setEnabled(False)
-        self.lineEdit_StudentID.textChanged.connect(self.StudentID_update)
+        self.lineEdit_Password.textChanged.connect(self.Password_update)
         self.lineEdit_Email.textChanged.connect(self.Email_update)
         self.label_Forget.mousePressEvent = self.forget_Pass
 
@@ -54,7 +54,7 @@ class LoginWindow(QDialog, Form):
         self.AcceptKey = False
 
         # lineEdit pass
-        self.lineEdit_StudentID.setEchoMode(QLineEdit.Password)
+        self.lineEdit_Password.setEchoMode(QLineEdit.Password)
 
 
 
@@ -63,10 +63,10 @@ class LoginWindow(QDialog, Form):
 
 
 
-    def StudentID_update(self, val):
-        self.Pass = str(val)
-        self.lineEdit_StudentID.setStyleSheet("")
-        if self.StudentID:
+    def Password_update(self, val):
+        self.Password = str(val)
+        self.lineEdit_Password.setStyleSheet("")
+        if self.Password:
             self.clearButton.setEnabled(True)
             if self.lineEdit_Email.text():
                 self.LoginButton.setEnabled(True)
@@ -80,15 +80,15 @@ class LoginWindow(QDialog, Form):
         self.lineEdit_Email.setStyleSheet("")
         if self.Email:
             self.clearButton.setEnabled(True)
-            if self.lineEdit_StudentID.text():
+            if self.lineEdit_Password.text():
                 self.LoginButton.setEnabled(True)
         else:
-            if not self.lineEdit_StudentID.text():
+            if not self.lineEdit_Password.text():
                 self.clearButton.setEnabled(False)
             self.LoginButton.setEnabled(False)
 
     def clear(self):
-        self.lineEdit_StudentID.clear()
+        self.lineEdit_Password.clear()
         self.lineEdit_Email.clear()
 
     def Login(self):
@@ -101,13 +101,13 @@ class LoginWindow(QDialog, Form):
             self.LoginButton.setEnabled(True)
         else:
             self.check = checkData_Thread(
-                self, Data=Data, Email=self.Email, Pass="#" + self.Pass)
+                self, Data=Data, Email=self.Email, Pass="#" + self.Password)
             self.check.check_Key.connect(self.isAccept)
             self.check.start()
 
     def isAccept(self, key):
         if key:
-            open("LoginPart/User.csv", "w").write(f"{self.Email},{self.Pass}")
+            open("LoginPart/User.csv", "w").write(f"{self.Email},{self.Password}")
             self.GetData = None
             self.check = None
             self.wait = None
@@ -118,7 +118,7 @@ class LoginWindow(QDialog, Form):
             self.AcceptKey = False
             self.user_Message("Email or Password wrong!", "rgb(255, 0, 0)", 10)
             self.LoginButton.setEnabled(True)
-            self.lineEdit_StudentID.setStyleSheet("background:#ff967c")
+            self.lineEdit_Password.setStyleSheet("background:#ff967c")
             self.lineEdit_Email.setStyleSheet("background:#ff967c")
 
     def LoginAccept(self):
@@ -159,8 +159,9 @@ class LoginWindow(QDialog, Form):
         if check:
             self.Label_Msg.setVisible(False)
 
-    def forget_Pass(self, val):
-        print("forget pass")
+    def forget_Pass(self,val):
+        ForgetPassW=ForgetPass.ForgetPassWindow(self)
+        ForgetPassW.show()
 
     def clear_msg(self, check):
         if check:
