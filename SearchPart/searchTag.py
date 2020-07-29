@@ -1,25 +1,30 @@
 import difflib
 from editPart import timeconvert as tc
+import re
 
 
 
 
 def find_Closest_to(tags, word):
-    suggest = __find__(tags, word)
-    for key in difflib.get_close_matches(word, tags):
-        suggest = suggest + tags.__find__(key)
-        
-    # print(suggest.sort())
-    suggest = list(set(suggest))
-    suggest.sort(key= lambda x: self.tc.to_second(tags[x]))
-    return suggest # list
+    suggest = __find__(tags, word.lower())
+    tags = {text.lower(): val for text, val in tags.items()} # change all text to lower case
+    for key in difflib.get_close_matches(word.lower(), tags.keys()):
+        suggest = {**suggest, **(__find__(tags, key))}
+    result = {}
+    for key in suggest: # delete repeated
+        if not key in result.keys():
+            result.update({key: suggest[key]}) 
+    # sort tags by time
+    result = {text: time for text, time in sorted(
+        result.items(), key=lambda item: tc.to_second(item[1]))}
+    return result # dict
     
 
 
 
 def __find__(tags, word):
-    suggest = []
+    suggest = {}
     for key in tags:
-        if key.find(word) != -1:
-            suggest.append(key)
-    return suggest
+        if key.find(word.lower()) != -1:
+            suggest.update({key : tags[key]})
+    return suggest # return dict

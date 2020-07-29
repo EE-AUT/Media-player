@@ -1,6 +1,7 @@
 import sys
 import os
 import csv
+import re
 import subprocess
 from time import sleep
 import LoginPart.Login as Login
@@ -16,6 +17,7 @@ from bookmarkPart.bookmark import add_Bookmark
 from editPart import timeconvert as tc
 from SearchPart import searchTag as STag
 import SettingPart.Theme as Theme_module
+from userWinPart.confirm import confrimWin
 
 Form = uic.loadUiType(os.path.join(os.getcwd(), 'Mediaplayer.ui'))[0]
 
@@ -141,7 +143,7 @@ class MediaPlayer(QMainWindow, Form):
         self.actionOpen_Tag.triggered.connect(self.openTags)
 
         # Search
-        self.sch_listWidget.itemDoubleClicked.connect(self.item_Event)
+        self.sch_listWidget.itemDoubleClicked.connect(self.item_searchlist_Event)
         self.search_lineEdit.textChanged.connect(self.search_Tag)
 
         # self.lineEdit_GoTo.textChanged.connect(self.GoTO)
@@ -299,6 +301,7 @@ class MediaPlayer(QMainWindow, Form):
 
             # Create Playlist
             self.PlaylistW.Create_Playlist(file_path)
+            self.set_TagonListwidget((self.windowTitle()[16:].split("."))[0])
 
     def Position_changed(self, position):
         if position > self.player.duration():
@@ -435,8 +438,16 @@ class MediaPlayer(QMainWindow, Form):
         self.sch_listWidget.move(
             self.size().width()-self.pushButton_Search.geometry().width()-self.search_lineEdit.geometry().width()-15, self.search_lineEdit.geometry().height()+self.search_lineEdit.pos().y() + self.menubar.geometry().height())
 
-    def item_Event(self, item):
-        print(item.text())
+    def item_searchlist_Event(self, item):
+        session, tag = re.split(" -> ", item.text())
+        if session != self.windowTitle()[16:].split(".")[0]:
+            self.confirmWin = confrimWin(self, session= session.split(".")[0], 
+                tag_Text= tag, Text= f"are you sure to change video to {session} from search")
+            self.confirmWin.show()
+        else:
+            time_second = tc.to_second(self.allTag[session][tag])
+            self.change_Position(time_second)
+         
 
     def search_Tag(self, val):
 
@@ -454,23 +465,22 @@ class MediaPlayer(QMainWindow, Form):
         #         int((600 / 800) * self.size().width())-self.pushButton_Search.geometry().width(), 52)
 
         self.sch_listWidget.setVisible(True)
-
+        if val == "":
+            self.sch_listWidget.clear()
         # start search thread
-        # self.search_Thread = search_thread(self, val)
-        # self.search_Thread.update_schTag.connect(self.update_Tags)
-        # self.search_Thread.start()
+        else:
+            self.search_Thread = search_thread(self, self.allTag, val)
+            self.search_Thread.update_schTag.connect(self.update_searchTags)
+            self.search_Thread.start()
 
-    def update_Tags(self, tagsList):
+    def update_searchTags(self, tagsDict):
         self.sch_listWidget.clear()
 
-        for key in tagsList:
-            self.sch_listWidget.addItem(key)
+        for session, Tags in tagsDict.items():
+            for text in Tags:
+                self.sch_listWidget.addItem(session + " -> " + text)
 
-        self.search_Thread = None
 
-    def Create_Tags(self, directory):
-        pass
-        # self.TagDB = Tag.tag("SearchPart/1")
 
     def Logout(self):
         os.remove("LoginPart/User.csv")
@@ -538,22 +548,48 @@ class MediaPlayer(QMainWindow, Form):
         except Exception as e:
             print(e)
 
-    # item clicked event to go to time correlate clicked tag in video
 
+    # item clicked event to go to time correlate clicked tag in video
     def GoToTagtime(self, item):
         spliter = len(str(self.ListWidget_Tags_of_file.currentRow()+1)) + 3
         tag_Text = item.text()[spliter:]
         if self.windowTitle()[16:] == self.ComboBox_Tags_of_file.currentText():
             session = self.windowTitle()[16:].split(".")[0]
-            # time_second =
             try:
                 time_second = tc.to_second(self.allTag[session][tag_Text])
             except Exception as e:
                 print(e)
-            # change slider position using item time
-            self.Slider_Play.setValue(int(time_second)*1000)
-            # change video position using item time
-            self.player.setPosition(int(time_second)*1000)
+            self.change_Position(time_second)
+        else:
+            session = self.ComboBox_Tags_of_file.currentText().split(".")[0]
+            self.confirmWin = confrimWin(self, session= session, 
+                tag_Text= tag_Text, Text= f"are you sure to change video to {session}")
+            self.confirmWin.show()
+
+
+    def change_Position(self, time_second):
+        # change slider position using item time
+        self.Slider_Play.setValue(int(time_second)*1000)
+        # change video position using item time
+        self.player.setPosition(int(time_second)*1000)
+            
+            
+
+
+    def change_Video(self, session):
+        for key in self.PlaylistW.Files:
+            if re.search(session, key):
+                self.player.setMedia(
+                    QMediaContent(QUrl.fromLocalFile(self.PlaylistW.Files[key])))
+                self.start()
+                self.setWindowTitle(
+                    f" Media Player - {key}")
+                index = self.ComboBox_Tags_of_file.findText(key)
+                self.ComboBox_Tags_of_file.setCurrentIndex(index)
+                self.set_TagonListwidget((key.split("."))[0])
+
+                return True
+        return False
 
 
 class Slider(QSlider):
@@ -589,16 +625,18 @@ class read_Tag(QtCore.QThread):
 
 # Thread for searching in tags
 class search_thread(QtCore.QThread):
-    update_schTag = QtCore.pyqtSignal(list)
+    update_schTag = QtCore.pyqtSignal(dict)
 
     def __init__(self, window, Tags, word):
         self.word = word
-        self.tags = tags
+        self.allTags = Tags
         QtCore.QThread.__init__(self, parent=window)
 
     def run(self):
-        suggest = STag(self.tags, self.word)
-        self.update_schTag.emit(suggest)
+        result = {}
+        for key in self.allTags:
+            result.update({key: STag.find_Closest_to(self.allTags[key], self.word)})
+        self.update_schTag.emit(result)
 
     def stop(self):
         self.terminate()
