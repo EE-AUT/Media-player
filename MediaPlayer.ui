@@ -655,8 +655,7 @@
     <addaction name="actionOpen"/>
     <addaction name="actionOpen_Tag"/>
     <addaction name="separator"/>
-    <addaction name="actionBookmarks"/>
-    <addaction name="separator"/>
+    <addaction name="actionChange_Password"/>
     <addaction name="actionLogOut"/>
     <addaction name="actionExit"/>
    </widget>
@@ -665,10 +664,20 @@
      <string>view</string>
     </property>
     <addaction name="actionFullScreen"/>
-    <addaction name="actionNightMode"/>
+    <addaction name="actionThme"/>
+    <addaction name="actionFont"/>
+   </widget>
+   <widget class="QMenu" name="menuTag">
+    <property name="title">
+     <string>Tag</string>
+    </property>
+    <addaction name="actionOpenTag"/>
+    <addaction name="actionEdit_Tag"/>
+    <addaction name="actionClose_Tag"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuview"/>
+   <addaction name="menuTag"/>
   </widget>
   <action name="actionOpen">
    <property name="text">
@@ -712,6 +721,36 @@
   <action name="actionNightMode">
    <property name="text">
     <string>NightMode</string>
+   </property>
+  </action>
+  <action name="actionThme">
+   <property name="text">
+    <string>Thme</string>
+   </property>
+  </action>
+  <action name="actionFont">
+   <property name="text">
+    <string>Font</string>
+   </property>
+  </action>
+  <action name="actionOpenTag">
+   <property name="text">
+    <string>OpenTag</string>
+   </property>
+  </action>
+  <action name="actionEdit_Tag">
+   <property name="text">
+    <string>Edit Tag</string>
+   </property>
+  </action>
+  <action name="actionClose_Tag">
+   <property name="text">
+    <string>Close Tag</string>
+   </property>
+  </action>
+  <action name="actionChange_Password">
+   <property name="text">
+    <string>Change Password</string>
    </property>
   </action>
  </widget>
