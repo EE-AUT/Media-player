@@ -51,6 +51,7 @@ class ForgetPassWindow(QDialog, Form, QtCore.QThread):
             self.pushButton_sent.setEnabled(False)
 
     def start_to_sent(self):
+        self.pushButton_sent.setEnabled(False)
         self.label_Wait.setVisible(True)
         self.pushButton_Back.setEnabled(False)
         self.Get_Data.start()
@@ -81,11 +82,13 @@ class ForgetPassWindow(QDialog, Form, QtCore.QThread):
                 self.label_Incorrect.setVisible(True)
                 self.label_Wait.setVisible(False)
                 self.pushButton_Back.setEnabled(True)
-
+                self.pushButton_sent.setEnabled(True)
         else:
             self.label_Error_Connection.setVisible(True)
             self.label_Wait.setVisible(False)
             self.pushButton_Back.setEnabled(True)
+            self.pushButton_sent.setEnabled(True)
+
 
     def Check(self, val):
         if val:
@@ -97,6 +100,7 @@ class ForgetPassWindow(QDialog, Form, QtCore.QThread):
             self.label_sent.setVisible(False)
         self.label_Wait.setVisible(False)
         self.pushButton_Back.setEnabled(True)
+        self.pushButton_sent.setEnabled(True)
 
 
 class Get_Data(QtCore.QThread):
@@ -106,7 +110,10 @@ class Get_Data(QtCore.QThread):
         QtCore.QThread.__init__(self, window)
 
     def run(self):
-        self.Data.emit(get_Database.get_Database())
+        try:
+            self.Data.emit(get_Database.get_Database())
+        except:
+            self.Data.emit([])
 
 
 class Sent_Email_Thread(QtCore.QThread):
