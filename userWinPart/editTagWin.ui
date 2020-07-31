@@ -7,66 +7,81 @@
     <x>0</x>
     <y>0</y>
     <width>350</width>
-    <height>160</height>
+    <height>200</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
     <width>350</width>
-    <height>160</height>
+    <height>200</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
     <width>350</width>
-    <height>160</height>
+    <height>200</height>
    </size>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QLabel" name="Msg_Lebel">
+   <widget class="QWidget" name="">
     <property name="geometry">
      <rect>
-      <x>20</x>
+      <x>50</x>
       <y>10</y>
-      <width>300</width>
-      <height>50</height>
+      <width>252</width>
+      <height>81</height>
      </rect>
     </property>
-    <property name="font">
-     <font>
-      <pointsize>10</pointsize>
-     </font>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-    <property name="alignment">
-     <set>Qt::AlignCenter</set>
-    </property>
-    <property name="wordWrap">
-     <bool>true</bool>
-    </property>
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <widget class="QLineEdit" name="tag_LineEdit">
+       <property name="minimumSize">
+        <size>
+         <width>250</width>
+         <height>25</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>16777215</width>
+         <height>25</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="time_LineEdit">
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>25</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>16777215</width>
+         <height>25</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </widget>
-   <widget class="QWidget" name="layoutWidget">
+   <widget class="QWidget" name="">
     <property name="geometry">
      <rect>
       <x>70</x>
-      <y>80</y>
+      <y>110</y>
       <width>195</width>
-      <height>32</height>
+      <height>30</height>
      </rect>
     </property>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
-      <widget class="QPushButton" name="yes_Button">
-       <property name="font">
-        <font>
-         <pointsize>10</pointsize>
-        </font>
-       </property>
+      <widget class="QPushButton" name="Ok_Button">
        <property name="styleSheet">
         <string notr="true">QPushButton::hover
 {
@@ -74,21 +89,20 @@ background-color: rgb(0, 170, 0);
 }</string>
        </property>
        <property name="text">
-        <string>Yes</string>
+        <string>Ok</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="no_Button">
+      <widget class="QPushButton" name="No_Button">
        <property name="styleSheet">
-        <string notr="true">
-QPushButton::hover
+        <string notr="true">QPushButton::hover
 {
-background-color: rgb(250, 0, 0);
+background-color: rgb(255, 0, 0);
 }</string>
        </property>
        <property name="text">
-        <string>No</string>
+        <string>Cancel</string>
        </property>
       </widget>
      </item>

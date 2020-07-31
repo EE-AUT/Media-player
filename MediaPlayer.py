@@ -7,7 +7,7 @@ from time import sleep
 import LoginPart.Login as Login
 import SettingPart.Setting as Setting
 import PlayListPart.Playlist as Playlist
-from PyQt5.QtWidgets import QApplication, QWidget, QMainWindow, QComboBox, QVBoxLayout, QDockWidget, QMenuBar, QFileDialog, QLineEdit, QListWidget, QSlider, QShortcut
+from PyQt5.QtWidgets import QApplication, QWidget, QMainWindow, QComboBox, QVBoxLayout, QDockWidget, QMenuBar, QFileDialog, QLineEdit, QListWidget, QSlider, QShortcut, QTreeWidgetItem
 from PyQt5 import uic, QtCore, QtGui
 from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
 from PyQt5.QtCore import Qt, QUrl
@@ -50,6 +50,9 @@ class MediaPlayer(QMainWindow, Form):
 
         # Create Tags
         self.allTag = {}
+
+        # initial None
+        self.confirmWin = None
 
         # create Volume Slide
         self.Slider_Volume = Slider(self)
@@ -510,7 +513,7 @@ class MediaPlayer(QMainWindow, Form):
 
     def ListWidget_Tag(self, index):
         videoName = (list(self.PlaylistW.Files.keys())[index].split("."))[0]
-        self.set_TagonListwidget(videoName)
+        self.set_TagonListwidget(videoName, Setting_Tags= False)
 
     # openTag in csv, pptx, docx format and start tag thread for reading data
 
@@ -534,17 +537,28 @@ class MediaPlayer(QMainWindow, Form):
 
     # set tags on tag listwidget using vedio name
 
-    def set_TagonListwidget(self, videoName):
-        self.ListWidget_Tags_of_file.clear()
+    def set_TagonListwidget(self, videoName, Setting_Tags= True, Media_Tags= True):
+        # tree = QtGui.QTreeWidget()
+        if Media_Tags:
+            self.ListWidget_Tags_of_file.clear()
+        if Setting_Tags:
+            self.Setting.Edit_tag_Listwidget.clear()
         try:
             if videoName in self.allTag:
                 sessionTag = self.allTag[videoName]
                 # sorted tags by time
                 sessionTag = {text: time for text, time in sorted(
                     sessionTag.items(), key=lambda item: tc.to_second(item[1]))}
-                for tagText in sessionTag:
-                    self.ListWidget_Tags_of_file.addItem(
-                        f'{self.ListWidget_Tags_of_file.count()+1} . {tagText}')
+                for text in sessionTag:
+                    # setting part tags by qtreewidget
+                    if Setting_Tags:
+                        item = QTreeWidgetItem(
+                            self.Setting.Edit_tag_Listwidget, [text, sessionTag[text]])
+                        # item.setFlags(item.flags() | QtCore.Qt.ItemIsEditable)
+                    # media part tags by qlistwidget 
+                    if Media_Tags:
+                        self.ListWidget_Tags_of_file.addItem(
+                            f'{self.ListWidget_Tags_of_file.count()+1} . {text}')
             else:
                 print("Fault in Tags")
         except Exception as e:
@@ -559,9 +573,9 @@ class MediaPlayer(QMainWindow, Form):
             session = self.windowTitle()[16:].split(".")[0]
             try:
                 time_second = tc.to_second(self.allTag[session][tag_Text])
+                self.change_Position(time_second)
             except Exception as e:
                 print(e)
-            self.change_Position(time_second)
         else:
             session = self.ComboBox_Tags_of_file.currentText().split(".")[0]
             self.confirmWin = confrimWin(self, session= session, 
@@ -594,6 +608,24 @@ class MediaPlayer(QMainWindow, Form):
         return False
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 class Slider(QSlider):
     setUP_Slider = QtCore.pyqtSignal(int)
 
@@ -605,6 +637,7 @@ class Slider(QSlider):
 
     def mouseMoveEvent(self, position):
         self.setUP_Slider.emit(position.x())
+
 
 
 class read_Tag(QtCore.QThread):
@@ -623,6 +656,7 @@ class read_Tag(QtCore.QThread):
     def stop(self):
         self.terminate()
         self.wait()
+
 
 
 # Thread for searching in tags

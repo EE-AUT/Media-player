@@ -5,6 +5,13 @@ import csv
 import SettingPart.Theme as Theme_module
 import SettingPart.PlayBack as PlayBack
 import SettingPart.Account as Account
+from editPart.edit import edit_Tags
+from userWinPart.confirm import confrimWin
+from userWinPart.updatedatabaseWin import updatedatabaseWin as UDWin
+from userWinPart.tagEditWin import tagEditWin
+from PyQt5.QtWidgets import QTreeWidgetItem
+import re
+
 
 Form = uic.loadUiType(os.path.join(os.getcwd(), 'SettingPart/Setting.ui'))[0]
 
@@ -63,6 +70,21 @@ class SettingWindow(QMainWindow, Form, QtCore.QThread):
         self.lineEdit_ReNewpass.textChanged.connect(
             lambda: self.label_NotMatch.setVisible(False))
 
+        
+        # Edit tag part
+        self.comboBox_Tag.activated.connect(self.ListWidget_Tag_Edit)
+        self.Edit_tag_Listwidget.setHeaderLabels(['Tag', 'Time'])
+        self.pushButton_Edit.clicked.connect(self.edit_Tag) 
+        self.pushButton_Delete.clicked.connect(self.del_Tag)
+        self.pushButton_Add.clicked.connect(self.add_Tag)
+        # self.pushButton_Upload.clicked.connect(self.uploadTags)
+        # self.pushButton_Download.clicked.connect(self.downloadTags)
+        self.prev_text = None
+        self.tagEditWin = None
+        self.UDWin = None
+
+
+
     # Connect signals to Theme module in Theme.py
     def _Theme(self, index):
         Theme_module._Theme(self, index)
@@ -106,7 +128,63 @@ class SettingWindow(QMainWindow, Form, QtCore.QThread):
         else:
             self.label_Error.setVisible(True)
 
+    
 
+    # Edit tag part
+    # *************************
+    def ListWidget_Tag_Edit(self, index):
+        videoName = (list(self.MediaPlayer.PlaylistW.Files.keys())[index].split("."))[0]
+        self.MediaPlayer.set_TagonListwidget(
+            videoName, Setting_Tags= True, Media_Tags= False)
+
+    def edit_Tag(self):
+        self.pushButton_Edit.setEnabled(False)
+        self.pushButton_Add.setEnabled(False)
+        try:
+            self.prev_text = [self.Edit_tag_Listwidget.currentItem().text(0), self.Edit_tag_Listwidget.currentItem().text(1)]
+            self.tagEditWin = tagEditWin(
+                self.MediaPlayer, Text= self.prev_text[0], Time= self.prev_text[1])
+            self.tagEditWin.show()
+        except Exception as e:
+            print(e)
+    
+
+    def del_Tag(self):
+        item = [self.Edit_tag_Listwidget.currentItem().text(0), self.Edit_tag_Listwidget.currentItem().text(1)]
+        session = self.comboBox_Tag.currentText().split(".")[0]
+        if session in self.MediaPlayer.allTag:
+            self.MediaPlayer.confirmWin = confrimWin(self.MediaPlayer, session= session 
+                , Text= f"are you sure to delete ({item[0]}) tag", tagPartText= item, Title= "delete tag")
+            self.MediaPlayer.confirmWin.show()
+        else:
+            print("error in finding session -> delete")
+
+    
+
+    def add_Tag(self):
+        self.pushButton_Edit.setEnabled(False)
+        self.pushButton_Add.setEnabled(False)
+        self.tagEditWin = tagEditWin(
+            self.MediaPlayer, Title= "Add tag")
+        self.tagEditWin.show()
+
+
+    # def uploadTags(self):
+    #     self.UDWin = UDWin(self.MediaPlayer)
+    #     self.UDWin.show()
+
+
+
+    # def downloadTags(self):
+    #     pass
+
+
+    
+
+
+    # Edit part ended 
+    # **********
+        
 
 
 
@@ -129,6 +207,7 @@ class SettingWindow(QMainWindow, Form, QtCore.QThread):
         Theme_module.saveANDexit(self)
         if self.Account_changing:
             self.label_finish.setVisible(False)
+
 
             if not self.label_NotMatch.isVisible():
                 if not self.label_PassLong.isVisible():

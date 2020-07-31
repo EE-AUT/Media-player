@@ -35,7 +35,7 @@
        <string/>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>3</number>
       </property>
       <widget class="QWidget" name="Theme">
        <attribute name="title">
@@ -99,8 +99,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>300</width>
-             <height>260</height>
+             <width>271</width>
+             <height>312</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -986,7 +986,13 @@
          </layout>
         </item>
         <item>
-         <widget class="QListView" name="listView_Tag"/>
+         <widget class="QTreeWidget" name="Edit_tag_Listwidget">
+          <column>
+           <property name="text">
+            <string notr="true">1</string>
+           </property>
+          </column>
+         </widget>
         </item>
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_15">

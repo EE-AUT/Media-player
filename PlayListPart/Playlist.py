@@ -64,8 +64,11 @@ class PlaylistWindow(QMainWindow, Form, QtCore.QThread):
         #To update part of Tags of file  Dackwidget 
         self.MediaPlayer.ComboBox_Tags_of_file.clear()
         self.MediaPlayer.ComboBox_Tags_of_file.addItems(self.Files.keys())
+        self.MediaPlayer.Setting.comboBox_Tag.addItems(self.Files.keys())
         index = self.MediaPlayer.ComboBox_Tags_of_file.findText(self.FileName)
         self.MediaPlayer.ComboBox_Tags_of_file.setCurrentIndex(index)
+        self.MediaPlayer.Setting.comboBox_Tag.setCurrentIndex(index)
+
 
     def listview_clicked(self, val):
         self.spliter = len(str(self.listWidget_Playlist.currentRow()+1)) + 3
@@ -101,6 +104,7 @@ class PlaylistWindow(QMainWindow, Form, QtCore.QThread):
         currentText = val.text()[self.spliter:]
         index = self.MediaPlayer.ComboBox_Tags_of_file.findText(currentText)
         self.MediaPlayer.ComboBox_Tags_of_file.setCurrentIndex(index)
+        self.MediaPlayer.Setting.comboBox_Tag.setCurrentIndex(index)
         self.MediaPlayer.set_TagonListwidget(currentText.split(".")[0])
 
 
@@ -117,6 +121,7 @@ class PlaylistWindow(QMainWindow, Form, QtCore.QThread):
         #To update part of Tags of file  Dackwidget 
         self.MediaPlayer.ComboBox_Tags_of_file.clear()
         self.MediaPlayer.ComboBox_Tags_of_file.addItems(self.Files.keys())
+        self.MediaPlayer.Setting.comboBox_Tag.addItems(self.Files.keys())
 
     def del_file(self):
         
@@ -129,4 +134,5 @@ class PlaylistWindow(QMainWindow, Form, QtCore.QThread):
         #To update part of Tags of file  Dackwidget 
         self.MediaPlayer.ComboBox_Tags_of_file.clear()
         self.MediaPlayer.ComboBox_Tags_of_file.addItems(self.Files.keys())
+        self.MediaPlayer.Setting.comboBox_Tag.addItems(self.Files.keys())
         

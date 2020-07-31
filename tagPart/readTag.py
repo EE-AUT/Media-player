@@ -36,7 +36,7 @@ def read_csv(filename):
 
 
 
-def read_doc(filename):
+def read_docx(filename):
     try:
         # read from word tables
         wordDoc = Document(filename)

@@ -26,19 +26,11 @@ def upload_Database(user, filename, filepath):
                         sheet.delete_rows(1, len(sheet.get_all_values()))
                         sheet.insert_rows(data)
                         return True
-                sheet = sh.add_worksheet(title=filename, rows=10000, cols= 20) # create new worksheet
+                sheet = sh.add_worksheet(title=filename, rows=10000, cols= 20) # create new worksheet if there in no worksheet for tags
                 sheet.insert_rows(data)
                 return True
+        return False
 
-        print("there is no databse for this user")
-        try: # if there is no Spreadsheet with user
-            sh = client.create(user)
-            sheet = sh.add_worksheet(filename)
-            sheet.insert_rows(data)
-            return True
-        except Exception as e: # handle Exception
-            return False
-            print(e)
     except Exception as e:
         print(e)
         return False
@@ -88,7 +80,38 @@ def set_csvData(filepath, data):
         return True
     except Exception as e:
         print(e)
-        return False          
+        return False       
+
+
+# return Worksheet and succesful result
+def get_allworksheet(user):
+    scope = ["https://spreadsheets.google.com/feeds","https://www.googleapis.com/auth/spreadsheets","https://www.googleapis.com/auth/drive.file","https://www.googleapis.com/auth/drive"]
+    try:
+        creds = ServiceAccountCredentials.from_json_keyfile_name("Database/json/creds.json", scope)
+        client = gspread.authorize(creds)
+        spreadsheets = client.list_spreadsheet_files()
+        for sh in spreadsheets:
+            if sh["name"] == user: # there is user spreadsheet
+                sheet = client.open(user)
+                worksheets = sheet.worksheets()
+                return worksheets, True
+
+        print("there is no databse for this user")
+        try: # if there is no Spreadsheet with user
+            sh = client.create(user)
+            return [], True
+        except Exception as e: # handle Exception
+            print(e)
+            return [], False
+        
+    except Exception as e:
+        print(e)
+        return [], False
+        
+
+            
+
+
 
 
 
