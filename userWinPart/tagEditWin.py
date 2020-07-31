@@ -22,6 +22,12 @@ class tagEditWin(QMainWindow, Form):
         self.MediaPlayer = parent
         self.Text = Text
         self.Time = Time
+        self.setWindowFlags(
+            QtCore.Qt.Window |
+            QtCore.Qt.CustomizeWindowHint |
+            QtCore.Qt.WindowTitleHint |
+            QtCore.Qt.WindowStaysOnTopHint
+        )
         if Title == "Change tag":
             self.Ok_Button.setText("Change")
             self.tag_LineEdit.setText(Text)

@@ -12,7 +12,7 @@ def upload_Database(user, filename, filepath):
     scope = ["https://spreadsheets.google.com/feeds","https://www.googleapis.com/auth/spreadsheets","https://www.googleapis.com/auth/drive.file","https://www.googleapis.com/auth/drive"]
 
     try:
-        creds = ServiceAccountCredentials.from_json_keyfile_name("creds.json", scope)
+        creds = ServiceAccountCredentials.from_json_keyfile_name("Database/json/creds.json", scope)
         client = gspread.authorize(creds)
         spreadsheets = client.list_spreadsheet_files()
         data = get_csvData(filepath)
@@ -42,7 +42,7 @@ def download_Database(user, filename, filepath):
     scope = ["https://spreadsheets.google.com/feeds","https://www.googleapis.com/auth/spreadsheets","https://www.googleapis.com/auth/drive.file","https://www.googleapis.com/auth/drive"]
     
     try:
-        creds = ServiceAccountCredentials.from_json_keyfile_name("creds.json", scope)
+        creds = ServiceAccountCredentials.from_json_keyfile_name("Database/json/creds.json", scope)
         client = gspread.authorize(creds)
         sh = client.open(user)
         sheet = sh.worksheet(filename)
@@ -56,7 +56,7 @@ def download_Database(user, filename, filepath):
 def get_csvData(filepath):
     data = []
     try:
-        with open("test.csv") as csvfile:
+        with open(filepath) as csvfile:
             file_reader = csv.reader(csvfile, delimiter='#')
             for row in file_reader:
                 data.append(row)
@@ -71,7 +71,7 @@ def set_csvData(filepath, data):
     try:
         with open(filepath, "w") as csvfile:
             for row in data:
-                if row[1] == "":
+                if len(row) == 2 and row[1] == "":
                     csvfile.write(row[0]+ "\n")
                 elif len(row) == 2:
                     csvfile.write(row[0] + "#" + row[1] + "\n")

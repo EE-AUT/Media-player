@@ -21,6 +21,12 @@ class confrimWin(QMainWindow, Form):
         self.session = session
         self.tag_Text = tag_Text
         self.tagPartText = tagPartText
+        self.setWindowFlags(
+            QtCore.Qt.Window |
+            QtCore.Qt.CustomizeWindowHint |
+            QtCore.Qt.WindowTitleHint |
+            QtCore.Qt.WindowStaysOnTopHint
+        )
 
         self.yes_Button.clicked.connect(self.yes_Clicked)
         self.no_Button.clicked.connect(self.no_Clicked)

@@ -26,11 +26,11 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QLineEdit" name="newWsh_LineEdit">
+   <widget class="QLineEdit" name="LineEdit">
     <property name="geometry">
      <rect>
       <x>50</x>
-      <y>110</y>
+      <y>80</y>
       <width>250</width>
       <height>22</height>
      </rect>
@@ -46,7 +46,7 @@
     <property name="geometry">
      <rect>
       <x>50</x>
-      <y>140</y>
+      <y>110</y>
       <width>151</width>
       <height>20</height>
      </rect>
@@ -59,7 +59,7 @@
     <property name="geometry">
      <rect>
       <x>51</x>
-      <y>52</y>
+      <y>22</y>
       <width>249</width>
       <height>24</height>
      </rect>
@@ -102,7 +102,7 @@
     <property name="geometry">
      <rect>
       <x>80</x>
-      <y>190</y>
+      <y>160</y>
       <width>195</width>
       <height>30</height>
      </rect>
@@ -110,6 +110,12 @@
     <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
       <widget class="QPushButton" name="Ok_Button">
+       <property name="styleSheet">
+        <string notr="true">QPushButton::hover
+{
+background-color: rgb(0, 170, 0);
+}</string>
+       </property>
        <property name="text">
         <string>Ok</string>
        </property>
@@ -117,12 +123,50 @@
      </item>
      <item>
       <widget class="QPushButton" name="Cancel_Button">
+       <property name="styleSheet">
+        <string notr="true">QPushButton::hover
+{
+background-color: rgb(255, 0, 0);
+}</string>
+       </property>
        <property name="text">
         <string>Cancel</string>
        </property>
       </widget>
      </item>
     </layout>
+   </widget>
+   <widget class="QLabel" name="label_Msg">
+    <property name="geometry">
+     <rect>
+      <x>50</x>
+      <y>210</y>
+      <width>250</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+    <property name="wordWrap">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="Browse_Button">
+    <property name="geometry">
+     <rect>
+      <x>50</x>
+      <y>110</y>
+      <width>93</width>
+      <height>28</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Browse</string>
+    </property>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">

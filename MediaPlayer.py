@@ -50,9 +50,8 @@ class MediaPlayer(QMainWindow, Form):
 
         # Create Tags
         self.allTag = {}
+        self.tag_Path = None
 
-        # initial None
-        self.confirmWin = None
 
         # create Volume Slide
         self.Slider_Volume = Slider(self)

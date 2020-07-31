@@ -69,6 +69,7 @@ class SettingWindow(QMainWindow, Form, QtCore.QThread):
         self.lineEdit_NewPass.editingFinished.connect(self.NewPass)
         self.lineEdit_ReNewpass.textChanged.connect(
             lambda: self.label_NotMatch.setVisible(False))
+        
 
         
         # Edit tag part
@@ -77,11 +78,16 @@ class SettingWindow(QMainWindow, Form, QtCore.QThread):
         self.pushButton_Edit.clicked.connect(self.edit_Tag) 
         self.pushButton_Delete.clicked.connect(self.del_Tag)
         self.pushButton_Add.clicked.connect(self.add_Tag)
-        # self.pushButton_Upload.clicked.connect(self.uploadTags)
-        # self.pushButton_Download.clicked.connect(self.downloadTags)
+        self.pushButton_Upload.clicked.connect(self.uploadTags)
+        self.pushButton_Download.clicked.connect(self.downloadTags)
         self.prev_text = None
         self.tagEditWin = None
-        self.UDWin = None
+        self.UDWin = UDWin(self.MediaPlayer)
+        self.confirmWin = None
+
+
+        # close event
+        self.closeEvent = self.Close
 
 
 
@@ -153,9 +159,9 @@ class SettingWindow(QMainWindow, Form, QtCore.QThread):
         item = [self.Edit_tag_Listwidget.currentItem().text(0), self.Edit_tag_Listwidget.currentItem().text(1)]
         session = self.comboBox_Tag.currentText().split(".")[0]
         if session in self.MediaPlayer.allTag:
-            self.MediaPlayer.confirmWin = confrimWin(self.MediaPlayer, session= session 
+            self.confirmWin = confrimWin(self.MediaPlayer, session= session 
                 , Text= f"are you sure to delete ({item[0]}) tag", tagPartText= item, Title= "delete tag")
-            self.MediaPlayer.confirmWin.show()
+            self.confirmWin.show()
         else:
             print("error in finding session -> delete")
 
@@ -169,21 +175,33 @@ class SettingWindow(QMainWindow, Form, QtCore.QThread):
         self.tagEditWin.show()
 
 
-    # def uploadTags(self):
-    #     self.UDWin = UDWin(self.MediaPlayer)
-    #     self.UDWin.show()
+    def uploadTags(self):
+        if not self.UDWin.isVisible():
+            self.UDWin = UDWin(self.MediaPlayer)
+            self.UDWin.user_Msg(
+                text= "Please wait to update list of your tag", stylesheet= "color:rgb(0, 170, 0);")
+            self.UDWin.show()
 
 
 
-    # def downloadTags(self):
-    #     pass
+    def downloadTags(self):
+        if not self.UDWin.isVisible():
+            self.UDWin = UDWin(self.MediaPlayer, "Download Database")
+            self.UDWin.user_Msg(
+                text= "Please wait to update list of your tag", stylesheet= "color:rgb(0, 170, 0);")
+            self.UDWin.show()
 
-
-    
-
-
+            
     # Edit part ended 
     # **********
+
+    def Close(self, val):
+        self.UDWin.close()
+        if self.tagEditWin:
+            self.tagEditWin.close()
+        if self.confirmWin:
+            self.confirmWin.close()
+
         
 
 
