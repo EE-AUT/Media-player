@@ -7,7 +7,7 @@ from time import sleep
 import LoginPart.Login as Login
 import SettingPart.Setting as Setting
 import PlayListPart.Playlist as Playlist
-from PyQt5.QtWidgets import QApplication, QWidget, QMainWindow, QComboBox, QVBoxLayout, QDockWidget, QMenuBar, QFileDialog, QLineEdit, QListWidget, QSlider, QShortcut, QTreeWidgetItem
+from PyQt5.QtWidgets import QApplication, QWidget, QMainWindow, QComboBox, QVBoxLayout, QDockWidget, QMenuBar, QFileDialog, QLineEdit, QListWidget, QSlider, QShortcut, QTreeWidgetItem, QGraphicsView
 from PyQt5 import uic, QtCore, QtGui
 from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
 from PyQt5.QtCore import Qt, QUrl
@@ -66,6 +66,7 @@ class MediaPlayer(QMainWindow, Form):
         self.Slider_Play.resize(644, 22)
         self.horizontalLayout_4.addWidget(self.Slider_Play, 1)
         self.horizontalLayout_4.addWidget(self.label_Time, 0)
+        
 
         # To Apply Theme
         self.Setting = Setting.SettingWindow(self)
@@ -132,10 +133,12 @@ class MediaPlayer(QMainWindow, Form):
         self.player.positionChanged.connect(self.Position_changed)
         self.player.durationChanged.connect(self.Duration_changed)
         self.Slider_Play.setUP_Slider.connect(self.Set_Position)
+        self.Slider_Play.moveMent_Position.connect(self.slider_pos)
 
         # Slider Volume
         self.Slider_Volume.setRange(0, 0)
         self.Slider_Volume.setUP_Slider.connect(self.Set_volume)
+        
 
         # Tool Bar
         self.actionOpen.triggered.connect(self.Load_video)
@@ -341,6 +344,10 @@ class MediaPlayer(QMainWindow, Form):
         self.Slider_Play.setValue(position)
         self.player.setPosition(position)
 
+
+    def slider_pos(self, position):
+        print(position)
+
     def Set_volume(self, volume):
         # self.Slider_Volume.setValue(volume)
         if 100 <= volume:
@@ -359,6 +366,8 @@ class MediaPlayer(QMainWindow, Form):
 
         self.Slider_Volume.setValue(volume)
         self.player.setVolume(volume)
+
+
 
     def volumeOnOff(self):
         if self.player.isAudioAvailable() or self.player.isVideoAvailable():
@@ -627,15 +636,24 @@ class MediaPlayer(QMainWindow, Form):
 
 class Slider(QSlider):
     setUP_Slider = QtCore.pyqtSignal(int)
+    moveMent_Position = QtCore.pyqtSignal(int)
 
     def __init__(self, MediaPlayer):
         QSlider.__init__(self, parent=MediaPlayer)
+        self.setMouseTracking(True)
 
     def mousePressEvent(self, position):
         self.setUP_Slider.emit(position.pos().x())
 
     def mouseMoveEvent(self, position):
-        self.setUP_Slider.emit(position.x())
+        # simple movement
+        if position.buttons() == QtCore.Qt.NoButton:
+            self.moveMent_Position.emit(position.x())
+
+        # Drag slider
+        elif position.buttons() == QtCore.Qt.LeftButton:
+            self.setUP_Slider.emit(position.x())
+
 
 
 
