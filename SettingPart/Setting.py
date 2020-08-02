@@ -156,14 +156,17 @@ class SettingWindow(QMainWindow, Form, QtCore.QThread):
     
 
     def del_Tag(self):
-        item = [self.Edit_tag_Listwidget.currentItem().text(0), self.Edit_tag_Listwidget.currentItem().text(1)]
-        session = self.comboBox_Tag.currentText().split(".")[0]
-        if session in self.MediaPlayer.allTag:
-            self.confirmWin = confrimWin(self.MediaPlayer, session= session 
-                , Text= f"are you sure to delete ({item[0]}) tag", tagPartText= item, Title= "delete tag")
-            self.confirmWin.show()
-        else:
-            print("error in finding session -> delete")
+        try:
+            item = [self.Edit_tag_Listwidget.currentItem().text(0), self.Edit_tag_Listwidget.currentItem().text(1)]
+            session = self.comboBox_Tag.currentText().split(".")[0]
+            if session in self.MediaPlayer.allTag:
+                self.confirmWin = confrimWin(self.MediaPlayer, session= session 
+                    , Text= f"are you sure to delete ({item[0]}) tag", tagPartText= item, Title= "delete tag")
+                self.confirmWin.show()
+            else:
+                print("error in finding session -> delete")
+        except Exception as e:
+            print(e)
 
     
 

@@ -5,7 +5,7 @@ from editPart import timeconvert as tc
 from editPart.edit import edit_Tags
 import re
 from editPart.edit import edit_Tags
-
+from bookmarkPart.bookmark import add_Bookmark
 
 
 
@@ -53,16 +53,26 @@ class tagEditWin(QMainWindow, Form):
                     if self.Title == "Change tag": # if change tag
                         del self.MediaPlayer.allTag[session][self.Text]
                         self.MediaPlayer.allTag[session].update({text : time})
-                        self.MediaPlayer.set_TagonListwidget(session) # update tags
+                        self.MediaPlayer.set_TagonListwidget(session) # update tags in Edit part
                         edit_Tags(
                             self.Text + "#" + self.Time, text + "#" + time, self.MediaPlayer.tag_Path)
                         self.close()
 
                     elif self.Title == "Add tag": # if add tag
-                        self.MediaPlayer.allTag[session].update({text : time}) # add tag 
-                        self.MediaPlayer.set_TagonListwidget(session) # update tags
-                        edit_Tags( # add tag to csv file
-                            session + "\n", session + "\n" + text + "#" + time + "\n", self.MediaPlayer.tag_Path)
+                        if session in self.MediaPlayer.allTag:
+                            self.MediaPlayer.allTag[session].update({text : time}) # add tag
+                            edit_Tags( # add tag to csv file
+                                session + "\n", session + "\n" + text + "#" + time + "\n", self.MediaPlayer.tag_Path)
+                        else:
+                            # if there is no tag for session in database
+                            self.MediaPlayer.allTag.update({session : {text : time}})
+                            add_Bookmark(text + "#" + time, session, self.MediaPlayer.tag_Path) 
+                            
+
+                        if session == self.MediaPlayer.ComboBox_Tags_of_file.currentText().split(".")[0]: # check for syncronise media tags and setting tags 
+                            self.MediaPlayer.set_TagonListwidget(session) # update tags in add part
+                        else:
+                            self.MediaPlayer.set_TagonListwidget(session, Media_Tags= False) # update tags in add part
                         self.close()
                 else:
                     print("current format")
