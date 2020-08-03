@@ -16,7 +16,6 @@ def fullscreen(MediaPlayer):
         MediaPlayer.Label_temp3 = QLabel("", MediaPlayer)
         MediaPlayer.Label_temp4 = QLabel("", parent=MediaPlayer)
         MediaPlayer.Label_temp5 = QLabel("", parent=MediaPlayer)
-        MediaPlayer.Label_temp6 = QLabel("", parent=MediaPlayer)
         MediaPlayer.Label_temp7 = QLabel("", parent=MediaPlayer)
         MediaPlayer.frame = QFrame(parent=MediaPlayer)
         MediaPlayer.lay = QHBoxLayout()
@@ -51,15 +50,13 @@ def Remove_from_layout(MediaPlayer):
     MediaPlayer.Label_temp4.resize(15,20)
     
     MediaPlayer.Slider_Play.move(15, screenHeight-50)
-    MediaPlayer.Slider_Play.resize(screenWidth-95, 20)
-    MediaPlayer.Label_temp5.move(screenWidth-80,screenHeight-50)
+    MediaPlayer.Slider_Play.resize(screenWidth-100, 20)
+    MediaPlayer.Label_temp5.move(screenWidth-85,screenHeight-50)
     MediaPlayer.Label_temp5.resize(15,20)
 
-    MediaPlayer.label_Time.move(screenWidth-65, screenHeight-50)
-    MediaPlayer.label_Time.resize(50, 20)
+    MediaPlayer.label_Time.move(screenWidth-70, screenHeight-50)
+    MediaPlayer.label_Time.resize(70, 20)
 
-    MediaPlayer.Label_temp6.move(screenWidth-15,screenHeight-50)
-    MediaPlayer.Label_temp6.resize(15,20)
     # Remove some pushButton from their layout and resize , move it
     MediaPlayer.horizontalLayout.removeWidget(MediaPlayer.pushButton_Start)
     MediaPlayer.horizontalLayout.removeWidget(MediaPlayer.pushButton_stop)
@@ -155,7 +152,6 @@ def Add_to_layout(MediaPlayer):
     MediaPlayer.Label_temp2.setVisible(False)
     MediaPlayer.Label_temp4.setVisible(False)
     MediaPlayer.Label_temp5.setVisible(False)
-    MediaPlayer.Label_temp6.setVisible(False)
     MediaPlayer.Label_temp7.setVisible(False)
 def Set_visible(MediaPlayer, Bool):
     # To SetVisible all widget True or False
@@ -163,7 +159,6 @@ def Set_visible(MediaPlayer, Bool):
     MediaPlayer.Label_temp2.setVisible(Bool)
     MediaPlayer.Label_temp4.setVisible(Bool)
     MediaPlayer.Label_temp5.setVisible(Bool)
-    MediaPlayer.Label_temp6.setVisible(Bool)
     MediaPlayer.Label_temp7.setVisible(Bool)
     MediaPlayer.Slider_Play.setVisible(Bool)
     MediaPlayer.label_Time.setVisible(Bool)

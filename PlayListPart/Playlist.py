@@ -18,7 +18,6 @@ class PlaylistWindow(QMainWindow, Form, QtCore.QThread):
         self.File_Path = os.getcwd()
         self.Files = dict()
 
-
         # To Specialize flags
         self.setWindowFlags(
             QtCore.Qt.Window |
@@ -31,7 +30,6 @@ class PlaylistWindow(QMainWindow, Form, QtCore.QThread):
         self.listWidget_Playlist.itemActivated.connect(self.listview_clicked)
         self.pushButton_Add.clicked.connect(self.add_file)
         self.pushButton_Delete.clicked.connect(self.del_file)
-
 
     def Create_Playlist(self, file_path):
         self.listWidget_Playlist.clear()
@@ -61,14 +59,13 @@ class PlaylistWindow(QMainWindow, Form, QtCore.QThread):
         if self.listWidget_Playlist.currentRow() != self.listWidget_Playlist.count()-1:
             self.MediaPlayer.pushButton_next.setEnabled(True)
 
-        #To update part of Tags of file  Dackwidget 
+        # To update part of Tags of file  Dackwidget
         self.MediaPlayer.ComboBox_Tags_of_file.clear()
         self.MediaPlayer.ComboBox_Tags_of_file.addItems(self.Files.keys())
         self.MediaPlayer.Setting.comboBox_Tag.addItems(self.Files.keys())
         index = self.MediaPlayer.ComboBox_Tags_of_file.findText(self.FileName)
         self.MediaPlayer.ComboBox_Tags_of_file.setCurrentIndex(index)
         self.MediaPlayer.Setting.comboBox_Tag.setCurrentIndex(index)
-
 
     def listview_clicked(self, val):
         self.spliter = len(str(self.listWidget_Playlist.currentRow()+1)) + 3
@@ -89,7 +86,8 @@ class PlaylistWindow(QMainWindow, Form, QtCore.QThread):
             self.MediaPlayer.pushButton_next.setEnabled(True)
 
         self.MediaPlayer.pushButton_stop.setEnabled(True)
-        self.MediaPlayer.setWindowTitle(f" Media Player - {val.text()[self.spliter:]}")
+        self.MediaPlayer.setWindowTitle(
+            f" Media Player - {val.text()[self.spliter:]}")
         self.MediaPlayer.pushButton_volume.setEnabled(True)
         self.MediaPlayer.pushButton_volume.setIcon(
             QtGui.QIcon('./Icons/unmute.png'))
@@ -107,7 +105,6 @@ class PlaylistWindow(QMainWindow, Form, QtCore.QThread):
         self.MediaPlayer.Setting.comboBox_Tag.setCurrentIndex(index)
         self.MediaPlayer.set_TagonListwidget(currentText.split(".")[0])
 
-
     def add_file(self):
         file_path, _ = QFileDialog.getOpenFileName(
             self, "Open video", directory=self.File_Path, filter='*.mp4 *.mkv *.mp3')
@@ -118,21 +115,38 @@ class PlaylistWindow(QMainWindow, Form, QtCore.QThread):
                 self.listWidget_Playlist.addItem(
                     f'{self.listWidget_Playlist.count()+1} . {file_name}')
 
-        #To update part of Tags of file  Dackwidget 
+        # To update part of Tags of file  Dackwidget
         self.MediaPlayer.ComboBox_Tags_of_file.clear()
         self.MediaPlayer.ComboBox_Tags_of_file.addItems(self.Files.keys())
         self.MediaPlayer.Setting.comboBox_Tag.addItems(self.Files.keys())
 
     def del_file(self):
-        
-        self.spliter = len(str(self.listWidget_Playlist.currentRow()+1)) + 3
-        if self.listWidget_Playlist.count():
-            self.Files.pop(self.listWidget_Playlist.currentItem().text()[self.spliter:])
-            self.listWidget_Playlist.takeItem(
-                self.listWidget_Playlist.currentRow())
+        self.spliter = len(
+            str(self.listWidget_Playlist.currentRow()+1)) + 3
+        Selected_Item = self.listWidget_Playlist.currentItem().text()[
+            self.spliter:]
+        # If the selected Item is playing
+        if Selected_Item == self.MediaPlayer.windowTitle()[16:]:
+            index = list(self.Files.keys()).index(Selected_Item)
 
-        #To update part of Tags of file  Dackwidget 
+        if self.listWidget_Playlist.count():
+            self.Files.pop(Selected_Item)
+            self.listWidget_Playlist.clear()
+            for file in self.Files:
+                self.listWidget_Playlist.addItem(
+                    f'{self.listWidget_Playlist.count()+1} . {file}')
+
+        # If the selected Item is playing
+        if Selected_Item == self.MediaPlayer.windowTitle()[16:]:
+            self.listWidget_Playlist.setCurrentRow(index-1)
+        if self.MediaPlayer.windowTitle()[16:] in self.Files.keys():
+            #If the playing Item is last item
+            if list(self.Files.keys()).index(self.MediaPlayer.windowTitle()[16:]) == self.listWidget_Playlist.count()-1:
+                self.MediaPlayer.pushButton_next.setEnabled(False)
+            #If the playing Item is first item
+            if list(self.Files.keys()).index(self.MediaPlayer.windowTitle()[16:]) == 0:
+                self.MediaPlayer.pushButton_previous.setEnabled(False)
+        # To update part of Tags of file  Dackwidget
         self.MediaPlayer.ComboBox_Tags_of_file.clear()
         self.MediaPlayer.ComboBox_Tags_of_file.addItems(self.Files.keys())
         self.MediaPlayer.Setting.comboBox_Tag.addItems(self.Files.keys())
-        
