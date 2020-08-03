@@ -163,7 +163,6 @@ def Set_visible(MediaPlayer, Bool):
     MediaPlayer.Slider_Play.setVisible(Bool)
     MediaPlayer.label_Time.setVisible(Bool)
 
-    MediaPlayer.pushButton_Start.setVisible(Bool)
     MediaPlayer.pushButton_stop.setVisible(Bool)
     MediaPlayer.pushButton_previous.setVisible(Bool)
     MediaPlayer.pushButton_open.setVisible(Bool)
@@ -177,3 +176,4 @@ def Set_visible(MediaPlayer, Bool):
     MediaPlayer.pushButton_Search.setVisible(Bool)
     MediaPlayer.pushButton_BookMark.setVisible(Bool)
     MediaPlayer.frame.setVisible(Bool)
+    MediaPlayer.pushButton_Start.setVisible(Bool)

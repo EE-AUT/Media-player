@@ -222,6 +222,7 @@ class MediaPlayer(QMainWindow, Form):
             self.pushButton_Start.setEnabled(True)
             self.pushButton_Start.setIcon(QIcon('./Icons/pause.png'))
             self.pushButton_Start.setToolTip("Pause")
+        self.pushButton_Start.setFocus(True)
 
     def stop(self):
         if self.player.isAudioAvailable() or self.player.isVideoAvailable():
