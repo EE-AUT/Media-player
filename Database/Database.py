@@ -11,7 +11,7 @@ def get_Database():
     try:
 
         creds = ServiceAccountCredentials.from_json_keyfile_name(
-            "Database/json/creds.json", scope)
+            "./Database/json/creds.json", scope)
         client = gspread.authorize(creds)
         sheet = client.open("test").sheet1
         data = sheet.get_all_records()
@@ -27,7 +27,7 @@ def exist_Email(Email):
 
     try:
         creds = ServiceAccountCredentials.from_json_keyfile_name(
-            "Database/json/creds.json", scope)
+            "./Database/json/creds.json", scope)
         client = gspread.authorize(creds)
         sheet = client.open("test").sheet1
         data = sheet.get_all_records()
@@ -46,7 +46,7 @@ def add_User(user):
 
     try:
         creds = ServiceAccountCredentials.from_json_keyfile_name(
-            "Database/json/creds.json", scope)
+            "./Database/json/creds.json", scope)
         client = gspread.authorize(creds)
         sheet = client.open("test").sheet1
         data = sheet.get_all_records()
@@ -65,7 +65,7 @@ def Change_password(oldPass, NewPass):
 
     try:
         creds = ServiceAccountCredentials.from_json_keyfile_name(
-            "Database/json/creds.json", scope)
+            "./Database/json/creds.json", scope)
         client = gspread.authorize(creds)
         sheet = client.open("test").sheet1
         address = sheet.find('#'+oldPass)

@@ -12,7 +12,7 @@ def upload_Database(user, filename, filepath):
     scope = ["https://spreadsheets.google.com/feeds","https://www.googleapis.com/auth/spreadsheets","https://www.googleapis.com/auth/drive.file","https://www.googleapis.com/auth/drive"]
 
     try:
-        creds = ServiceAccountCredentials.from_json_keyfile_name("Database/json/creds.json", scope)
+        creds = ServiceAccountCredentials.from_json_keyfile_name("./Database/json/creds.json", scope)
         client = gspread.authorize(creds)
         spreadsheets = client.list_spreadsheet_files()
         data = get_csvData(filepath)
@@ -42,7 +42,7 @@ def download_Database(user, filename, filepath):
     scope = ["https://spreadsheets.google.com/feeds","https://www.googleapis.com/auth/spreadsheets","https://www.googleapis.com/auth/drive.file","https://www.googleapis.com/auth/drive"]
     
     try:
-        creds = ServiceAccountCredentials.from_json_keyfile_name("Database/json/creds.json", scope)
+        creds = ServiceAccountCredentials.from_json_keyfile_name("./Database/json/creds.json", scope)
         client = gspread.authorize(creds)
         sh = client.open(user)
         sheet = sh.worksheet(filename)
@@ -87,7 +87,7 @@ def set_csvData(filepath, data):
 def get_allworksheet(user):
     scope = ["https://spreadsheets.google.com/feeds","https://www.googleapis.com/auth/spreadsheets","https://www.googleapis.com/auth/drive.file","https://www.googleapis.com/auth/drive"]
     try:
-        creds = ServiceAccountCredentials.from_json_keyfile_name("Database/json/creds.json", scope)
+        creds = ServiceAccountCredentials.from_json_keyfile_name("./Database/json/creds.json", scope)
         client = gspread.authorize(creds)
         spreadsheets = client.list_spreadsheet_files()
         for sh in spreadsheets:
