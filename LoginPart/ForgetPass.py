@@ -10,11 +10,10 @@ import os
 Form = uic.loadUiType(os.path.join(os.getcwd(), 'LoginPart/ForgetPass.ui'))[0]
 
 
-class ForgetPassWindow(QDialog, Form, QtCore.QThread):
+class ForgetPassWindow(QDialog, Form):
     def __init__(self, window):
         QDialog.__init__(self)
         Form.__init__(self)
-        QtCore.QThread.__init__(self, window)
         self.setupUi(self)
         self.setWindowFlags(
             QtCore.Qt.Window |

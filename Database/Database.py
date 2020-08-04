@@ -85,5 +85,25 @@ def Edit_user(newPass):
     with open("LoginPart/User.csv", "w") as csvfile:
         csvfile.write(Newstring)
 
+ 
+def Delete_Account(Mediaplayer,SettingW,Email):
+    scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/spreadsheets",
+             "https://www.googleapis.com/auth/drive.file", "https://www.googleapis.com/auth/drive"]
+
+    try:
+        creds = ServiceAccountCredentials.from_json_keyfile_name(
+            "./Database/json/creds.json", scope)
+        client = gspread.authorize(creds)
+        sheet = client.open("test").sheet1
+        address = sheet.find(Email)
+        sheet.delete_row(address.row)
+        SettingW.close()
+        Mediaplayer.Logout()
+        return True
+    except:
+        print('OH')
+        return False
+
+
 if __name__ == "__main__":
     print(get_Database())

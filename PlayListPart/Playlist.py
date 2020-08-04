@@ -93,11 +93,8 @@ class PlaylistWindow(QMainWindow, Form):
         self.MediaPlayer.pushButton_volume.setToolTip("Mute")
         if not self.MediaPlayer.isFullScreen():
             self.MediaPlayer.pushButton_BookMark.setVisible(True)
-        self.MediaPlayer.Slider_Volume.setRange(
-            0, self.MediaPlayer.player.volume())
-        self.MediaPlayer.Set_volume(80)
 
-        # updata combo and listwidget of tags
+        #Updata combo and listwidget of tags
         currentText = val.text()[self.spliter:]
         index = self.MediaPlayer.ComboBox_Tags_of_file.findText(currentText)
         self.MediaPlayer.ComboBox_Tags_of_file.setCurrentIndex(index)

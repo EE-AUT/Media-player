@@ -42,20 +42,24 @@ def Remove_from_layout(MediaPlayer):
     MediaPlayer.videowidget.resize(screenWidth, screenHeight)
     MediaPlayer.videowidget.move(0, 0)
 
-    # Remove Slider and Time_Label from their layout and resize , move it
+    # Remove Slider and Time_Label and Duration_label from their layout and resize , move it
+    MediaPlayer.horizontalLayout_4.removeWidget(MediaPlayer.label_Duration)
     MediaPlayer.horizontalLayout_4.removeWidget(MediaPlayer.Slider_Play)
     MediaPlayer.horizontalLayout_4.removeWidget(MediaPlayer.label_Time)
 
     MediaPlayer.Label_temp4.move( 0 ,screenHeight-50)
     MediaPlayer.Label_temp4.resize(15,20)
+
+    MediaPlayer.label_Time.move( 15 ,screenHeight-50)
+    MediaPlayer.label_Time.resize(70,20)
     
-    MediaPlayer.Slider_Play.move(15, screenHeight-50)
-    MediaPlayer.Slider_Play.resize(screenWidth-100, 20)
+    MediaPlayer.Slider_Play.move(85, screenHeight-50)
+    MediaPlayer.Slider_Play.resize(screenWidth-170, 20)
     MediaPlayer.Label_temp5.move(screenWidth-85,screenHeight-50)
     MediaPlayer.Label_temp5.resize(15,20)
 
-    MediaPlayer.label_Time.move(screenWidth-70, screenHeight-50)
-    MediaPlayer.label_Time.resize(70, 20)
+    MediaPlayer.label_Duration.move(screenWidth-70, screenHeight-50)
+    MediaPlayer.label_Duration.resize(70, 20)
 
     # Remove some pushButton from their layout and resize , move it
     MediaPlayer.horizontalLayout.removeWidget(MediaPlayer.pushButton_Start)
@@ -118,8 +122,9 @@ def Add_to_layout(MediaPlayer):
     MediaPlayer.verticalLayout.addWidget(MediaPlayer.videowidget)
     MediaPlayer.verticalLayout.removeItem(MediaPlayer.horizontalLayout_4)
     MediaPlayer.verticalLayout.addLayout(MediaPlayer.horizontalLayout_4)
-    MediaPlayer.horizontalLayout_4.addWidget(MediaPlayer.Slider_Play)
     MediaPlayer.horizontalLayout_4.addWidget(MediaPlayer.label_Time)
+    MediaPlayer.horizontalLayout_4.addWidget(MediaPlayer.Slider_Play)
+    MediaPlayer.horizontalLayout_4.addWidget(MediaPlayer.label_Duration)
     MediaPlayer.horizontalLayout_5.addWidget(MediaPlayer.pushButton_Setting)
     MediaPlayer.horizontalLayout_5.addWidget(MediaPlayer.pushButton_Playlist,12,alignment=QtCore.Qt.AlignLeft)
 
@@ -162,7 +167,7 @@ def Set_visible(MediaPlayer, Bool):
     MediaPlayer.Label_temp7.setVisible(Bool)
     MediaPlayer.Slider_Play.setVisible(Bool)
     MediaPlayer.label_Time.setVisible(Bool)
-
+    MediaPlayer.label_Duration.setVisible(Bool)
     MediaPlayer.pushButton_stop.setVisible(Bool)
     MediaPlayer.pushButton_previous.setVisible(Bool)
     MediaPlayer.pushButton_open.setVisible(Bool)

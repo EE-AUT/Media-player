@@ -68,7 +68,8 @@ class SettingWindow(QMainWindow, Form):
         self.lineEdit_NewPass.editingFinished.connect(self.NewPass)
         self.lineEdit_ReNewpass.textChanged.connect(
             lambda: self.label_NotMatch.setVisible(False))
-        
+
+        self.pushButton_Delete_Acc.clicked.connect(self.DelAcc)
 
         
         # Edit tag part
@@ -134,6 +135,8 @@ class SettingWindow(QMainWindow, Form):
         else:
             self.label_Error.setVisible(True)
 
+    def DelAcc(self):
+        Account.DeleteAcc(self,self.MediaPlayer)
     
 
     # Edit tag part
