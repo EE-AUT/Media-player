@@ -36,7 +36,9 @@ class MediaPlayer(QMainWindow, Form):
         self.sch_listWidget = QListWidget(self)
         self.sch_listWidget.setVisible(False)
         self.search_lineEdit.setVisible(False)
-        self.videowidget.mouseDoubleClickEvent=self.Doubleclick_mouse
+        self.videowidget.mouseDoubleClickEvent = self.Doubleclick_mouse
+        self.wheelEvent = self.Scroll_mouse
+
         self.mouseReleaseEvent = self.MainWindow_Event
         self.resizeEvent = self.main_size_Change
         self.search_Thread = None
@@ -133,11 +135,21 @@ class MediaPlayer(QMainWindow, Form):
         self.player.positionChanged.connect(self.Position_changed)
         self.player.durationChanged.connect(self.Duration_changed)
         self.Slider_Play.setUP_Slider.connect(self.Set_Position)
-        self.Slider_Play.moveMent_Position.connect(self.slider_pos)
-
+        self.Slider_Play.moveMent_Position.connect(self.slider_play_pos)
+        # For Slider Time
+        self.Slider_play_label = QLabel("Time", parent=self)
+        self.Slider_play_label.resize(50, 20)
+        self.Slider_play_label.setAlignment(Qt.AlignCenter)
+        self.Slider_play_label.setVisible(False)
         # Slider Volume
         self.Slider_Volume.setRange(0, 0)
         self.Slider_Volume.setUP_Slider.connect(self.Set_volume)
+        self.Slider_Volume.moveMent_Position.connect(self.slider_volume_pos)
+        # For Slider Volume
+        self.Slider_Volume_label = QLabel("Volume", parent=self)
+        self.Slider_Volume_label.resize(30, 20)
+        self.Slider_Volume_label.setAlignment(Qt.AlignCenter)
+        self.Slider_Volume_label.setVisible(False)
 
         # Tool Bar
         self.actionOpen.triggered.connect(self.Load_video)
@@ -166,12 +178,6 @@ class MediaPlayer(QMainWindow, Form):
         # For FullScreen part
         self.firstTime_fullscreen = True
 
-        # For Slider Time
-        self.Slider_label = QLabel("Time", parent=self)
-        self.Slider_label.resize(50, 20)
-        self.Slider_label.setAlignment(Qt.AlignCenter)
-        self.Slider_label.setVisible(False)
-
     # KeyPress Event
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_PageDown and self.pushButton_next.isEnabled():
@@ -180,21 +186,46 @@ class MediaPlayer(QMainWindow, Form):
             self.previous()
         if event.key() == Qt.Key_Enter or event.key() == Qt.Key_Return:
             self.fullscreen()
+        if event.key() == Qt.Key_6:
+            self.Move_Slider_play(self.width()*4500/self.player.duration())
+        if event.key() == Qt.Key_4:
+            self.Move_Slider_play(
+                (-1*self.width()*4500/self.player.duration()))
+        if event.key() == Qt.Key_8:
+            self.Move_Slider_volume(+1)
+        if event.key() == Qt.Key_2:
+            self.Move_Slider_volume(-1)
 
     def fullscreen(self):
         self.DockWidget_Tags_of_file.setVisible(False)
+        self.Slider_play_label.setVisible(False)
+        self.Slider_Volume_label.setVisible(False)
+
         Full_screen.fullscreen(self)
 
     def MousePos(self, position):
         if self.isFullScreen():
             Full_screen.MousePosition(self, position)
-        self.Slider_label.setVisible(False)
+        self.Slider_play_label.setVisible(False)
+        self.Slider_Volume_label.setVisible(False)
 
-
-    def Doubleclick_mouse(self,position):
+    def Doubleclick_mouse(self, position):
         if self.pushButton_Start.isEnabled():
             self.start()
 
+    def Scroll_mouse(self, event):
+        if self.player.isAudioAvailable() or self.player.isVideoAvailable():
+            self.Set_volume(int(self.player.volume() +
+                                event.angleDelta().y()/120))
+
+    def Move_Slider_play(self, move):
+        if self.player.isAudioAvailable() or self.player.isVideoAvailable():
+            Now = self.player.position()*self.Slider_Play.width()/self.player.duration()
+            self.Set_Position(Now+move)
+
+    def Move_Slider_volume(self, move):
+        if self.player.isAudioAvailable() or self.player.isVideoAvailable():
+            self.Set_volume(self.player.volume() + move)
 
     def Settingshow(self):
         self.Setting.Tab.setCurrentIndex(0)
@@ -345,36 +376,53 @@ class MediaPlayer(QMainWindow, Form):
         self.Slider_Play.setValue(position)
         self.player.setPosition(position)
 
-    def slider_pos(self, position):
+    def slider_play_pos(self, position):
         if self.player.isAudioAvailable() or self.player.isVideoAvailable():
             Time = int(self.player.duration() *
                        position/self.Slider_Play.width())
             hour = Time//(1000*3600)
             minute = (Time % (1000*3600))//(60*1000)
             second = ((Time % (1000*3600)) % (60*1000))//1000
-            self.Slider_label.setText(
+            self.Slider_play_label.setText(
                 f'{str(hour).zfill(2)}:{str(minute).zfill(2)}:{str(second).zfill(2)}')
-            self.Slider_label.move(position, self.height()-80)
-            self.Slider_label.setVisible(True)
+            if self.isFullScreen():
+                self.Slider_play_label.move(position, self.height()-65)
+            else:
+                self.Slider_play_label.move(position, self.height()-80)
+            self.Slider_play_label.setVisible(True)
+
+    def slider_volume_pos(self, position):
+        if self.player.isAudioAvailable() or self.player.isVideoAvailable():
+            volume = int(100*position/self.Slider_Volume.width())
+            self.Slider_Volume_label.setText(f'{volume}')
+            if self.isFullScreen():
+                self.Slider_Volume_label.move(
+                    position + self.Slider_Volume.x()-5, self.height()-37)
+            else:
+                self.Slider_Volume_label.move(
+                    position + self.Slider_Volume.x()-5, self.height()-48)
+            self.Slider_Volume_label.setVisible(True)
 
     def Set_volume(self, volume):
-        # self.Slider_Volume.setValue(volume)
-        if 100 <= volume:
-            volume = 100
-        elif volume <= 0:
-            volume = 0
-        if not volume:
-            self.player.setMuted(True)
-            self.pushButton_volume.setIcon(QIcon('./Icons/mute.png'))
-            self.pushButton_volume.setToolTip("UnMute")
+        if self.player.isAudioAvailable() or self.player.isVideoAvailable():
 
-        else:
-            self.player.setMuted(False)
-            self.pushButton_volume.setIcon(QIcon('./Icons/unmute.png'))
-            self.pushButton_volume.setToolTip("Mute")
+            if 100 <= volume:
+                volume = 100
+            elif volume <= 0:
+                volume = 0
 
-        self.Slider_Volume.setValue(volume)
-        self.player.setVolume(volume)
+            if not volume:
+                self.player.setMuted(True)
+                self.pushButton_volume.setIcon(QIcon('./Icons/mute.png'))
+                self.pushButton_volume.setToolTip("UnMute")
+
+            else:
+                self.player.setMuted(False)
+                self.pushButton_volume.setIcon(QIcon('./Icons/unmute.png'))
+                self.pushButton_volume.setToolTip("Mute")
+
+            self.Slider_Volume.setValue(volume)
+            self.player.setVolume(volume)
 
     def volumeOnOff(self):
         if self.player.isAudioAvailable() or self.player.isVideoAvailable():
@@ -421,7 +469,7 @@ class MediaPlayer(QMainWindow, Form):
         self.search_lineEdit.setFocus(True)
 
     def Update_Search_Animation(self, size):
-        if size==-1:
+        if size == -1:
             self.pushButton_Search.setEnabled(True)
         else:
             self.search_lineEdit.setFixedWidth(size)
@@ -441,7 +489,7 @@ class MediaPlayer(QMainWindow, Form):
             self.lineEdit_Bookmark.setFocus(True)
 
     def Update_BookMark_Animation(self, size):
-        if size==-1:
+        if size == -1:
             self.pushButton_BookMark.setEnabled(True)
         else:
             self.lineEdit_Bookmark.setFixedWidth(size)
@@ -521,11 +569,13 @@ class MediaPlayer(QMainWindow, Form):
         index = self.ComboBox_Tags_of_file.findText(self.windowTitle()[16:])
         self.ComboBox_Tags_of_file.setCurrentIndex(index)
         if self.isFullScreen():
-            self.DockWidget_Tags_of_file.setFeatures(QDockWidget.DockWidgetClosable)
-            Full_screen.Set_visible(self,False)
+            self.DockWidget_Tags_of_file.setFeatures(
+                QDockWidget.DockWidgetClosable)
+            Full_screen.Set_visible(self, False)
 
         else:
-            self.DockWidget_Tags_of_file.setFeatures(QDockWidget.DockWidgetFloatable|QDockWidget.DockWidgetMovable)
+            self.DockWidget_Tags_of_file.setFeatures(
+                QDockWidget.DockWidgetFloatable | QDockWidget.DockWidgetMovable)
 
     # tag combo box item clicked function
     def ListWidget_Tag(self, index):
@@ -643,7 +693,8 @@ class Slider(QSlider):
             self.setUP_Slider.emit(position.x())
 
         if position.y() > self.height()-5 or position.y() < 5 or position.x() > self.width()-5 or position.x() < 5:
-            self.MediaPlayer.Slider_label.setVisible(False)
+            self.MediaPlayer.Slider_play_label.setVisible(False)
+            self.MediaPlayer.Slider_Volume_label.setVisible(False)
 
 
 class read_Tag(QtCore.QThread):
@@ -709,7 +760,7 @@ class BookMark_Animation(QtCore.QThread):
         QtCore.QThread.__init__(self, parent=window)
 
     def run(self):
-        
+
         for i in range(int(Mainw.size().width()/8)):
             self.update_Animation.emit(2*i)
             sleep(0.001)
