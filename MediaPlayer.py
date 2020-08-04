@@ -461,12 +461,13 @@ class MediaPlayer(QMainWindow, Form):
                 self.pushButton_volume.setToolTip("UnMute")
 
     # save bookmarks and updatae tag list widget
-
     def save_Bookmarks(self):
         try:
+            # use add bookmark function to add bookmarks in tag part
             add_Bookmark(
                 self.lineEdit_Bookmark.text() + "#" + tc.millis_to_format(self.player.position()),
-                self.windowTitle()[16:].split(".")[0], self.tag_Path)  # use add bookmark function to add bookmarks in tag part
+                self.windowTitle()[16:].split(".")[0], self.tag_Path)
+            # there isn't any tags for movie we want to add bookmark it 
             if not self.windowTitle()[16:].split(".")[0] in self.allTag:
                 self.allTag.update({self.windowTitle()[16:].split(".")[0]: {}})
             self.allTag[self.windowTitle()[16:].split(".")[0]].update(
@@ -530,30 +531,37 @@ class MediaPlayer(QMainWindow, Form):
         self.sch_listWidget.setVisible(False)
         self.sch_listWidget.clear()
 
+    # handle main size change to set correct size to 
+    # search and bookmark line edits and searchlistwidgetd 
     def main_size_Change(self, val):
         self.lineEdit_Bookmark.setFixedWidth(int(self.size().width()/4))
         self.search_lineEdit.setFixedWidth(int(self.size().width()/4))
 
-        self.sch_listWidget.resize(
+
+        self.sch_listWidget.resize(# handle size of search listwidget
             int(self.size().width()/4), int((200 / 600) * self.size().height()))
-        self.sch_listWidget.move(
+        self.sch_listWidget.move( # move search listwidget
             self.size().width()-self.pushButton_Search.geometry().width()-self.search_lineEdit.geometry().width()-15, self.search_lineEdit.geometry().height()+self.search_lineEdit.pos().y() + self.menubar.geometry().height())
 
     # item clicked event in search tag part
     def item_searchlist_Event(self, item):
         session, tag = re.split(" -> ", item.text())
-        if session != self.windowTitle()[16:].split(".")[0]:
+        if session != self.windowTitle()[16:].split(".")[0]: 
+            # show confirm window to get accept user for change video
             self.confirmWin = confrimWin(self, session=session.split(".")[0],
                                          tag_Text=tag, Text=f"are you sure to change video to {session} from search")
             self.confirmWin.show()
         else:
             try:
+                # concert time format to second for using in change position
                 time_second = tc.to_second(self.allTag[session][tag])
                 self.change_Position(time_second)
             except Exception as e:  # handle unexcepted error!
                 print(e)
                 pass
 
+
+    # create search listwidget and running thread to starting search
     def search_Tag(self, val):
         # create QListWidget
         self.sch_listWidget.resize(
@@ -570,10 +578,12 @@ class MediaPlayer(QMainWindow, Form):
             self.search_Thread.update_schTag.connect(self.update_searchTags)
             self.search_Thread.start()
 
-    def update_searchTags(self, tagsDict):
-        self.sch_listWidget.clear()
 
-        for session, Tags in tagsDict.items():
+    # update searchtags function to update search widget by searching instantly
+    def update_searchTags(self, tagsDict):
+        self.sch_listWidget.clear() #clear search list widget
+
+        for session, Tags in tagsDict.items(): # writing data on search listwidget
             for text in Tags:
                 self.sch_listWidget.addItem(session + " -> " + text)
 
@@ -593,6 +603,7 @@ class MediaPlayer(QMainWindow, Form):
         self.PlaylistW.move(QtGui.QCursor().pos().x(),
                             QtGui.QCursor().pos().y()-self.PlaylistW.size().height()-25)
 
+
     def Show_Tags_of_file(self):
         self.DockWidget_Tags_of_file.setVisible(
             not self.DockWidget_Tags_of_file.isVisible())
@@ -607,16 +618,19 @@ class MediaPlayer(QMainWindow, Form):
             self.DockWidget_Tags_of_file.setFeatures(
                 QDockWidget.DockWidgetFloatable | QDockWidget.DockWidgetMovable)
 
+
     # tag combo box item clicked function
     def ListWidget_Tag(self, index):
         videoName = (list(self.PlaylistW.Files.keys())[index].split("."))[0]
         self.set_TagonListwidget(videoName, Setting_Tags=False)
 
-    # openTag in csv, pptx, docx format and start tag thread for reading data
 
+
+    # openTag in csv, pptx, docx format and start tag thread for reading data
     def openTags(self):
         self.tag_Path, _ = QFileDialog.getOpenFileName(
             self, "Open Tag", directory=os.path.join(os.getcwd(), 'Tags'), filter='*.csv *.pptx *.docx')
+        # if tagpath is correct we starting tag_thread to read tags from path
         if self.tag_Path:
             self.Tagname = self.tag_Path.split("/")[-1]
             fileFormat = self.Tagname.split(".")[-1]
@@ -624,16 +638,19 @@ class MediaPlayer(QMainWindow, Form):
             self.tag_thread.Tag_Ready.connect(self.getTag)
             self.tag_thread.start()
 
-    # tag is ready to use
 
+    # tag is ready to use
+    # if tags ready we shoud save them in self.allTag variable to use them properly
     def getTag(self, tags):
         self.allTag = tags
-        index = self.ComboBox_Tags_of_file.findText(self.windowTitle()[16:])
+        index = self.ComboBox_Tags_of_file.findText(self.windowTitle()[16:]) 
         self.ComboBox_Tags_of_file.setCurrentIndex(index)
         self.set_TagonListwidget((self.windowTitle()[16:].split("."))[0])
 
-    # set tags on tag listwidget using vedio name
 
+
+    # set tags on tag listwidget using vedio name
+    # update tags
     def set_TagonListwidget(self, videoName, Setting_Tags=True, Media_Tags=True):
         # tree = QtGui.QTreeWidget()
         if Media_Tags:
@@ -651,7 +668,6 @@ class MediaPlayer(QMainWindow, Form):
                     if Setting_Tags:
                         item = QTreeWidgetItem(
                             self.Setting.Edit_tag_Listwidget, [text, sessionTag[text]])
-                        # item.setFlags(item.flags() | QtCore.Qt.ItemIsEditable)
                     # media part tags by qlistwidget
                     if Media_Tags:
                         self.ListWidget_Tags_of_file.addItem(
@@ -663,14 +679,16 @@ class MediaPlayer(QMainWindow, Form):
 
     # item clicked event to go to time correlate clicked tag in video
 
+
+    # change time when clicking on tags in search part and main listwidget if tags
     def GoToTagtime(self, item):
         spliter = len(str(self.ListWidget_Tags_of_file.currentRow()+1)) + 3
         tag_Text = item.text()[spliter:]
-        if self.windowTitle()[16:] == self.ComboBox_Tags_of_file.currentText():
+        if self.windowTitle()[16:] == self.ComboBox_Tags_of_file.currentText(): #change time if clicked on tags that belong to playing session
             session = self.windowTitle()[16:].split(".")[0]
             try:
-                time_second = tc.to_second(self.allTag[session][tag_Text])
-                self.change_Position(time_second)
+                time_second = tc.to_second(self.allTag[session][tag_Text]) #convert time to seconds using tc mudole(write by own)
+                self.change_Position(time_second) # using change position function to handle sliders and time
             except Exception as e:
                 print(e)
         else:
@@ -685,17 +703,20 @@ class MediaPlayer(QMainWindow, Form):
         # change video position using item time
         self.player.setPosition(int(time_second)*1000)
 
+
+    # change video function to change video when clicked on 
+    # tags that there is not in current movie's tags
     def change_Video(self, session):
         for key in self.PlaylistW.Files:
             if re.search(session, key):
                 self.player.setMedia(
-                    QMediaContent(QUrl.fromLocalFile(self.PlaylistW.Files[key])))
+                    QMediaContent(QUrl.fromLocalFile(self.PlaylistW.Files[key]))) #set video
                 self.start()
                 self.setWindowTitle(
-                    f" Media Player - {key}")
-                index = self.ComboBox_Tags_of_file.findText(key)
-                self.ComboBox_Tags_of_file.setCurrentIndex(index)
-                self.set_TagonListwidget((key.split("."))[0])
+                    f" Media Player - {key}") # change title
+                index = self.ComboBox_Tags_of_file.findText(key) # update combo box of session in MediaPlayer
+                self.ComboBox_Tags_of_file.setCurrentIndex(index) # update combo box
+                self.set_TagonListwidget((key.split("."))[0]) #update tags on setting and MediaPlayer window
 
                 return True
         return False
@@ -711,6 +732,8 @@ class MediaPlayer(QMainWindow, Form):
         if self.BookMarkAnimation:
             self.BookMarkAnimation.stop()
 
+
+    # dragEnterEvent to hanle drag and drop option
     def dragEnterEvent(self, event):
         # pass
         if event.mimeData().hasUrls:
@@ -718,37 +741,45 @@ class MediaPlayer(QMainWindow, Form):
         else:
             event.ignore()
 
+    # dragMoveEvent to hanle drag and drop option    
     def dragMoveEvent(self, event):
         if event.mimeData().hasUrls:
             event.accept()
         else:
             event.ignore()
 
+    # dropEvent to hanle drag and drop option 
     def dropEvent(self, event):
         if event.mimeData().hasUrls:
             event.setDropAction(Qt.CopyAction)
-            file_path = event.mimeData().urls()[0].toLocalFile()
-            self.Load_video(filepath=file_path)
+            file_path = event.mimeData().urls()[0].toLocalFile() #get droppen file path
+            file_format = (file_path.split("/")[-1]).split(".")[-1]
+            desired_format = ['mp4', 'mkv', 'mp3'] # desired path to open
+            if file_format in desired_format: #check file format
+                self.Load_video(filepath=file_path)
 
 
+
+# custome slider for handling some event 
+# like mouse press and drag and mouse move event
 class Slider(QSlider):
     setUP_Slider = QtCore.pyqtSignal(int)
     moveMent_Position = QtCore.pyqtSignal(int)
 
-    def __init__(self, MediaPlayer):
+    def __init__(self, MediaPlayer): #init function
         QSlider.__init__(self, parent=MediaPlayer)
         self.setMouseTracking(True)
         self.MediaPlayer = MediaPlayer
 
-    def mousePressEvent(self, position):
+    def mousePressEvent(self, position): # mouse pressed event
         self.setUP_Slider.emit(position.pos().x())
 
     def mouseMoveEvent(self, position):
-        # simple movement
+        # simple movement event
         if position.buttons() == QtCore.Qt.NoButton:
             self.moveMent_Position.emit(position.x())
 
-        # Drag slider
+        # Drag slider event
         elif position.buttons() == QtCore.Qt.LeftButton:
             self.setUP_Slider.emit(position.x())
 
@@ -757,6 +788,8 @@ class Slider(QSlider):
             self.MediaPlayer.Slider_Volume_label.setVisible(False)
 
 
+
+# thread for read data from csv or pptx or docx file
 class read_Tag(QtCore.QThread):
     Tag_Ready = QtCore.pyqtSignal(dict)
 
@@ -766,11 +799,11 @@ class read_Tag(QtCore.QThread):
         QtCore.QThread.__init__(self, parent=window)
 
     def run(self):
-        func = getattr(readTag, "read_" + str(self.fileFormat))
+        func = getattr(readTag, "read_" + str(self.fileFormat)) # get data function using readTag mudole
         tags = func(self.filepath)
         self.Tag_Ready.emit(tags)
 
-    def stop(self):
+    def stop(self): # force thread to stop
         self.terminate()
         self.wait()
 
@@ -784,14 +817,14 @@ class search_thread(QtCore.QThread):
         self.allTags = Tags
         QtCore.QThread.__init__(self, parent=window)
 
-    def run(self):
+    def run(self): 
         result = {}
         for key in self.allTags:
             result.update({key: STag.find_Closest_to(
                 self.allTags[key], self.word)})
         self.update_schTag.emit(result)
 
-    def stop(self):
+    def stop(self): # force thread to stop
         self.terminate()
         self.wait()
 
@@ -802,13 +835,14 @@ class Search_Animation(QtCore.QThread):
     def __init__(self, window):
         QtCore.QThread.__init__(self, parent=window)
 
+
     def run(self):
         for i in range(int(Mainw.size().width()/8)):
             self.update_Animation.emit(2*i)
             sleep(0.001)
         self.update_Animation.emit(-1)
 
-    def stop(self):
+    def stop(self):# force thread to stop
         self.terminate()
         self.wait()
 
@@ -826,7 +860,7 @@ class BookMark_Animation(QtCore.QThread):
             sleep(0.001)
         self.update_Animation.emit(-1)
 
-    def stop(self):
+    def stop(self): # force thread to stop
         self.terminate()
         self.wait()
 

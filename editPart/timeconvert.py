@@ -2,6 +2,7 @@ import time
 
 
 
+# convert time from format to second 
 def to_second(time):
     _split = time.split(":")
 
@@ -13,9 +14,11 @@ def to_second(time):
         except Exception as e:
             print(e)
         count = count - 1
-    return result
+    return result # return second
 
 
+
+# convert millisecond to time format string using time module
 def millis_to_format(millis):
-    second = int(millis / 1000)
+    second = int(millis / 1000) # milli second to second
     return time.strftime("%H:%M:%S", time.gmtime(second))

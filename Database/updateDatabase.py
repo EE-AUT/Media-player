@@ -7,9 +7,9 @@ from time import time
 
 
 
+#  upload tags to user online database in google sheet 
 def upload_Database(user, filename, filepath):
     scope = ["https://spreadsheets.google.com/feeds","https://www.googleapis.com/auth/spreadsheets","https://www.googleapis.com/auth/drive.file","https://www.googleapis.com/auth/drive"]
-
 
     try:
         creds = ServiceAccountCredentials.from_json_keyfile_name("./Database/json/creds.json", scope)
@@ -53,29 +53,33 @@ def download_Database(user, filename, filepath):
         return False
         
         
+# get tags from csv file and return list of then 
+# using them in writing online google sheet
 def get_csvData(filepath):
     data = []
     try:
         with open(filepath) as csvfile:
-            file_reader = csv.reader(csvfile, delimiter='#')
+            file_reader = csv.reader(csvfile, delimiter='#') 
             for row in file_reader:
                 data.append(row)
-        return data
+        return data # return list of data
+
+    # hanle exception
     except Exception as e:
         print(e)
         return None 
 
 
-
+# save csv file in selected csv file
 def set_csvData(filepath, data):
     try:
         with open(filepath, "w") as csvfile:
             for row in data:
-                if len(row) == 2 and row[1] == "":
+                if len(row) == 2 and row[1] == "": # save session name
                     csvfile.write(row[0]+ "\n")
-                elif len(row) == 2:
+                elif len(row) == 2: # write tags 
                     csvfile.write(row[0] + "#" + row[1] + "\n")
-                elif len(row) == 3:
+                elif len(row) == 3: # write bookmarks
                     csvfile.write(row[0] + "#" + row[1] + "#" + row[2] + "\n")
         return True
     except Exception as e:
@@ -84,6 +88,7 @@ def set_csvData(filepath, data):
 
 
 # return Worksheet and succesful result
+# return globalworksheets and succesful result
 def get_allworksheet(user):
     scope = ["https://spreadsheets.google.com/feeds","https://www.googleapis.com/auth/spreadsheets","https://www.googleapis.com/auth/drive.file","https://www.googleapis.com/auth/drive"]
     try:
@@ -93,10 +98,10 @@ def get_allworksheet(user):
         for sh in spreadsheets:
             if sh["name"] == user: # there is user spreadsheet
                 sheet = client.open(user)
-                sheetAdmin = client.open("ap.mediaplayer@gmail.com")
+                sheetAdmin = client.open("ap.mediaplayer@gmail.com") 
                 worksheets = sheet.worksheets()
-                worksheetsGlobal = sheetAdmin.worksheets()
-                # Globa
+                worksheetsGlobal = sheetAdmin.worksheets() # global tags
+                # return data and their successfull key
                 return worksheets, True, worksheetsGlobal, True
 
         print("there is no databse for this user")

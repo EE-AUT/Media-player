@@ -5,6 +5,7 @@ from editPart import timeconvert as tc
 from editPart.edit import edit_Tags
 
 
+# window for get accept from user to do some works
 
 
 
@@ -32,6 +33,7 @@ class confrimWin(QMainWindow, Form):
         self.no_Button.clicked.connect(self.no_Clicked)
         self.Msg_Lebel.setText(Text)
     
+    # accept and do some works
     def yes_Clicked(self):
         if self.Title == "change video":
             self.MediaPlayer.change_Video(self.session)
@@ -56,6 +58,7 @@ class confrimWin(QMainWindow, Form):
         self.close()
     
     
+    # no clicked
     def no_Clicked(self):
         self.close()
         

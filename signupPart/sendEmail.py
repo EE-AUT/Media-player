@@ -5,6 +5,7 @@ from time import time
 import random
 
 
+# using smtplib to send verification email to user
 def Send_Email(receiver_address):
     start = time()
     confirm_key = random.randint(10e5, 10e6)

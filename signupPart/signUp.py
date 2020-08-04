@@ -18,7 +18,7 @@ class signUpWindow(QMainWindow, Form):
         self.setupUi(self)
         self.setWindowTitle("Login")
 
-
+        # set text to line Edit
         self.FirstName.setPlaceholderText("First Name")
         self.LastName.setPlaceholderText("Last Name")
         self.PassLineEdit.setPlaceholderText("Password")
@@ -26,6 +26,8 @@ class signUpWindow(QMainWindow, Form):
         self.Email_LineEdit.setPlaceholderText("Email address")
         self.StudentNo_LineEdit.setPlaceholderText("Student Number")
 
+
+        # initial value
         self.FName = None
         self.LName = None
         self.UPass = ""
@@ -63,22 +65,19 @@ class signUpWindow(QMainWindow, Form):
         self.confirm_LineEdit.setPlaceholderText("Enter Key here: 180' remain")
 
 
-
+        # events
         self.FirstName.editingFinished.connect(self.saveFName)
         self.LastName.editingFinished.connect(self.saveLName)
         self.PassLineEdit.editingFinished.connect(self.saveUpass)
         self.Pass_repeat.editingFinished.connect(self.check_equal)
         self.StudentNo_LineEdit.editingFinished.connect(self.saveSNo)
         self.Email_LineEdit.textChanged.connect(self.saveEmail)
-
-
-
-        self.PassLineEdit.setEchoMode(QLineEdit.Password)
-        self.Pass_repeat.setEchoMode(QLineEdit.Password)
-
         self.submit_Button.clicked.connect(self.submit_Email)
         self.clear_Button.clicked.connect(self.clearall)
 
+        # set password mode to pass line edit
+        self.PassLineEdit.setEchoMode(QLineEdit.Password)
+        self.Pass_repeat.setEchoMode(QLineEdit.Password)
 
 
 
@@ -87,17 +86,21 @@ class signUpWindow(QMainWindow, Form):
 
 
 
+
+
+    # save first name
     def saveFName(self):
         self.FName = self.FirstName.text()
 
+    # save last name
     def saveLName(self):
         self.LName = self.LastName.text()
 
-
+    # save pass
     def saveUpass(self):
         self.UPass = self.PassLineEdit.text()
 
-
+    # save student number and check it's correctance 
     def saveSNo(self):
         try:
             self.StudentNo = int(self.StudentNo_LineEdit.text())
@@ -107,7 +110,7 @@ class signUpWindow(QMainWindow, Form):
             self.error_No = True
             self.user_Message("Enter Valid Student number", "rgb(255, 0, 0)", font= 10)
 
-
+    # save email
     def saveEmail(self, val):
         try:
             self.Email = val
@@ -120,6 +123,7 @@ class signUpWindow(QMainWindow, Form):
             self.submit_Button.setEnabled(False)
 
 
+    # chack password is equal 
     def check_equal(self):
         if self.UPass == self.Pass_repeat.text():
             self.NotEqual_error.setVisible(False)
@@ -130,14 +134,14 @@ class signUpWindow(QMainWindow, Form):
 
         
 
-
+    # clear message label
     def clear_Msg(self, ckeck_Key):
         if ckeck_Key:
             self.Label_Msg.setVisible(False)
 
 
 
-
+    # check input information of user
     def submit_Email(self):
         if self.FName != "" and self.LName != "" and self.UPass != "" and self.Email != "":
             if self.isEqual_pass and self.StudentNo_LineEdit.text() != "" and not self.error_No:
@@ -154,20 +158,21 @@ class signUpWindow(QMainWindow, Form):
 
 
     
-
+    # check exist email or not using thread
     def _check_Exist(self):
         self.check_Mail = checkEmail_Exist(self, self.Email)
         self.check_Mail.check_Exist.connect(self._check_Exist_Key)
         if self.check_Mail:
             self.check_Mail.start()
 
+    # check email existance result
     def _check_Exist_Key(self, key):
-        if key == 0:
+        if key == 0: # is true
             self.SendMail()
-        if key == 1:
+        if key == 1: # there is user with this email
             self.submit_Button.setEnabled(True)
             self.user_Message("there is a user with this Email", "rgb(255, 0, 0)", font= 10)
-        if key == 2:
+        if key == 2: # connection failed
             self.submit_Button.setEnabled(True)
             self.user_Message("Connection failed", "rgb(255, 0, 0)") 
 
@@ -175,7 +180,7 @@ class signUpWindow(QMainWindow, Form):
 
 
 
-
+    # clear all lineedits
     def clearall(self):
         self.FirstName.clear()
         self.LastName.clear()
@@ -185,6 +190,7 @@ class signUpWindow(QMainWindow, Form):
         self.Email_LineEdit.clear()
 
 
+    # start send email thread
     def SendMail(self):
         try:
             self.send_Email_Thread = send_Email(self, receiver= self.Email)
@@ -196,7 +202,7 @@ class signUpWindow(QMainWindow, Form):
             self.user_Message("Invalid Email", "rgb(255, 0, 0)")
         
 
-
+    # email result and show confirm key lineedit
     def check_verify(self, key):
         self.submit_Button.setEnabled(True)
         if key:
@@ -209,7 +215,7 @@ class signUpWindow(QMainWindow, Form):
         else:
             self.user_Message("Connection Faild, or invalid Email address", "rgb(255, 0, 0)", font=8)
 
-
+    # set visible allwidgets
     def setVisibleAll(self, key):
         self.confirm_LineEdit.setVisible(not(key))
         self.FirstName.setVisible(key)
@@ -222,28 +228,31 @@ class signUpWindow(QMainWindow, Form):
         self.clear_Button.setVisible(key)
 
 
+    # update remaining time
     def Update_Time(self, val):
         self.confirm_LineEdit.setPlaceholderText(f"Enter Key here: {val}' remain")
 
+    # time of enter confimation key has been ended
     def Time_Ended(self, key):
         if key:
             self.confirm_LineEdit.clear()
             self.setVisibleAll(True)
 
+    # check confirmation key
     def check_rightKey(self):
         try:
             if int(self.confirm_LineEdit.text()) == int(self.Confirm_key):
-                print("correct key")
                 self.user_Message("Please wait ...", "rgb(0, 170, 0)", wait= False)
-                self.Confirmation()
+                self.Confirmation() # start confirmation
             else:
-                self.user_Message("Invalid Key", "rgb(255, 0, 0)")
+                self.user_Message("Invalid Key", "rgb(255, 0, 0)") # key is not true
         except Exception as e:
             print(e)
             self.user_Message("Just Number Please", "rgb(255, 0, 0)", font= 10)
 
         
-        
+    
+    # start thread to save user information in database
     def Confirmation(self):
         user_Info = [str(self.Email), str(self.StudentNo), "#" + str(self.UPass)
                     , str(self.FName), str(self.LName)]
@@ -252,7 +261,7 @@ class signUpWindow(QMainWindow, Form):
         if self.Confirm_thread:
             self.Confirm_thread.start()
 
-
+    # sign up completed
     def signUp_Ended(self, key):
         if key:
             self.user_Message("Register has been done", "rgb(0, 170, 0)", font= 10)
@@ -264,7 +273,7 @@ class signUpWindow(QMainWindow, Form):
 
 
 
-
+    # user message to show user message and set css to message
     def user_Message(self, msg, color, font = 12, wait= True):
         self.Label_Msg.setVisible(True)
         self.Label_Msg.setText(msg)
@@ -288,7 +297,7 @@ class signUpWindow(QMainWindow, Form):
 
 
     
-    
+# thread for waiting to clearing message label
 class wait_Toclear_thread(QtCore.QThread):
     isFinished = QtCore.pyqtSignal(bool)
     def __init__(self, window):
@@ -301,6 +310,7 @@ class wait_Toclear_thread(QtCore.QThread):
         self.terminate()
         self.wait()
 
+# send email thread to send verify key from email
 class send_Email(QtCore.QThread):
     Finished = QtCore.pyqtSignal(int)
     def __init__(self, window, receiver):
@@ -315,6 +325,7 @@ class send_Email(QtCore.QThread):
         self.wait()
 
 
+# wait for user to enter verify key
 class wait_Toconfirm(QtCore.QThread):
     Finished_1s = QtCore.pyqtSignal(int)
     Finished_Time = QtCore.pyqtSignal(bool)
@@ -332,6 +343,7 @@ class wait_Toconfirm(QtCore.QThread):
         self.wait()
 
 
+# check email exsistance
 class checkEmail_Exist(QtCore.QThread):
 
     check_Exist = QtCore.pyqtSignal(int)
@@ -350,6 +362,7 @@ class checkEmail_Exist(QtCore.QThread):
         self.wait()
 
 
+# save user information in database
 class Confimation_Thread(QtCore.QThread):
     Confirm_Complete = QtCore.pyqtSignal(bool)
     def __init__(self, window, user):

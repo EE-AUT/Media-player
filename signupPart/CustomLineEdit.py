@@ -1,6 +1,8 @@
 from PyQt5.QtWidgets import QLineEdit
 
 
+
+# our custome line dit with special css format and handle size
 class LineEdit(QLineEdit):
     def __init__(self, parent):
         QLineEdit.__init__(self, parent= parent)

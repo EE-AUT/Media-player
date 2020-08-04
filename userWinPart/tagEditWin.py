@@ -8,6 +8,7 @@ from editPart.edit import edit_Tags
 from bookmarkPart.bookmark import add_Bookmark
 
 
+# window for edit end add tag 
 
 
 Form = uic.loadUiType(os.path.join(os.getcwd(), 'userWinPart/editTagWin.ui'))[0]
