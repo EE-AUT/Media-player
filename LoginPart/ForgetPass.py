@@ -14,7 +14,7 @@ class ForgetPassWindow(QDialog, Form, QtCore.QThread):
     def __init__(self, window):
         QDialog.__init__(self)
         Form.__init__(self)
-        QtCore.QThread.__init__(self, parent=window)
+        QtCore.QThread.__init__(self, window)
         self.setupUi(self)
         self.setWindowFlags(
             QtCore.Qt.Window |
@@ -35,6 +35,11 @@ class ForgetPassWindow(QDialog, Form, QtCore.QThread):
         self.Get_Data = Get_Data(self)
         self.Get_Data.Data.connect(self.Sent_Email)
         self.pushButton_sent.clicked.connect(self.start_to_sent)
+
+        # Close Event to stop running thread
+        self.closeEvent = self.Close
+        # initial for threads
+        self.Sent_Email_ = None
 
     def Edit_Email(self, val):
         self.label_Incorrect.setVisible(False)
@@ -102,6 +107,15 @@ class ForgetPassWindow(QDialog, Form, QtCore.QThread):
         self.pushButton_Back.setEnabled(True)
         self.pushButton_sent.setEnabled(True)
 
+    def Close(self, val):
+        pass
+        try:
+            self.Get_Data.stop()
+            if self.Sent_Email_:
+                self.Sent_Email_.stop()
+        except:
+            pass
+
 
 class Get_Data(QtCore.QThread):
     Data = QtCore.pyqtSignal(list)
@@ -114,6 +128,10 @@ class Get_Data(QtCore.QThread):
             self.Data.emit(get_Database.get_Database())
         except:
             self.Data.emit([])
+
+    def stop(self):
+        self.terminate()
+        self.wait()
 
 
 class Sent_Email_Thread(QtCore.QThread):
@@ -131,8 +149,8 @@ class Sent_Email_Thread(QtCore.QThread):
 
     def run(self):
         # The mail addresses and password
-        sender_address = 'agha.mehdi2020@gmail.com'
-        sender_pass = '0021639450@'
+        sender_address = 'ap.mediaplayer@gmail.com'
+        sender_pass = 'AP_MediaPlayer2020' # secret :)
         # Setup the MIME
         message = MIMEMultipart()
         message['From'] = sender_address
@@ -156,3 +174,7 @@ class Sent_Email_Thread(QtCore.QThread):
 
         except:
             self.sent.emit(False)
+
+    def stop(self):
+        self.terminate()
+        self.wait()

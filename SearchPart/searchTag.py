@@ -6,9 +6,9 @@ import re
 
 
 def find_Closest_to(tags, word):
-    suggest = __find__(tags, word.lower())
-    tags = {text.lower(): val for text, val in tags.items()} # change all text to lower case
-    for key in difflib.get_close_matches(word.lower(), tags.keys()):
+    suggest = __find__(tags, word)
+    # tags = {text.lower(): val for text, val in tags.items()} # change all text to lower case
+    for key in difflib.get_close_matches(word, tags.keys()):
         suggest = {**suggest, **(__find__(tags, key))}
     result = {}
     for key in suggest: # delete repeated
@@ -25,6 +25,6 @@ def find_Closest_to(tags, word):
 def __find__(tags, word):
     suggest = {}
     for key in tags:
-        if key.find(word.lower()) != -1:
+        if key.find(word) != -1:
             suggest.update({key : tags[key]})
     return suggest # return dict

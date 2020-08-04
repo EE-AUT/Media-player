@@ -13,9 +13,8 @@ def Send_Email(receiver_address):
     Thank You'''
 
     #The mail addresses and password
-    sender_address = 'agha.mehdi2020@gmail.com'
-    sender_pass = '0021639450@'
-    # receiver_address = 'mahdi.sabour@aut.ac.ir'
+    sender_address = 'ap.mediaplayer@gmail.com'
+    sender_pass = 'AP_MediaPlayer2020' # secret :)
     #Setup the MIME
     message = MIMEMultipart()
     message['From'] = sender_address
@@ -35,7 +34,8 @@ def Send_Email(receiver_address):
         print('Mail Sent: ', end - start)
         return confirm_key
 
-    except:
+    except Exception as e:
+        print(e) 
         return 0
 
 

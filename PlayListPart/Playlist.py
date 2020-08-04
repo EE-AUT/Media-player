@@ -8,11 +8,10 @@ from PyQt5.QtMultimedia import QMediaContent
 Form = uic.loadUiType(os.path.join(os.getcwd(), 'PlayListPart/Playlist.ui'))[0]
 
 
-class PlaylistWindow(QMainWindow, Form, QtCore.QThread):
+class PlaylistWindow(QMainWindow, Form):
     def __init__(self, MediaPlayer):
         QMainWindow.__init__(self)
         Form.__init__(self)
-        QtCore.QThread.__init__(self, parent=MediaPlayer)
         self.setupUi(self)
         self.MediaPlayer = MediaPlayer
         self.File_Path = os.getcwd()

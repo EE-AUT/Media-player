@@ -20,7 +20,6 @@ class SettingWindow(QMainWindow, Form):
     def __init__(self, Mediaplayer):
         QMainWindow.__init__(self)
         Form.__init__(self)
-        QtCore.QThread.__init__(self, parent=Mediaplayer)
         self.setupUi(self)
         self.MediaPlayer = Mediaplayer
         self.Account_changing = False
@@ -88,6 +87,7 @@ class SettingWindow(QMainWindow, Form):
 
         # close event
         self.closeEvent = self.Close
+        self.connection_part = None
 
 
 
@@ -204,6 +204,8 @@ class SettingWindow(QMainWindow, Form):
             self.tagEditWin.close()
         if self.confirmWin:
             self.confirmWin.close()
+        if self.connection_part:
+            self.connection_part.stop()
 
         
 
@@ -238,9 +240,9 @@ class SettingWindow(QMainWindow, Form):
                         self.pushButton_OK.setEnabled(False)
                         self.pushButton_Cancel.setEnabled(False)
                         self.label_Wait.setVisible(True)
-                        connection_part =Account.Apply_Thread(self)
-                        connection_part.start()
-                        connection_part.pass_changed.connect(self.pass_change_result)
+                        self.connection_part =Account.Apply_Thread(self)
+                        self.connection_part.start()
+                        self.connection_part.pass_changed.connect(self.pass_change_result)
                         self.label_Wait.setVisible(False)           
                         self.pushButton_OK.setEnabled(True)
                         self.pushButton_Cancel.setEnabled(True)

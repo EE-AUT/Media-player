@@ -51,3 +51,8 @@ class Apply_Thread(QtCore.QThread):
                     result = get_Database.Change_password(
                             read_Pass('Pass'), self.window.lineEdit_NewPass.text())
                     self.pass_changed.emit(result)
+
+
+    def stop(self):
+        self.terminate()
+        self.wait()

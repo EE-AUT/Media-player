@@ -7,9 +7,9 @@ from time import time
 
 
 
-
 def upload_Database(user, filename, filepath):
     scope = ["https://spreadsheets.google.com/feeds","https://www.googleapis.com/auth/spreadsheets","https://www.googleapis.com/auth/drive.file","https://www.googleapis.com/auth/drive"]
+
 
     try:
         creds = ServiceAccountCredentials.from_json_keyfile_name("./Database/json/creds.json", scope)
@@ -93,20 +93,23 @@ def get_allworksheet(user):
         for sh in spreadsheets:
             if sh["name"] == user: # there is user spreadsheet
                 sheet = client.open(user)
+                sheetAdmin = client.open("ap.mediaplayer@gmail.com")
                 worksheets = sheet.worksheets()
-                return worksheets, True
+                worksheetsGlobal = sheetAdmin.worksheets()
+                # Globa
+                return worksheets, True, worksheetsGlobal, True
 
         print("there is no databse for this user")
         try: # if there is no Spreadsheet with user
             sh = client.create(user)
-            return [], True
+            return [], True, [], False
         except Exception as e: # handle Exception
             print(e)
-            return [], False
+            return [], False, [], False
         
     except Exception as e:
         print(e)
-        return [], False
+        return [], False, [], False
         
 
             

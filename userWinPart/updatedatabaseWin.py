@@ -43,6 +43,8 @@ class updatedatabaseWin(QMainWindow, Form):
             self.Browse_Button.setVisible(False)
             self.wsheets =None
             self.new_Button.clicked.connect(self.new_Wsh)
+            self.wsh_Combo_Global.setVisible(False)
+            self.label_Global.setVisible(False)
             self.Ok_Button.clicked.connect(self.OkClicked_Upload)
 
         if self.Title == "Download Database":
@@ -59,14 +61,22 @@ class updatedatabaseWin(QMainWindow, Form):
         self.Cancel_Button.clicked.connect(self.Cancel)
 
 
-    def wsh_isReady(self, wsheets, accept):
+    def wsh_isReady(self, wsheets, accept, Gworksheets, gAccept):
         self.wsheets = wsheets
         self.Ok_Button.setEnabled(True)
         self.label_Msg.setVisible(False)
         if accept:
             self.wsh_Combo.addItems(wsheets)
         else:
-            print("error occured")
+            self.user_Msg(
+                "Connection Failed or Failed in user Tag", "color:rgb(255, 0, 0)")
+
+        if self.Title == "Download Database":
+            if gAccept:
+                self.wsh_Combo_Global.addItems(Gworksheets)
+            else:
+                self.user_Msg(
+                    "Connection Failed", "color:rgb(255, 0, 0)")
 
     def new_Wsh(self):
         if self.new_Button.isChecked():
@@ -83,12 +93,12 @@ class updatedatabaseWin(QMainWindow, Form):
 
     def OkClicked_Upload(self):
         self.label_Msg.setVisible(False)
-        self.Ok_Button.setEnabled(False)
         user = open("LoginPart/User.csv").read().split(",")[0]
         if self.new_Button.isChecked():
             tagname = self.LineEdit.text()
             if not tagname == "":
                 if not tagname in self.wsheets:
+                    self.Ok_Button.setEnabled(False)
                     self.upload(user, tagname, self.MediaPlayer.tag_Path)
                 else:
                     self.user_Msg(
@@ -98,6 +108,7 @@ class updatedatabaseWin(QMainWindow, Form):
                     "please fill tag name", "color:rgb(255, 0, 0)")
         else:
             if self.wsh_Combo.currentIndex():
+                self.Ok_Button.setEnabled(False)
                 self.upload(user, self.wsh_Combo.currentText(), self.MediaPlayer.tag_Path)
             else:
                 self.user_Msg(
@@ -106,10 +117,15 @@ class updatedatabaseWin(QMainWindow, Form):
 
     def upload(self, user, wsheetname, filepath):
         if filepath:
-            self.UD_Thread = uploadDatabse(self, user, wsheetname, filepath)
-            self.UD_Thread.upload_Result.connect(self.upload_Result)
-            self.UD_Thread.start()
-            self.user_Msg("please wait ...", "color:rgb(0, 170, 0)")
+            file_format = (filepath.split("/")[-1]).split(".")[-1]
+            if file_format == "csv":
+                self.UD_Thread = uploadDatabse(self, user, wsheetname, filepath)
+                self.UD_Thread.upload_Result.connect(self.upload_Result)
+                self.UD_Thread.start()
+                self.user_Msg("please wait ...", "color:rgb(0, 170, 0)")
+            else:
+                self.user_Msg("you can only upload csv file not other format", "color:rgb(255, 0, 0)")
+            
         else:
             self.user_Msg(
                 "first select a tag in media and try this again", "color:rgb(255, 0, 0)")
@@ -132,13 +148,19 @@ class updatedatabaseWin(QMainWindow, Form):
             self.LineEdit.setText(save_tag_Path)
 
     def OkClicked_Download(self):
-        self.Ok_Button.setEnabled(False)
         self.label_Msg.setVisible(False)
         tagpath = self.LineEdit.text()
         try:
             if os.path.exists(tagpath):
-                if self.wsh_Combo.currentIndex():
+                if self.wsh_Combo.currentIndex() and self.wsh_Combo_Global.currentIndex():
+                    self.user_Msg(
+                        "you cant choose two tags instantly", "color:rgb(255, 0, 0)")
+                elif self.wsh_Combo.currentIndex() and (not self.wsh_Combo_Global.currentIndex()):
+                    self.Ok_Button.setEnabled(False)
                     self.download()
+                elif (not self.wsh_Combo.currentIndex()) and self.wsh_Combo_Global.currentIndex():
+                    self.Ok_Button.setEnabled(False)
+                    self.download(Global = True)
                 else:
                     self.user_Msg(
                         "please select one of tags to download", "color:rgb(255, 0, 0)")
@@ -148,9 +170,13 @@ class updatedatabaseWin(QMainWindow, Form):
         except Exception as e:
             print(e)
 
-    def download(self):
-        user = user = open("LoginPart/User.csv").read().split(",")[0]
-        wsheets = self.wsh_Combo.currentText()
+    def download(self, Global = False):
+        if not Global:
+            user = user = open("LoginPart/User.csv").read().split(",")[0]
+            wsheets = self.wsh_Combo.currentText()
+        else:
+            user = "ap.mediaplayer@gmail.com"
+            wsheets = self.wsh_Combo_Global.currentText()
         self.user_Msg("please wait ...", "color:rgb(0, 170, 0)")
         self.DD_Thread = downloadDatabse(self, user, wsheets, self.LineEdit.text())
         self.DD_Thread.download_Result.connect(self.Download_Result)
@@ -188,8 +214,9 @@ class updatedatabaseWin(QMainWindow, Form):
 
 
 
+
 class getWsheets(QtCore.QThread):
-    Wsheets_Ready = QtCore.pyqtSignal(list, bool)
+    Wsheets_Ready = QtCore.pyqtSignal(list, bool, list, bool)
 
     def __init__(self, window):
         QtCore.QThread.__init__(self, parent=window)
@@ -197,13 +224,18 @@ class getWsheets(QtCore.QThread):
     def run(self):
         result = []
         worksheets = []
+        Globalworksheet = []
         user = open("LoginPart/User.csv").read().split(",")[0]
         result = UD.get_allworksheet(user)
         for item in result[0]:
             worksheets.append(item.title)
+        for item in result[2]:
+            Globalworksheet.append(item.title)
         if len(worksheets):
             worksheets.pop(0)
-        self.Wsheets_Ready.emit(worksheets, result[1])
+        if len(Globalworksheet):
+            Globalworksheet.pop(0)
+        self.Wsheets_Ready.emit(worksheets, result[1], Globalworksheet, result[3])
 
     def stop(self):
         self.terminate()

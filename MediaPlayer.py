@@ -32,6 +32,7 @@ class MediaPlayer(QMainWindow, Form):
         self.player = QMediaPlayer(None, QMediaPlayer.VideoSurface)
         self.player.setVideoOutput(self.videowidget)
         self.setWindowTitle(" Media Player")
+        self.setAcceptDrops(True)
 
         self.sch_listWidget = QListWidget(self)
         self.sch_listWidget.setVisible(False)
@@ -41,7 +42,6 @@ class MediaPlayer(QMainWindow, Form):
 
         self.mouseReleaseEvent = self.MainWindow_Event
         self.resizeEvent = self.main_size_Change
-        self.search_Thread = None
         self.lineEdit_Bookmark.setVisible(False)
         self.lineEdit_Bookmark.returnPressed.connect(self.save_Bookmarks)
 
@@ -52,6 +52,10 @@ class MediaPlayer(QMainWindow, Form):
 
         # threads part
         self.tag_thread = None
+        self.search_Thread = None
+        self.SearchAnimation = None 
+        self.BookMarkAnimation = None
+        
 
         # Create Tags
         self.allTag = {}
@@ -177,6 +181,11 @@ class MediaPlayer(QMainWindow, Form):
 
         # For FullScreen part
         self.firstTime_fullscreen = True
+
+
+        # close event to stop running thread
+        self.closeEvent = self.Close
+
 
     # KeyPress Event
     def keyPressEvent(self, event):
@@ -320,10 +329,12 @@ class MediaPlayer(QMainWindow, Form):
             self.pushButton_previous.setEnabled(False)
         self.pushButton_next.setEnabled(True)
 
-    def Load_video(self):
-
-        file_path, _ = QFileDialog.getOpenFileName(
-            self, "Open video", directory=os.path.join(os.getcwd(), 'Video'), filter='*.mp4 *.mkv *.mp3')
+    def Load_video(self, filepath= None):
+        if not filepath:
+            file_path, _ = QFileDialog.getOpenFileName(
+                self, "Open video", directory=os.path.join(os.getcwd(), 'Video'), filter='*.mp4 *.mkv *.mp3')
+        else:
+            file_path = filepath
 
         if file_path:
             self.player.setMedia(QMediaContent(QUrl.fromLocalFile(file_path)))
@@ -514,15 +525,19 @@ class MediaPlayer(QMainWindow, Form):
         self.sch_listWidget.move(
             self.size().width()-self.pushButton_Search.geometry().width()-self.search_lineEdit.geometry().width()-15, self.search_lineEdit.geometry().height()+self.search_lineEdit.pos().y() + self.menubar.geometry().height())
 
-    def item_searchlist_Event(self, item):
+    def item_searchlist_Event(self, item): # item clicked event in search tag part
         session, tag = re.split(" -> ", item.text())
         if session != self.windowTitle()[16:].split(".")[0]:
             self.confirmWin = confrimWin(self, session=session.split(".")[0],
                                          tag_Text=tag, Text=f"are you sure to change video to {session} from search")
             self.confirmWin.show()
         else:
-            time_second = tc.to_second(self.allTag[session][tag])
-            self.change_Position(time_second)
+            try:
+                time_second = tc.to_second(self.allTag[session][tag])
+                self.change_Position(time_second)
+            except Exception as e: # handle unexcepted error!
+                print(e)
+                pass
 
     def search_Tag(self, val):
         # create QListWidget
@@ -669,6 +684,37 @@ class MediaPlayer(QMainWindow, Form):
 
                 return True
         return False
+
+    # close Event to stop runnig thread and preventing error
+    def Close(self, val):
+        if self.tag_thread:
+            self.tag_thread.stop()
+        if self.search_Thread:
+            self.search_Thread.stop()
+        if self.SearchAnimation:
+            self.SearchAnimation.stop()
+        if self.BookMarkAnimation:
+            self.BookMarkAnimation.stop()
+
+    def dragEnterEvent(self, event):
+        # pass
+        if event.mimeData().hasUrls:
+            event.accept()
+        else:
+            event.ignore()
+
+    def dragMoveEvent(self, event):
+        if event.mimeData().hasUrls:
+            event.accept()
+        else:
+            event.ignore()
+
+
+    def dropEvent(self, event):
+        if event.mimeData().hasUrls:
+            event.setDropAction(Qt.CopyAction)
+            file_path = event.mimeData().urls()[0].toLocalFile()
+            self.Load_video(filepath= file_path)
 
 
 class Slider(QSlider):

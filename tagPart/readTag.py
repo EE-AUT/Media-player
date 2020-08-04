@@ -8,6 +8,7 @@ import csv
 
 
 
+# read data from csv file
 def read_csv(filename):
     try:
         tagsDict = {}
@@ -15,8 +16,8 @@ def read_csv(filename):
         output = {}
         with open(filename) as csvfile:
             file_reader = csv.reader(csvfile, delimiter='#')
-
             for row in file_reader:
+                # classification data with len and find tag session and tags 
                 if len(row) == 1:
                     output.update({movie_Session : tagsDict})
                     tagsDict = {}
@@ -27,15 +28,17 @@ def read_csv(filename):
                     tagsDict.update({row[0] : row[1]}) #read from bookmarks
             output.update({movie_Session : tagsDict})
 
-            del output['']
+            del output[''] # delete empty key
 
             return output
+            # handle Exception
     except Exception as e:
         print(e)
         return {}
 
 
 
+# read data from docx file
 def read_docx(filename):
     try:
         # read from word tables
@@ -47,7 +50,8 @@ def read_docx(filename):
         for table in wordDoc.tables:
             for row in table.rows:
                 for cell in row.cells:
-                    if cell.text != "":
+                    if cell.text != "": # if cell has text
+                        # classification data and find session and tags
                         if re.search("Session = ", cell.text):
                             try:
                                 tagsDict = {name[i]: name[i+1] for i in range(0, len(name), 2)} # create dictionary
@@ -61,12 +65,13 @@ def read_docx(filename):
                         else:
                             name.append(cell.text)
 
+        # convert list to dict 
         tagsDict = {name[i]: name[i+1] for i in range(0, len(name), 2)}
         output.update({movie_Session : tagsDict})
 
-        del output[""]
+        del output[""] # delete empty key
         return output
-    except Exception as e:
+    except Exception as e: # handle exception
         print(e)
         return {}
 
@@ -77,19 +82,21 @@ def read_docx(filename):
 def read_pptx(filename):
     try:
         output = {}
+        # open presentation
         for eachfile in glob.glob(filename):
             prs = Presentation(eachfile)
             movie_Session = ""
             movie_string = ""
 
             a = {}
+            # iterate each shape to find text
             for slide in prs.slides: #get slides
                 for shape in slide.shapes:
-                    if hasattr(shape, "text"):
-                        if re.search("S\d\d", shape.text):
+                    if hasattr(shape, "text"): # if there is shape in tags
+                        if re.search("Session = #", shape.text):
                             a.update({movie_Session : movie_string}) # update dictionary
                             movie_string = ""
-                            movie_Session = str(re.search("S\d\d", shape.text).group())
+                            movie_Session = re.split("Session = #", shape.text)[-1] # find session name with our role
                         else:
                             movie_string = movie_string + "\n" +  shape.text
                 a.update({movie_Session : movie_string})
