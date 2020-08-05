@@ -56,13 +56,11 @@ class LoginWindow(QDialog, Form):
         # lineEdit pass
         self.lineEdit_Password.setEchoMode(QLineEdit.Password)
 
-
-
         # first definition of threads
         self.check = None
-    
 
     # update pasword from pass line edit
+
     def Password_update(self, val):
         self.Password = str(val)
         self.lineEdit_Password.setStyleSheet("")
@@ -76,8 +74,8 @@ class LoginWindow(QDialog, Form):
                 self.clearButton.setEnabled(False)
             self.LoginButton.setEnabled(False)
 
-
     # update email from pass line edit
+
     def Email_update(self, email):
         self.Email = email.lower()
         self.lineEdit_Email.setStyleSheet("")
@@ -91,8 +89,8 @@ class LoginWindow(QDialog, Form):
                 self.clearButton.setEnabled(False)
             self.LoginButton.setEnabled(False)
 
-
     # clear all line edits using clear button
+
     def clear(self):
         self.lineEdit_Password.clear()
         self.lineEdit_Email.clear()
@@ -113,11 +111,12 @@ class LoginWindow(QDialog, Form):
             self.check.check_Key.connect(self.isAccept)
             self.check.start()
 
-
     # if input information is correct
+
     def isAccept(self, key):
         if key:
-            open("LoginPart/User.csv", "w").write(f"{self.Email},{self.Password}")
+            open("LoginPart/User.csv",
+                 "w").write(f"{self.Email},{self.Password}")
             self.GetData = None
             self.check = None
             self.wait = None
@@ -134,8 +133,8 @@ class LoginWindow(QDialog, Form):
     def LoginAccept(self):
         return self.AcceptKey
 
-
     # signup button clicked
+
     def signUp(self):
         # show sign uo window
         self.signUpwin = signUpWindow(self)
@@ -148,7 +147,7 @@ class LoginWindow(QDialog, Form):
         self.setVisible(True)
         if self.signUpwin.check_Mail:
             self.signUpwin.check_Mail.terminate()
-        if self.signUpwin.send_Email_Thread: 
+        if self.signUpwin.send_Email_Thread:
             self.signUpwin.send_Email_Thread.stop()
         if self.signUpwin.wait_Toconfirm:
             self.signUpwin.wait_Toconfirm.stop()
@@ -157,10 +156,10 @@ class LoginWindow(QDialog, Form):
         if self.signUpwin.wait_To_clearMsg:
             self.signUpwin.wait_To_clearMsg.stop()
 
-
     # close login threads
+
     def closeThreads(self, val):
-        if self.GetData: 
+        if self.GetData:
             self.GetData.stop()
         if self.check:
             self.check.stop()
@@ -174,26 +173,24 @@ class LoginWindow(QDialog, Form):
         if check:
             self.Label_Msg.setVisible(False)
 
-
-
-    def forget_Pass(self,val):
-        ForgetPassW=ForgetPass.ForgetPassWindow(self)
+    def forget_Pass(self, val):
+        ForgetPassW = ForgetPass.ForgetPassWindow(self)
         ForgetPassW.show()
 
-
     # check connection and starting thread to login
+
     def check_connection(self, val):
         if val:
             if self.GetData:
-                self.user_Message("please wait ...", "rgb(0, 170, 0)", wait=False)
+                self.user_Message("please wait ...",
+                                  "rgb(0, 170, 0)", wait=False)
                 self.LoginButton.setEnabled(False)
                 self.GetData.start()
         else:
             self.user_Message("Connection failed", "rgb(255, 0, 0)")
 
-
-
     # user message window to show message with our css format
+
     def user_Message(self, msg, color, font=12, wait=True):
         self.Label_Msg.setVisible(True)
         self.Label_Msg.setText(msg)
@@ -213,8 +210,7 @@ class LoginWindow(QDialog, Form):
                 self.wait.start()
 
 
-
-# get data thread to get all user information 
+# get data thread to get all user information
 # from google sheet using Database mudole's function
 class GetData_Thread(QtCore.QThread):
     data_isReady = QtCore.pyqtSignal(list)
@@ -229,14 +225,14 @@ class GetData_Thread(QtCore.QThread):
         else:
             self.data_isReady.emit(data)
 
-    def stop(self): # stop thread
+    def stop(self):  # stop thread
         self.terminate()
         self.wait()
 
 
-# check information of user 
+# check information of user
 class checkData_Thread(QtCore.QThread):
-    check_Key = QtCore.pyqtSignal(bool) 
+    check_Key = QtCore.pyqtSignal(bool)
 
     def __init__(self, window, Data, Email, Pass):
         self.Data = Data
@@ -252,7 +248,7 @@ class checkData_Thread(QtCore.QThread):
                     break
             self.check_Key.emit(False)
 
-    def stop(self): # stop thread
+    def stop(self):  # stop thread
         self.terminate()
         self.wait()
 
@@ -269,10 +265,9 @@ class wait_Toclear_thread(QtCore.QThread):
         sleep(2.5)
         self.isFinished.emit(True)
 
-    def stop(self): # stop thread
+    def stop(self):  # stop thread
         self.terminate()
         self.wait()
-
 
 
 # check connectivity of internet using socket library
@@ -284,22 +279,15 @@ class is_connected(QtCore.QThread):
 
     def run(self):
         try:
-            socket.create_connection(("1.1.1.1", 53)) # connect to 1.1.1.1 if can else coneectiob faild
+            # connect to 1.1.1.1 if can else coneectiob faild
+            socket.create_connection(("1.1.1.1", 53))
             self.isConnected.emit(True)
             return
         except Exception as e:
             pass
         self.isConnected.emit(False)
-    def stop(self): # stop thread
+
+    def stop(self):  # stop thread
         self.terminate()
         self.wait()
 
-
-
-
-if __name__ == "__main__":
-    app = QApplication(sys.argv)
-    app.setStyle("Fusion")
-    w = LoginWindow()
-    w.show()
-    sys.exit(app.exec_())

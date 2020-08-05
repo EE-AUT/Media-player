@@ -8,13 +8,15 @@ from editPart.edit import edit_Tags
 from bookmarkPart.bookmark import add_Bookmark
 
 
-# window for edit end add tag 
+# window for edit end add tag
 
 
-Form = uic.loadUiType(os.path.join(os.getcwd(), 'userWinPart/editTagWin.ui'))[0]
+Form = uic.loadUiType(os.path.join(
+    os.getcwd(), 'userWinPart/editTagWin.ui'))[0]
+
 
 class tagEditWin(QMainWindow, Form):
-    def __init__(self, parent= None, Title= "Change tag", Text= "None", Time= "None"):
+    def __init__(self, parent=None, Title="Change tag", Text="None", Time="None"):
         Form.__init__(self)
         QMainWindow.__init__(self)
         self.setupUi(self)
@@ -33,12 +35,13 @@ class tagEditWin(QMainWindow, Form):
             self.Ok_Button.setText("Change")
             self.tag_LineEdit.setText(Text)
             self.time_LineEdit.setText(Time)
-            
+
         if Title == "Add tag":
             self.Ok_Button.setText("Create")
             self.tag_LineEdit.setPlaceholderText("Enter Tag here")
-            self.time_LineEdit.setPlaceholderText("Time -> format : H:M:S or M:S")
-        
+            self.time_LineEdit.setPlaceholderText(
+                "Time -> format : H:M:S or M:S")
+
         self.Ok_Button.clicked.connect(self.okClicked)
         self.No_Button.clicked.connect(self.noClicked)
         self.closeEvent = self.CloseWin
@@ -46,48 +49,50 @@ class tagEditWin(QMainWindow, Form):
     # clicked yes
     def okClicked(self):
         try:
-            session = self.MediaPlayer.Setting.comboBox_Tag.currentText().split(".")[0]
-            text = self.tag_LineEdit.text() #line Edit text
-            time = self.time_LineEdit.text() #lineEdit Time
-            if not text == "" and not time == "": # if line edit not empty
-                if re.search("\d\d:\d\d", time) or re.search("\d\d:\d\d:\d\d", time): #check format of line edit
-                    if self.Title == "Change tag": # if change tag
+            session = self.MediaPlayer.Setting.comboBox_Tag.currentText().split(".")[
+                0]
+            text = self.tag_LineEdit.text()  # line Edit text
+            time = self.time_LineEdit.text()  # lineEdit Time
+            if not text == "" and not time == "":  # if line edit not empty
+                # check format of line edit
+                if re.search("\d\d:\d\d", time) or re.search("\d\d:\d\d:\d\d", time):
+                    if self.Title == "Change tag":  # if change tag
                         del self.MediaPlayer.allTag[session][self.Text]
-                        self.MediaPlayer.allTag[session].update({text : time})
-                        self.MediaPlayer.set_TagonListwidget(session) # update tags in Edit part
+                        self.MediaPlayer.allTag[session].update({text: time})
+                        self.MediaPlayer.set_TagonListwidget(
+                            session)  # update tags in Edit part
                         edit_Tags(
                             self.Text + "#" + self.Time, text + "#" + time, self.MediaPlayer.tag_Path)
                         self.close()
 
-                    elif self.Title == "Add tag": # if add tag
+                    elif self.Title == "Add tag":  # if add tag
                         if session in self.MediaPlayer.allTag:
-                            self.MediaPlayer.allTag[session].update({text : time}) # add tag
-                            edit_Tags( # add tag to csv file
+                            self.MediaPlayer.allTag[session].update(
+                                {text: time})  # add tag
+                            edit_Tags(  # add tag to csv file
                                 session + "\n", session + "\n" + text + "#" + time + "\n", self.MediaPlayer.tag_Path)
                         else:
                             # if there is no tag for session in database
-                            self.MediaPlayer.allTag.update({session : {text : time}})
-                            add_Bookmark(text + "#" + time, session, self.MediaPlayer.tag_Path) 
-                            
+                            self.MediaPlayer.allTag.update(
+                                {session: {text: time}})
+                            add_Bookmark(text + "#" + time, session,
+                                         self.MediaPlayer.tag_Path)
 
-                        if session == self.MediaPlayer.ComboBox_Tags_of_file.currentText().split(".")[0]: # check for syncronise media tags and setting tags 
-                            self.MediaPlayer.set_TagonListwidget(session) # update tags in add part
+                        # check for syncronise media tags and setting tags
+                        if session == self.MediaPlayer.ComboBox_Tags_of_file.currentText().split(".")[0]:
+                            self.MediaPlayer.set_TagonListwidget(
+                                session)  # update tags in add part
                         else:
-                            self.MediaPlayer.set_TagonListwidget(session, Media_Tags= False) # update tags in add part
+                            self.MediaPlayer.set_TagonListwidget(
+                                session, Media_Tags=False)  # update tags in add part
                         self.close()
-                else:
-                    print("current format")
-            else:
-                print("fill all")
-        except Exception as e:
-            print(e)
-        
+        except:
+            pass
 
     # clecked cancel
     def noClicked(self):
         self.close()
-    
+
     def CloseWin(self, val):
         self.MediaPlayer.Setting.pushButton_Edit.setEnabled(True)
         self.MediaPlayer.Setting.pushButton_Add.setEnabled(True)
-

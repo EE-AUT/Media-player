@@ -1,1 +1,0 @@
-pyinstaller --hidden-import PyQt5.QtMultimediaWidgets --onefile --path "G:\\program file\Anaconda\\Lib\\site-packages\\PyQt5\\Qt\\bin" MediaPlayer.py

@@ -64,7 +64,7 @@ class ForgetPassWindow(QDialog, Form):
         self.Get_Data.start()
 
     def Back(self):
-        #Reset to factory! and close
+        # Reset to factory! and close
         self.label_sent.setVisible(False)
         self.label_Error_Connection.setVisible(False)
         self.lineEdit_Email.clear()

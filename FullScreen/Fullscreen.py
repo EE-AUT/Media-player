@@ -10,7 +10,7 @@ def MousePosition(MediaPlayer, position):
 
 
 def fullscreen(MediaPlayer):
-    if MediaPlayer.firstTime_fullscreen:#For first time must be craete some labels to fill gaps and frame
+    if MediaPlayer.firstTime_fullscreen:  # For first time must be craete some labels to fill gaps and frame
         MediaPlayer.Label_temp1 = QLabel("", MediaPlayer)
         MediaPlayer.Label_temp2 = QLabel("", MediaPlayer)
         MediaPlayer.Label_temp3 = QLabel("", MediaPlayer)
@@ -99,7 +99,7 @@ def Remove_from_layout(MediaPlayer):
 
     MediaPlayer.Label_temp2.move(screenWidth/2+75, screenHeight-30)
     MediaPlayer.Label_temp2.resize(screenWidth-158-screenWidth/2-75, 30)
-    # Remove search and Bookmark pushButton from their layout 
+    # Remove search and Bookmark pushButton from their layout
     MediaPlayer.horizontalLayout_6.removeWidget(MediaPlayer.pushButton_Search)
     MediaPlayer.horizontalLayout_6.removeWidget(MediaPlayer.search_lineEdit)
     MediaPlayer.horizontalLayout_2.removeWidget(
@@ -156,7 +156,7 @@ def Add_to_layout(MediaPlayer):
 
     MediaPlayer.horizontalLayout_6.addWidget(MediaPlayer.search_lineEdit)
     MediaPlayer.horizontalLayout_6.addWidget(MediaPlayer.pushButton_Search)
-    #Temporary label and frame must be hide when mainwindow is in Normal screen
+    # Temporary label and frame must be hide when mainwindow is in Normal screen
     MediaPlayer.frame.setVisible(False)
     MediaPlayer.Label_temp1.setVisible(False)
     MediaPlayer.Label_temp2.setVisible(False)
@@ -187,4 +187,5 @@ def Set_visible(MediaPlayer, Bool):
     MediaPlayer.pushButton_Search.setVisible(Bool)
     MediaPlayer.pushButton_BookMark.setVisible(Bool)
     MediaPlayer.frame.setVisible(Bool)
-    MediaPlayer.pushButton_Start.setVisible(Bool)#For focuse Start button must be last
+    # For focuse Start button must be last
+    MediaPlayer.pushButton_Start.setVisible(Bool)

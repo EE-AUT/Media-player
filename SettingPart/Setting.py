@@ -22,7 +22,7 @@ class SettingWindow(QMainWindow, Form):
         Form.__init__(self)
         self.setupUi(self)
         self.MediaPlayer = Mediaplayer
-        self.Account_changing = False #This parameter shown password must be change
+        self.Account_changing = False  # This parameter shown password must be change
 
         # Theme Part
         self.palette = QtGui.QPalette()
@@ -54,9 +54,6 @@ class SettingWindow(QMainWindow, Form):
         self.horizontalSlider_Speed.valueChanged.connect(self.Play_Back_Slider)
         self.lineEdit_Speed.textChanged.connect(self.Play_Back_LineEdit)
 
-        # Text Part
-        self.comboBox_Font.activated.connect(self.Font_Change)
-
         # Account part
         self.label_NotMatch.setVisible(False)
         self.label_PassLong.setVisible(False)
@@ -71,11 +68,10 @@ class SettingWindow(QMainWindow, Form):
 
         self.pushButton_Delete_Acc.clicked.connect(self.DelAcc)
 
-        
         # Edit tag part
         self.comboBox_Tag.activated.connect(self.ListWidget_Tag_Edit)
         self.Edit_tag_Listwidget.setHeaderLabels(['Tag', 'Time'])
-        self.pushButton_Edit.clicked.connect(self.edit_Tag) 
+        self.pushButton_Edit.clicked.connect(self.edit_Tag)
         self.pushButton_Delete.clicked.connect(self.del_Tag)
         self.pushButton_Add.clicked.connect(self.add_Tag)
         self.pushButton_Upload.clicked.connect(self.uploadTags)
@@ -85,14 +81,12 @@ class SettingWindow(QMainWindow, Form):
         self.UDWin = UDWin(self.MediaPlayer)
         self.confirmWin = None
 
-
         # close event
         self.closeEvent = self.Close
         self.connection_part = None
 
-
-
     # Connect signals to Theme module in Theme.py
+
     def _Theme(self, index):
         Theme_module._Theme(self, index)
 
@@ -127,9 +121,8 @@ class SettingWindow(QMainWindow, Form):
     def NewPass(self):
         Account.NewPass(self)
 
-
-    def pass_change_result(self,val):
-        """To show password has been changed or not""" 
+    def pass_change_result(self, val):
+        """To show password has been changed or not"""
         if val:
             self.label_finish.setVisible(True)
         else:
@@ -137,80 +130,80 @@ class SettingWindow(QMainWindow, Form):
 
     def DelAcc(self):
         self.pushButton_Delete_Acc.setEnabled(False)
-        Account.DeleteAcc(self,self.MediaPlayer)
-    
+        Account.DeleteAcc(self, self.MediaPlayer)
 
     # Edit tag part
     # *************************
-    
+
     # updata tags part of settingpart's tag listwidget
+
     def ListWidget_Tag_Edit(self, index):
-        videoName = (list(self.MediaPlayer.PlaylistW.Files.keys())[index].split("."))[0] # get videoname
-        self.MediaPlayer.set_TagonListwidget( # update listwidgets
-            videoName, Setting_Tags= True, Media_Tags= False)
-
-
+        videoName = (list(self.MediaPlayer.PlaylistW.Files.keys())
+                     [index].split("."))[0]  # get videoname
+        self.MediaPlayer.set_TagonListwidget(  # update listwidgets
+            videoName, Setting_Tags=True, Media_Tags=False)
 
     # edit tag part
+
     def edit_Tag(self):
         self.pushButton_Edit.setEnabled(False)
         self.pushButton_Add.setEnabled(False)
         try:
-            self.prev_text = [self.Edit_tag_Listwidget.currentItem().text(0), self.Edit_tag_Listwidget.currentItem().text(1)]
-            self.tagEditWin = tagEditWin( # show open tag win to apply our change
-                self.MediaPlayer, Text= self.prev_text[0], Time= self.prev_text[1])
+            self.prev_text = [self.Edit_tag_Listwidget.currentItem().text(
+                0), self.Edit_tag_Listwidget.currentItem().text(1)]
+            self.tagEditWin = tagEditWin(  # show open tag win to apply our change
+                self.MediaPlayer, Text=self.prev_text[0], Time=self.prev_text[1])
             self.tagEditWin.show()
-        except Exception as e:
-            print(e)
-    
-
+        except:
+            pass
     # delete part for deleting selected item in tree widget
+
     def del_Tag(self):
-        try: # handle error of not selected item
-            item = [self.Edit_tag_Listwidget.currentItem().text(0), self.Edit_tag_Listwidget.currentItem().text(1)]
+        try:  # handle error of not selected item
+            item = [self.Edit_tag_Listwidget.currentItem().text(
+                0), self.Edit_tag_Listwidget.currentItem().text(1)]
             session = self.comboBox_Tag.currentText().split(".")[0]
             if session in self.MediaPlayer.allTag:
                 # show window to get accept from user
-                self.confirmWin = confrimWin(self.MediaPlayer, session= session 
-                    , Text= f"are you sure to delete ({item[0]}) tag", tagPartText= item, Title= "delete tag")
+                self.confirmWin = confrimWin(
+                    self.MediaPlayer, session=session, Text=f"are you sure to delete ({item[0]}) tag", tagPartText=item, Title="delete tag")
                 self.confirmWin.show()
-            else:
-                print("error in finding session -> delete")
-        except Exception as e:
-            print(e)
+        except:
+            pass
 
-    
-    # add tag 
+    # add tag
+
     def add_Tag(self):
         self.pushButton_Edit.setEnabled(False)
         self.pushButton_Add.setEnabled(False)
-        self.tagEditWin = tagEditWin( # show add tag win that user enter tag information
-            self.MediaPlayer, Title= "Add tag")
+        self.tagEditWin = tagEditWin(  # show add tag win that user enter tag information
+            self.MediaPlayer, Title="Add tag")
         self.tagEditWin.show()
 
-
     # upload tag to online database
+
     def uploadTags(self):
         if not self.UDWin.isVisible():
-            self.UDWin = UDWin(self.MediaPlayer) # window of upload tag
+            self.UDWin = UDWin(self.MediaPlayer)  # window of upload tag
             self.UDWin.user_Msg(
-                text= "Please wait to update list of your tag", stylesheet= "color:rgb(0, 170, 0);")
+                text="Please wait to update list of your tag", stylesheet="color:rgb(0, 170, 0);")
             self.UDWin.show()
-
 
     # download tag from online database
+
     def downloadTags(self):
         if not self.UDWin.isVisible():
-            self.UDWin = UDWin(self.MediaPlayer, "Download Database") # window of download tag
+            # window of download tag
+            self.UDWin = UDWin(self.MediaPlayer, "Download Database")
             self.UDWin.user_Msg(
-                text= "Please wait to update list of your tag", stylesheet= "color:rgb(0, 170, 0);")
+                text="Please wait to update list of your tag", stylesheet="color:rgb(0, 170, 0);")
             self.UDWin.show()
 
-            
-    # Edit part ended 
+    # Edit part ended
     # **********
 
     # close event to close child win and stop runnig thread
+
     def Close(self, val):
         self.UDWin.close()
         if self.tagEditWin:
@@ -219,19 +212,6 @@ class SettingWindow(QMainWindow, Form):
             self.confirmWin.close()
         if self.connection_part:
             self.connection_part.stop()
-
-        
-
-
-
-    def Font_Change(self, val):
-        print(val)
-        # if int(val)==0:
-        #     print(self.font())
-        #     self.setFont(QtGui.QFont('Arial',2))
-        #     self.MediaPlayer.setFont(QtGui.QFont('Arial',2))
-        #     self.Tab.setFont(QtGui.QFont('Arial',2))
-        #     self.MediaPlayer.actionFullScreen.setFont(QtGui.QFont('Arial',2))
 
     def Play_Back_LineEdit(self, val):
         PlayBack.Play_Back_LineEdit(self, val)
@@ -244,7 +224,6 @@ class SettingWindow(QMainWindow, Form):
         if self.Account_changing:
             self.label_finish.setVisible(False)
 
-
             if not self.label_NotMatch.isVisible():
                 if not self.label_PassLong.isVisible():
                     if Account.read_Pass('Pass') == self.lineEdit_CurrentPass.text():
@@ -253,10 +232,11 @@ class SettingWindow(QMainWindow, Form):
                         self.pushButton_OK.setEnabled(False)
                         self.pushButton_Cancel.setEnabled(False)
                         self.label_Wait.setVisible(True)
-                        self.connection_part =Account.Apply_Thread(self)
+                        self.connection_part = Account.Apply_Thread(self)
                         self.connection_part.start()
-                        self.connection_part.pass_changed.connect(self.pass_change_result)
-                        self.label_Wait.setVisible(False)           
+                        self.connection_part.pass_changed.connect(
+                            self.pass_change_result)
+                        self.label_Wait.setVisible(False)
                         self.pushButton_OK.setEnabled(True)
                         self.pushButton_Cancel.setEnabled(True)
                     else:
@@ -265,10 +245,8 @@ class SettingWindow(QMainWindow, Form):
         else:
             self.close()
 
-
-
     def Exit(self):
-        #Reset to factory!!
+        # Reset to factory!!
         Theme_module.Theme_apply(self)
         self.label_finish.setVisible(False)
         self.label_NotMatch.setVisible(False)
@@ -279,5 +257,5 @@ class SettingWindow(QMainWindow, Form):
         self.lineEdit_CurrentPass.clear()
         self.lineEdit_NewPass.clear()
         self.lineEdit_ReNewpass.clear()
-        self.Account_changing =False
+        self.Account_changing = False
         self.close()

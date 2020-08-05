@@ -241,43 +241,41 @@ class MediaPlayer(QMainWindow, Form):
         self.Settingshow()
         self.Setting.Tab.setCurrentIndex(3)
 
-    def menuBarAccout(self):    
+    def menuBarAccout(self):
         # Open Account Tab of Setting Window
         self.Setting.Account_changing = False
         self.Settingshow()
         self.Setting.Tab.setCurrentIndex(4)
 
-
     def menuBarCreateTag(self):
         # create new Tag file
         if self.tag_Path:
-            self.confirmCloseTag = confrimWin(self, Title= "Create Tag", 
-                Text= "Are you sure to close current tag and create new one")
+            self.confirmCloseTag = confrimWin(self, Title="Create Tag",
+                                              Text="Are you sure to close current tag and create new one")
             self.actionCreate_Tag.setEnabled(False)
             self.confirmCloseTag.show()
         else:
             dialog = QFileDialog(self, 'file tag', directory=os.getcwd())
             dialog.setFileMode(QFileDialog.DirectoryOnly)
             if dialog.exec_() == QDialog.Accepted:
-                _path = dialog.selectedFiles()[0] 
+                _path = dialog.selectedFiles()[0]
                 self.tag_Path = _path + "/Created_tag.csv"
                 open(self.tag_Path, "w")
 
         pass
-    
 
     def menuBarCloseTag(self):
         # close current tags
         if self.tag_Path:
-            self.confirmCloseTag = confrimWin(self, Title= "Close Tag", Text= "Are you sure to close current tag")
+            self.confirmCloseTag = confrimWin(
+                self, Title="Close Tag", Text="Are you sure to close current tag")
             self.confirmCloseTag.show()
             self.actionClose_Tag.setEnabled(False)
-        else :
-            self.confirmCloseTag = confrimWin(self, Title= "message for close tag", Text= "There is no tag to close")
-            self.confirmCloseTag.show()  
+        else:
+            self.confirmCloseTag = confrimWin(
+                self, Title="message for close tag", Text="There is no tag to close")
+            self.confirmCloseTag.show()
             self.actionClose_Tag.setEnabled(False)
-
-
 
     def fullscreen(self):
         self.DockWidget_Tags_of_file.setVisible(False)
@@ -565,8 +563,7 @@ class MediaPlayer(QMainWindow, Form):
             self.set_TagonListwidget(self.windowTitle()[16:].split(".")[
                                      0])  # update tag listwidget
 
-        except Exception as e:
-            print(e)
+        except:
             pass
 
         self.lineEdit_Bookmark.clear()
@@ -650,8 +647,7 @@ class MediaPlayer(QMainWindow, Form):
                 # concert time format to second for using in change position
                 time_second = tc.to_second(self.allTag[session][tag])
                 self.change_Position(time_second)
-            except Exception as e:  # handle unexcepted error!
-                print(e)
+            except:  # handle unexcepted error!
                 pass
 
     # Create search listwidget and running thread to starting search
@@ -719,7 +715,6 @@ class MediaPlayer(QMainWindow, Form):
         videoName = (list(self.PlaylistW.Files.keys())[index].split("."))[0]
         self.set_TagonListwidget(videoName, Setting_Tags=False)
 
-
     def openTags(self):
         """OpenTag in csv, pptx, docx format and start tag thread for reading data"""
 
@@ -766,11 +761,9 @@ class MediaPlayer(QMainWindow, Form):
                     if Media_Tags:
                         self.ListWidget_Tags_of_file.addItem(
                             f'{self.ListWidget_Tags_of_file.count()+1} . {text}')
-            else:
-                print("Fault in Tags")
-        except Exception as e:
-            print(e)
 
+        except:
+            pass
     # item clicked event to go to time correlate clicked tag in video
 
     # change time when clicking on tags in search part and main listwidget if tags
@@ -786,8 +779,8 @@ class MediaPlayer(QMainWindow, Form):
                 time_second = tc.to_second(self.allTag[session][tag_Text])
                 # using change position function to handle sliders and time
                 self.change_Position(time_second)
-            except Exception as e:
-                print(e)
+            except:
+                pass
         else:
             session = self.ComboBox_Tags_of_file.currentText().split(".")[0]
             self.confirmWin = confrimWin(self, session=session,
@@ -883,7 +876,7 @@ class Slider(QSlider):
         elif position.buttons() == QtCore.Qt.LeftButton:
             self.setUP_Slider.emit(position.x())
 
-        #To Close label of slider
+        # To Close label of slider
         if position.y() > self.height()-5 or position.y() < 5 or position.x() > self.width()-5 or position.x() < 5:
             self.MediaPlayer.Slider_play_label.setVisible(False)
             self.MediaPlayer.Slider_Volume_label.setVisible(False)
@@ -940,7 +933,8 @@ class Search_Animation(QtCore.QThread):
         for i in range(int(Mainw.size().width()/8)):
             self.update_Animation.emit(2*i)
             sleep(0.001)
-        self.update_Animation.emit(-1)#-1 is emitted when animation is finished
+        # -1 is emitted when animation is finished
+        self.update_Animation.emit(-1)
 
     def stop(self):  # force thread to stop
         self.terminate()
@@ -957,7 +951,8 @@ class BookMark_Animation(QtCore.QThread):
         for i in range(int(Mainw.size().width()/8)):
             self.update_Animation.emit(2*i)
             sleep(0.001)
-        self.update_Animation.emit(-1)#-1 is emitted when animation is finished
+        # -1 is emitted when animation is finished
+        self.update_Animation.emit(-1)
 
     def stop(self):  # force thread to stop
         self.terminate()

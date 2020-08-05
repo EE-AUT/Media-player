@@ -6,15 +6,12 @@ from editPart.edit import edit_Tags
 import Database.updateDatabase as UD
 
 
+Form = uic.loadUiType(os.path.join(
+    os.getcwd(), 'userWinPart/updatedatabaseWin.ui'))[0]
 
-
-
-
-
-Form = uic.loadUiType(os.path.join(os.getcwd(), 'userWinPart/updatedatabaseWin.ui'))[0]
 
 class updatedatabaseWin(QMainWindow, Form):
-    def __init__(self, parent= None, Title= "Upload Database"):
+    def __init__(self, parent=None, Title="Upload Database"):
         Form.__init__(self)
         QMainWindow.__init__(self)
         self.setupUi(self)
@@ -29,7 +26,7 @@ class updatedatabaseWin(QMainWindow, Form):
         self.MediaPlayer = parent
 
         # threads
-        self.getWsheets = getWsheets(self) # get worksheets of user
+        self.getWsheets = getWsheets(self)  # get worksheets of user
         self.getWsheets.Wsheets_Ready.connect(self.wsh_isReady)
         self.getWsheets.start()
         self.UD_Thread = None
@@ -41,7 +38,7 @@ class updatedatabaseWin(QMainWindow, Form):
         if self.Title == "Upload Database":
             self.LineEdit.setEnabled(False)
             self.Browse_Button.setVisible(False)
-            self.wsheets =None
+            self.wsheets = None
             self.new_Button.clicked.connect(self.new_Wsh)
             self.wsh_Combo_Global.setVisible(False)
             self.label_Global.setVisible(False)
@@ -60,26 +57,27 @@ class updatedatabaseWin(QMainWindow, Form):
         self.closeEvent = self.Close
         self.Cancel_Button.clicked.connect(self.Cancel)
 
-
     # worksheets and they result ready
+
     def wsh_isReady(self, wsheets, accept, Gworksheets, gAccept):
         self.wsheets = wsheets
         self.Ok_Button.setEnabled(True)
         self.label_Msg.setVisible(False)
         if accept:
-            self.wsh_Combo.addItems(wsheets) # update worksheets in combo box
+            self.wsh_Combo.addItems(wsheets)  # update worksheets in combo box
         else:
-            self.user_Msg( # connection failed
+            self.user_Msg(  # connection failed
                 "Connection Failed or Failed in user Tag", "color:rgb(255, 0, 0)")
 
         if self.Title == "Download Database":
             if gAccept:
-                self.wsh_Combo_Global.addItems(Gworksheets) #show global worksheets in download part
+                # show global worksheets in download part
+                self.wsh_Combo_Global.addItems(Gworksheets)
             else:
                 self.user_Msg(
-                    "Connection Failed", "color:rgb(255, 0, 0)") # connection failed
+                    "Connection Failed", "color:rgb(255, 0, 0)")  # connection failed
 
-    def new_Wsh(self): # enter new worksheet name to create new one
+    def new_Wsh(self):  # enter new worksheet name to create new one
         if self.new_Button.isChecked():
             self.LineEdit.setEnabled(True)
             self.LineEdit.setPlaceholderText("Enter tag file name")
@@ -110,26 +108,29 @@ class updatedatabaseWin(QMainWindow, Form):
         else:
             if self.wsh_Combo.currentIndex():
                 self.Ok_Button.setEnabled(False)
-                self.upload(user, self.wsh_Combo.currentText(), self.MediaPlayer.tag_Path)
+                self.upload(user, self.wsh_Combo.currentText(),
+                            self.MediaPlayer.tag_Path)
             else:
                 self.user_Msg(
                     "select one of tags or create new one", "color:rgb(255, 0, 0)")
-                
 
     # running thread for upload data to database
+
     def upload(self, user, wsheetname, filepath):
         if filepath:
             file_format = (filepath.split("/")[-1]).split(".")[-1]
             if file_format == "csv":
                 # creating and running thread
-                self.UD_Thread = uploadDatabse(self, user, wsheetname, filepath)
+                self.UD_Thread = uploadDatabse(
+                    self, user, wsheetname, filepath)
                 self.UD_Thread.upload_Result.connect(self.upload_Result)
                 self.UD_Thread.start()
                 self.user_Msg("please wait ...", "color:rgb(0, 170, 0)")
             else:
                 # handle user incorrect work
-                self.user_Msg("you can only upload csv file not other format", "color:rgb(255, 0, 0)")
-            
+                self.user_Msg(
+                    "you can only upload csv file not other format", "color:rgb(255, 0, 0)")
+
         else:
             # handle user incorrect work
             self.user_Msg(
@@ -154,7 +155,7 @@ class updatedatabaseWin(QMainWindow, Form):
         if save_tag_Path:
             self.LineEdit.setText(save_tag_Path)
 
-    # handle download 
+    # handle download
     def OkClicked_Download(self):
         self.label_Msg.setVisible(False)
         tagpath = self.LineEdit.text()
@@ -166,10 +167,10 @@ class updatedatabaseWin(QMainWindow, Form):
                         "you cant choose two tags instantly", "color:rgb(255, 0, 0)")
                 elif self.wsh_Combo.currentIndex() and (not self.wsh_Combo_Global.currentIndex()):
                     self.Ok_Button.setEnabled(False)
-                    self.download() 
+                    self.download()
                 elif (not self.wsh_Combo.currentIndex()) and self.wsh_Combo_Global.currentIndex():
                     self.Ok_Button.setEnabled(False)
-                    self.download(Global = True)
+                    self.download(Global=True)
                 else:
                     # handle user incorrect work
                     self.user_Msg(
@@ -178,13 +179,12 @@ class updatedatabaseWin(QMainWindow, Form):
                 # handle user incorrect work
                 self.user_Msg(
                     "please select currect file", "color:rgb(255, 0, 0)")
-        except Exception as e:
-            print(e)
-
+        except:
+            pass
 
     # download data using thread
-    def download(self, Global = False):
-        if not Global: # download from gloals or not
+    def download(self, Global=False):
+        if not Global:  # download from gloals or not
             user = user = open("LoginPart/User.csv").read().split(",")[0]
             wsheets = self.wsh_Combo.currentText()
         else:
@@ -192,11 +192,12 @@ class updatedatabaseWin(QMainWindow, Form):
             wsheets = self.wsh_Combo_Global.currentText()
         self.user_Msg("please wait ...", "color:rgb(0, 170, 0)")
         # running thread
-        self.DD_Thread = downloadDatabse(self, user, wsheets, self.LineEdit.text())
+        self.DD_Thread = downloadDatabse(
+            self, user, wsheets, self.LineEdit.text())
         self.DD_Thread.download_Result.connect(self.Download_Result)
         self.DD_Thread.start()
 
-    # download result 
+    # download result
     def Download_Result(self, key):
         self.Ok_Button.setEnabled(True)
         if key:
@@ -206,8 +207,8 @@ class updatedatabaseWin(QMainWindow, Form):
             # Connection Failed
             self.user_Msg("Connection Failed", "color:rgb(255, 0, 0)")
 
-
     # cancel button and close self window
+
     def Cancel(self):
         self.close()
 
@@ -219,18 +220,12 @@ class updatedatabaseWin(QMainWindow, Form):
         if self.DD_Thread:
             self.DD_Thread.stop()
 
-
     # user message label situation
+
     def user_Msg(self, text, stylesheet):
         self.label_Msg.setVisible(True)
         self.label_Msg.setText(text)
         self.label_Msg.setStyleSheet(stylesheet)
-        
-
-
-
-
-
 
 
 # thread of get worksheets
@@ -247,26 +242,26 @@ class getWsheets(QtCore.QThread):
         user = open("LoginPart/User.csv").read().split(",")[0]
         result = UD.get_allworksheet(user)
         for item in result[0]:
-            worksheets.append(item.title) # user worksheets
+            worksheets.append(item.title)  # user worksheets
         for item in result[2]:
-            Globalworksheet.append(item.title) # global worksheets
+            Globalworksheet.append(item.title)  # global worksheets
         if len(worksheets):
-            worksheets.pop(0) 
+            worksheets.pop(0)
         if len(Globalworksheet):
             Globalworksheet.pop(0)
-        self.Wsheets_Ready.emit(worksheets, result[1], Globalworksheet, result[3])
+        self.Wsheets_Ready.emit(
+            worksheets, result[1], Globalworksheet, result[3])
 
-    def stop(self): # stop thread
+    def stop(self):  # stop thread
         self.terminate()
         self.wait()
-
 
 
 # thread for upload database using UpdateDatabase mudole
 class uploadDatabse(QtCore.QThread):
     upload_Result = QtCore.pyqtSignal(bool, str)
 
-    def __init__(self, window, user= None, wsheetname= None, filepath= None):
+    def __init__(self, window, user=None, wsheetname=None, filepath=None):
         QtCore.QThread.__init__(self, parent=window)
         self.user = user
         self.wsheetname = wsheetname
@@ -276,25 +271,26 @@ class uploadDatabse(QtCore.QThread):
         result = UD.upload_Database(self.user, self.wsheetname, self.filepath)
         self.upload_Result.emit(result, self.wsheetname)
 
-
     def stop(self):
         self.terminate()
         self.wait()
 
 # thread for download database using UpdateDatabase mudole
+
+
 class downloadDatabse(QtCore.QThread):
     download_Result = QtCore.pyqtSignal(bool)
 
-    def __init__(self, window, user= None, wsheetname= None, filepath= None):
+    def __init__(self, window, user=None, wsheetname=None, filepath=None):
         QtCore.QThread.__init__(self, parent=window)
         self.user = user
         self.wsheetname = wsheetname
         self.filepath = filepath
 
     def run(self):
-        result = UD.download_Database(self.user, self.wsheetname, self.filepath)
+        result = UD.download_Database(
+            self.user, self.wsheetname, self.filepath)
         self.download_Result.emit(result)
-
 
     def stop(self):
         self.terminate()

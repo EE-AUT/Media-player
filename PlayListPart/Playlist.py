@@ -127,9 +127,9 @@ class PlaylistWindow(QMainWindow, Form):
             index = list(self.Files.keys()).index(Selected_Item)
 
         if self.listWidget_Playlist.count():
-            self.Files.pop(Selected_Item) #delete from Files
+            self.Files.pop(Selected_Item)  # delete from Files
             self.listWidget_Playlist.clear()
-            for file in self.Files: #rewrite listwidget of playlist
+            for file in self.Files:  # rewrite listwidget of playlist
                 self.listWidget_Playlist.addItem(
                     f'{self.listWidget_Playlist.count()+1} . {file}')
 
