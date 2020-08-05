@@ -643,7 +643,7 @@
           </property>
           <property name="icon">
            <iconset>
-            <normaloff>Icons/iconfinder_icon-111-search_314478.png</normaloff>Icons/iconfinder_icon-111-search_314478.png</iconset>
+            <normaloff>Icons/Search.png</normaloff>Icons/Search.png</iconset>
           </property>
           <property name="iconSize">
            <size>
