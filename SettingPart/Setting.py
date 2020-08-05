@@ -260,7 +260,7 @@ class SettingWindow(QMainWindow, Form):
                         self.pushButton_OK.setEnabled(True)
                         self.pushButton_Cancel.setEnabled(True)
                     else:
-                        self.Tab.setCurrentIndex(3)
+                        self.Tab.setCurrentIndex(4)
                         self.label_OldPass.setVisible(True)
         else:
             self.close()
