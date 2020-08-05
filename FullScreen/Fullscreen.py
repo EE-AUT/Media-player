@@ -35,7 +35,7 @@ def fullscreen(MediaPlayer):
 
 
 def Remove_from_layout(MediaPlayer):
-    ###To remove everything from their layout
+    """To remove everything from their layout"""
     screenWidth = QApplication.desktop().screenGeometry().width()
     screenHeight = QApplication.desktop().screenGeometry().height()
     # Remove widget of video from its layout and resize , move it
@@ -119,7 +119,7 @@ def Remove_from_layout(MediaPlayer):
 
 
 def Add_to_layout(MediaPlayer):
-    ###To Add everything To their layout
+    """To Add everything To their layout"""
     MediaPlayer.horizontalLayout_5.removeItem(MediaPlayer.horizontalLayout)
     MediaPlayer.horizontalLayout_5.removeItem(MediaPlayer.horizontalLayout_3)
     MediaPlayer.verticalLayout.addWidget(MediaPlayer.videowidget)

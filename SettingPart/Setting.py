@@ -129,7 +129,7 @@ class SettingWindow(QMainWindow, Form):
 
 
     def pass_change_result(self,val):
-        ###To show password has been changed or not 
+        """To show password has been changed or not""" 
         if val:
             self.label_finish.setVisible(True)
         else:

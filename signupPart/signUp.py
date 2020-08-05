@@ -230,7 +230,7 @@ class signUpWindow(QMainWindow, Form):
 
     # update remaining time
     def Update_Time(self, val):
-        self.confirm_LineEdit.setPlaceholderText(f"Enter Key here: {val}' remain")
+        self.confirm_LineEdit.setPlaceholderText(f"Enter Key here: {val}")
 
     # time of enter confimation key has been ended
     def Time_Ended(self, key):

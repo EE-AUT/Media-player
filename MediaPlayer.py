@@ -7,7 +7,7 @@ from time import sleep
 import LoginPart.Login as Login
 import SettingPart.Setting as Setting
 import PlayListPart.Playlist as Playlist
-from PyQt5.QtWidgets import QApplication, QHBoxLayout, QWidget, QLabel, QFrame, QMainWindow, QComboBox, QVBoxLayout, QDockWidget, QMenuBar, QFileDialog, QLineEdit, QListWidget, QSlider, QShortcut, QTreeWidgetItem, QGraphicsView
+from PyQt5.QtWidgets import QApplication, QHBoxLayout, QWidget, QLabel, QFrame, QMainWindow, QComboBox, QVBoxLayout, QDockWidget, QMenuBar, QFileDialog, QLineEdit, QListWidget, QSlider, QShortcut, QTreeWidgetItem, QGraphicsView, QDialog
 from PyQt5 import uic, QtCore, QtGui
 from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
 from PyQt5.QtCore import Qt, QUrl
@@ -82,25 +82,25 @@ class MediaPlayer(QMainWindow, Form):
 
         self.pushButton_stop.setEnabled(False)
         self.pushButton_stop.clicked.connect(self.stop)
-        self.pushButton_stop.setToolTip("Stop")
+        self.pushButton_stop.setToolTip("Stop (Ctrl+Z)")
 
         self.pushButton_next.setEnabled(False)
         self.pushButton_next.clicked.connect(self.next)
-        self.pushButton_next.setToolTip("Next")
+        self.pushButton_next.setToolTip("Next (PgUp)")
 
         self.pushButton_previous.setEnabled(False)
         self.pushButton_previous.clicked.connect(self.previous)
-        self.pushButton_previous.setToolTip("Previous")
+        self.pushButton_previous.setToolTip("Previous (PgDn)")
 
         self.pushButton_open.clicked.connect(self.Load_video)
-        self.pushButton_open.setToolTip("Open")
+        self.pushButton_open.setToolTip("Open (Ctrl+O)")
 
         self.pushButton_Search.clicked.connect(self.sch_icon_Event)
-        self.pushButton_Search.setToolTip("Search")
+        self.pushButton_Search.setToolTip("Search (Ctrl+S)")
 
         self.pushButton_BookMark.setVisible(False)
         self.pushButton_BookMark.clicked.connect(self.add_BookMarks)
-        self.pushButton_BookMark.setToolTip("Add BookMark")
+        self.pushButton_BookMark.setToolTip("Add BookMark (Ctrl+B)")
 
         self.pushButton_Setting.clicked.connect(self.Settingshow)
         self.pushButton_Setting.setToolTip("Setting")
@@ -111,6 +111,7 @@ class MediaPlayer(QMainWindow, Form):
 
         # Create Tags of file Dockwidget
         self.pushButton_Tag_of_file.clicked.connect(self.Show_Tags_of_file)
+        self.pushButton_Tag_of_file.setToolTip("Tags of file")
         self.DockWidget_Tags_of_file = QDockWidget("Tags of file", self)
         self.DockWidget_Tags_of_file.setVisible(False)
         self.DockWidget_Tags_of_file.setMinimumWidth(150)
@@ -240,17 +241,43 @@ class MediaPlayer(QMainWindow, Form):
         self.Settingshow()
         self.Setting.Tab.setCurrentIndex(3)
 
-    def menuBarAccout(self):
+    def menuBarAccout(self):    
         # Open Account Tab of Setting Window
         self.Setting.Account_changing = False
         self.Settingshow()
         self.Setting.Tab.setCurrentIndex(4)
 
+
     def menuBarCreateTag(self):
-        print("Create Tag")
+        # create new Tag file
+        if self.tag_Path:
+            self.confirmCloseTag = confrimWin(self, Title= "Create Tag", 
+                Text= "Are you sure to close current tag and create new one")
+            self.actionCreate_Tag.setEnabled(False)
+            self.confirmCloseTag.show()
+        else:
+            dialog = QFileDialog(self, 'file tag', directory=os.getcwd())
+            dialog.setFileMode(QFileDialog.DirectoryOnly)
+            if dialog.exec_() == QDialog.Accepted:
+                _path = dialog.selectedFiles()[0] 
+                self.tag_Path = _path + "/Created_tag.csv"
+                open(self.tag_Path, "w")
+
+        pass
+    
 
     def menuBarCloseTag(self):
-        print("Close Tag")
+        # close current tags
+        if self.tag_Path:
+            self.confirmCloseTag = confrimWin(self, Title= "Close Tag", Text= "Are you sure to close current tag")
+            self.confirmCloseTag.show()
+            self.actionClose_Tag.setEnabled(False)
+        else :
+            self.confirmCloseTag = confrimWin(self, Title= "message for close tag", Text= "There is no tag to close")
+            self.confirmCloseTag.show()  
+            self.actionClose_Tag.setEnabled(False)
+
+
 
     def fullscreen(self):
         self.DockWidget_Tags_of_file.setVisible(False)
@@ -400,7 +427,7 @@ class MediaPlayer(QMainWindow, Form):
             self.start()
             self.pushButton_volume.setEnabled(True)
             self.pushButton_volume.setIcon(QIcon('./Icons/unmute.png'))
-            self.pushButton_volume.setToolTip("Mute")
+            self.pushButton_volume.setToolTip("Mute (Ctrl+M)")
             if not self.isFullScreen():
                 self.pushButton_BookMark.setVisible(True)
             self.pushButton_stop.setEnabled(True)
@@ -501,27 +528,27 @@ class MediaPlayer(QMainWindow, Form):
             if not volume:
                 self.player.setMuted(True)
                 self.pushButton_volume.setIcon(QIcon('./Icons/mute.png'))
-                self.pushButton_volume.setToolTip("UnMute")
+                self.pushButton_volume.setToolTip("UnMute (Ctrl+M)")
 
             else:
                 self.player.setMuted(False)
                 self.pushButton_volume.setIcon(QIcon('./Icons/unmute.png'))
-                self.pushButton_volume.setToolTip("Mute")
+                self.pushButton_volume.setToolTip("Mute (Ctrl+M)")
 
             self.Slider_Volume.setValue(volume)
             self.player.setVolume(volume)
 
     def volumeOnOff(self):
-        ###Mute and unmute
+        """Mute and unmute"""
         if self.player.isAudioAvailable() or self.player.isVideoAvailable():
             if self.player.isMuted():
                 self.player.setMuted(False)
                 self.pushButton_volume.setIcon(QIcon('./Icons/unmute.png'))
-                self.pushButton_volume.setToolTip("Mute")
+                self.pushButton_volume.setToolTip("Mute (Ctrl+M)")
             else:
                 self.player.setMuted(True)
                 self.pushButton_volume.setIcon(QIcon('./Icons/mute.png'))
-                self.pushButton_volume.setToolTip("UnMute")
+                self.pushButton_volume.setToolTip("UnMute (Ctrl+M)")
 
     # save bookmarks and updatae tag list widget
     def save_Bookmarks(self):
@@ -688,13 +715,13 @@ class MediaPlayer(QMainWindow, Form):
                 QDockWidget.DockWidgetFloatable | QDockWidget.DockWidgetMovable)
 
     def ListWidget_Tag(self, index):
-        ### Tag combo box item clicked function
+        """Tag combo box item clicked function"""
         videoName = (list(self.PlaylistW.Files.keys())[index].split("."))[0]
         self.set_TagonListwidget(videoName, Setting_Tags=False)
 
 
     def openTags(self):
-        ###OpenTag in csv, pptx, docx format and start tag thread for reading data
+        """OpenTag in csv, pptx, docx format and start tag thread for reading data"""
 
         self.tag_Path, _ = QFileDialog.getOpenFileName(
             self, "Open Tag", directory=os.path.join(os.getcwd(), 'Tags'), filter='*.csv *.pptx *.docx')
