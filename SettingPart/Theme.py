@@ -3,9 +3,6 @@ from PyQt5.QtWidgets import QApplication
 from PyQt5 import QtCore, QtGui
 
 
-
-
-
 def saveANDexit(SettingWindow):
     # To Write everything about Setting in Sitting.csv
     with open('SettingPart/Setting.csv', mode='w', newline='') as file:
@@ -39,7 +36,7 @@ def Theme_apply(SettingWindow):
         SettingWindow.comboBox_Theme.setCurrentIndex(int(Dict['Theme']))
         _Theme(SettingWindow, int(Dict['Theme']))
 
-        Classic_Theme( int(Dict['Classic']))
+        Classic_Theme(int(Dict['Classic']))
         SettingWindow.checkBox_Theme.setChecked(int(Dict['Classic']))
 
         background_Theme(SettingWindow, int(Dict['Background']))
@@ -74,7 +71,9 @@ def Theme_apply(SettingWindow):
 
 
 def _Theme(SettingWindow, index):
+    # To select Theme
     if index == 0:
+        # Light Theme
         Classic_Theme(False)
         SettingWindow.checkBox_Theme.setChecked(False)
 
@@ -107,7 +106,8 @@ def _Theme(SettingWindow, index):
         SettingWindow.scrollArea_Theme.setVisible(False)
 
     if index == 1:
-        Classic_Theme( False)
+        # Dark Theme
+        Classic_Theme(False)
         SettingWindow.checkBox_Theme.setChecked(False)
 
         background_Theme(SettingWindow, 11)
@@ -139,14 +139,16 @@ def _Theme(SettingWindow, index):
         SettingWindow.scrollArea_Theme.setVisible(False)
 
     if index == 2:
+        # Classic Dark Theme
         _Theme(SettingWindow, 1)
-        Classic_Theme( True)
+        Classic_Theme(True)
         SettingWindow.checkBox_Theme.setChecked(True)
         SliderTheme(SettingWindow, 5)
 
     if index == 3:
+        # Classic Light Theme
         _Theme(SettingWindow, 0)
-        Classic_Theme( True)
+        Classic_Theme(True)
         SettingWindow.checkBox_Theme.setChecked(True)
         SliderTheme(SettingWindow, 3)
 
@@ -155,9 +157,8 @@ def _Theme(SettingWindow, index):
         SettingWindow.scrollArea_Theme.setVisible(True)
 
 
-
-
 def Classic_Theme(classic):
+    # To Set windows or Fusion style according to Classic
     if classic:
         QApplication.setStyle("Windows")
     else:
@@ -165,58 +166,60 @@ def Classic_Theme(classic):
 
 
 def background_Theme(SettingWindow, index):
+    # To set Background according index(Color)
     if index == 0:
         SettingWindow.palette.setColor(QtGui.QPalette.Window,
-                                       QtGui.QColor('#ffffff'))
+                                       QtGui.QColor('#ffffff'))  # White
         QApplication.setPalette(SettingWindow.palette)
     if index == 1:
         SettingWindow.palette.setColor(QtGui.QPalette.Window,
-                                       QtGui.QColor('#ebebeb'))
+                                       QtGui.QColor('#ebebeb'))  # Silver
         QApplication.setPalette(SettingWindow.palette)
     if index == 2:
         SettingWindow.palette.setColor(QtGui.QPalette.Window,
-                                       QtGui.QColor(53, 53, 53))
+                                       QtGui.QColor(53, 53, 53))  # Black
         QApplication.setPalette(SettingWindow.palette)
     if index == 3:
         SettingWindow.palette.setColor(QtGui.QPalette.Window,
-                                       QtGui.QColor('#35b9ff'))
+                                       QtGui.QColor('#35b9ff'))  # Bright Blue
         QApplication.setPalette(SettingWindow.palette)
     if index == 4:
         SettingWindow.palette.setColor(QtGui.QPalette.Window,
-                                       QtGui.QColor('#163393'))
+                                       QtGui.QColor('#163393'))  # Dark Blue
         QApplication.setPalette(SettingWindow.palette)
     if index == 5:
         SettingWindow.palette.setColor(QtGui.QPalette.Window,
-                                       QtGui.QColor('#ee8bff'))
+                                       QtGui.QColor('#ee8bff'))  # Bright purple
         QApplication.setPalette(SettingWindow.palette)
     if index == 6:
         SettingWindow.palette.setColor(QtGui.QPalette.Window,
-                                       QtGui.QColor('#9538bd'))
+                                       QtGui.QColor('#9538bd'))  # Dark purple
         QApplication.setPalette(SettingWindow.palette)
     if index == 7:
         SettingWindow.palette.setColor(QtGui.QPalette.Window,
-                                       QtGui.QColor('#55aa00'))
+                                       QtGui.QColor('#55aa00'))  # Green
         QApplication.setPalette(SettingWindow.palette)
     if index == 8:
         SettingWindow.palette.setColor(QtGui.QPalette.Window,
-                                       QtGui.QColor('#ffff7f'))
+                                       QtGui.QColor('#ffff7f'))  # Yellow
         QApplication.setPalette(SettingWindow.palette)
     if index == 9:
         SettingWindow.palette.setColor(QtGui.QPalette.Window,
-                                       QtGui.QColor('#ff0000'))
+                                       QtGui.QColor('#ff0000'))  # Red
         QApplication.setPalette(SettingWindow.palette)
     if index == 10:
         SettingWindow.palette.setColor(QtGui.QPalette.Window,
-                                       QtGui.QColor('#ffaa00'))
+                                       QtGui.QColor('#ffaa00'))  # Orange
     if index == 11:
         SettingWindow.palette.setColor(QtGui.QPalette.Window,
-                                       QtGui.QColor('#353535'))
+                                       QtGui.QColor('#353535'))  # Gray
     QApplication.setPalette(SettingWindow.palette)
 
 ##########################
 
 
 def Base_Theme(SettingWindow, index):
+    # To set Base color according index(Color)
     if index == 0:
         SettingWindow.palette.setColor(QtGui.QPalette.Base,
                                        QtGui.QColor('#ffffff'))
@@ -247,7 +250,6 @@ def Base_Theme(SettingWindow, index):
     if index == 9:
         SettingWindow.palette.setColor(QtGui.QPalette.Base,
                                        QtGui.QColor('#ff0000'))
-        # QApplication.setPalette(SettingWindow.palette)
     if index == 10:
         SettingWindow.palette.setColor(QtGui.QPalette.Base,
                                        QtGui.QColor('#ffaa00'))
@@ -260,6 +262,7 @@ def Base_Theme(SettingWindow, index):
 
 
 def WindowsText_Theme(SettingWindow, index):
+    # To set WindowsText color according index(Color)
     if index == 0:
         SettingWindow.palette.setColor(QtGui.QPalette.WindowText,
                                        QtGui.QColor('#ffffff'))
@@ -303,6 +306,7 @@ def WindowsText_Theme(SettingWindow, index):
 
 
 def Text_Theme(SettingWindow, index):
+    # To set Text color according index(Color)
     if index == 0:
         SettingWindow.palette.setColor(QtGui.QPalette.Text,
                                        QtGui.QColor('#ffffff'))
@@ -345,6 +349,7 @@ def Text_Theme(SettingWindow, index):
 
 
 def Button_Theme(SettingWindow, index):
+    # To set Button color according index(Color)
     if index == 0:
         SettingWindow.palette.setColor(QtGui.QPalette.Button,
                                        QtGui.QColor('#ffffff'))
@@ -387,6 +392,7 @@ def Button_Theme(SettingWindow, index):
 
 
 def ButtonText_Theme(SettingWindow, index):
+    # To set ButtonText color according index(Color)
     if index == 0:
         SettingWindow.palette.setColor(QtGui.QPalette.ButtonText,
                                        QtGui.QColor('#ffffff'))
@@ -428,12 +434,11 @@ def ButtonText_Theme(SettingWindow, index):
 
 
 def SliderTheme(SettingWindow, index):
-    # Color of Slider in comboBox
+    # Create list of Color of Slider in comboBox
     color = ["#ffffff", "#ebebeb", "#353535", "#35b9ff", "#163393",
              "#ee8bff", "#9538bd", "#55aa00", "#ffff7f", "#ff0000", "#ffaa00"]
     if SettingWindow.checkBox_Theme.isChecked():
         # Set stylesheet for Sliders Classic
-
         StyleSheet_Slider = ("")
     else:
         # Set stylesheet for Sliders Fusion

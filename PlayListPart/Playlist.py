@@ -15,6 +15,7 @@ class PlaylistWindow(QMainWindow, Form):
         self.setupUi(self)
         self.MediaPlayer = MediaPlayer
         self.File_Path = os.getcwd()
+        # To save File of play list , keys are name of file and values are directories of file
         self.Files = dict()
 
         # To Specialize flags
@@ -38,10 +39,10 @@ class PlaylistWindow(QMainWindow, Form):
         self.File_Path = file_path.replace(f"{self.FileName}", "")
         # Create a dictionary for Files that keys of it are files name and values of it is file path
         self.Files = dict((file, f'{self.File_Path}{file}') for file in os.listdir(
-            self.File_Path) if re.search(f'.{File_format}', file))
+            self.File_Path) if re.search(f'.{File_format}', file))  # Create Files
         for file in self.Files:
             self.listWidget_Playlist.addItem(
-                f'{self.listWidget_Playlist.count()+1} . {file}')
+                f'{self.listWidget_Playlist.count()+1} . {file}')  # Add file to listWidget in playlist
             # To set current item of list that is playing
             if file == self.FileName:
                 self.listWidget_Playlist.setCurrentItem(
@@ -94,7 +95,7 @@ class PlaylistWindow(QMainWindow, Form):
         if not self.MediaPlayer.isFullScreen():
             self.MediaPlayer.pushButton_BookMark.setVisible(True)
 
-        #Updata combo and listwidget of tags
+        # Updata combo and listwidget of tags
         currentText = val.text()[self.spliter:]
         index = self.MediaPlayer.ComboBox_Tags_of_file.findText(currentText)
         self.MediaPlayer.ComboBox_Tags_of_file.setCurrentIndex(index)
@@ -107,9 +108,9 @@ class PlaylistWindow(QMainWindow, Form):
         if file_path:
             file_name = file_path.split("/")[-1]
             if not file_name in self.Files.keys():
-                self.Files[file_name] = file_path
+                self.Files[file_name] = file_path  # Add to files
                 self.listWidget_Playlist.addItem(
-                    f'{self.listWidget_Playlist.count()+1} . {file_name}')
+                    f'{self.listWidget_Playlist.count()+1} . {file_name}')  # Add to listwidget in playlist
 
         # To update part of Tags of file  Dackwidget
         self.MediaPlayer.ComboBox_Tags_of_file.clear()
@@ -126,9 +127,9 @@ class PlaylistWindow(QMainWindow, Form):
             index = list(self.Files.keys()).index(Selected_Item)
 
         if self.listWidget_Playlist.count():
-            self.Files.pop(Selected_Item)
+            self.Files.pop(Selected_Item) #delete from Files
             self.listWidget_Playlist.clear()
-            for file in self.Files:
+            for file in self.Files: #rewrite listwidget of playlist
                 self.listWidget_Playlist.addItem(
                     f'{self.listWidget_Playlist.count()+1} . {file}')
 
@@ -136,10 +137,10 @@ class PlaylistWindow(QMainWindow, Form):
         if Selected_Item == self.MediaPlayer.windowTitle()[16:]:
             self.listWidget_Playlist.setCurrentRow(index-1)
         if self.MediaPlayer.windowTitle()[16:] in self.Files.keys():
-            #If the playing Item is last item
+            # If the playing Item is last item
             if list(self.Files.keys()).index(self.MediaPlayer.windowTitle()[16:]) == self.listWidget_Playlist.count()-1:
                 self.MediaPlayer.pushButton_next.setEnabled(False)
-            #If the playing Item is first item
+            # If the playing Item is first item
             if list(self.Files.keys()).index(self.MediaPlayer.windowTitle()[16:]) == 0:
                 self.MediaPlayer.pushButton_previous.setEnabled(False)
         # To update part of Tags of file  Dackwidget

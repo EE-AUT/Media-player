@@ -22,7 +22,7 @@ class SettingWindow(QMainWindow, Form):
         Form.__init__(self)
         self.setupUi(self)
         self.MediaPlayer = Mediaplayer
-        self.Account_changing = False
+        self.Account_changing = False #This parameter shown password must be change
 
         # Theme Part
         self.palette = QtGui.QPalette()
@@ -136,6 +136,7 @@ class SettingWindow(QMainWindow, Form):
             self.label_Error.setVisible(True)
 
     def DelAcc(self):
+        self.pushButton_Delete_Acc.setEnabled(False)
         Account.DeleteAcc(self,self.MediaPlayer)
     
 
@@ -278,4 +279,5 @@ class SettingWindow(QMainWindow, Form):
         self.lineEdit_CurrentPass.clear()
         self.lineEdit_NewPass.clear()
         self.lineEdit_ReNewpass.clear()
+        self.Account_changing =False
         self.close()

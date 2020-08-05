@@ -78,47 +78,53 @@ Form = uic.loadUiType(os.path.join(
     os.getcwd(), 'SettingPart/Delete Account.ui'))[0]
 
 
-class DeleteAccountWindow(QMainWindow, Form, QtCore.QThread):
-    def __init__(self, window,MediaPlayer, key):
+class DeleteAccountWindow(QMainWindow, Form):
+    def __init__(self, window, MediaPlayer, key):
         QMainWindow.__init__(self)
         Form.__init__(self)
-        QtCore.QThread.__init__(self, window)
         self.setupUi(self)
+
+        # To Specialize flags
         self.setWindowFlags(
             QtCore.Qt.Window |
             QtCore.Qt.CustomizeWindowHint |
             QtCore.Qt.WindowTitleHint |
             QtCore.Qt.WindowStaysOnTopHint
         )
-        self.key = key
-        self.window = window
-        self.MediaPlayer = MediaPlayer
+        self.key = key  # Verification code
+        self.window = window  # Setting window
+        self.MediaPlayer = MediaPlayer  # Media player window
 
+        # Connect Signals
         self.Button_No.clicked.connect(self.No)
         self.Button_Yes.clicked.connect(self.Yes)
         self.lineEdit_Code.textChanged.connect(
             lambda: self.label_Error_code.setVisible(False))
+
         self.label_Error.setVisible(False)
         self.label_Error_code.setVisible(False)
 
     def check(self, val):
+        # To check connection is ok?
         if not val:
             self.label_Error.setVisible(True)
-            self.Button_No.setEnabled(True)
             self.Button_Yes.setEnabled(False)
         else:
             self.Button_Yes.setEnabled(True)
+        self.Button_No.setEnabled(True)
 
     def Yes(self):
-        if self.key == int(self.lineEdit_Code.text()):
+        if self.key == int(self.lineEdit_Code.text()):  # To Confirm Verification code
             self.Button_No.setEnabled(False)
             self.Button_Yes.setEnabled(False)
             self.label_Error_code.setVisible(False)
+            # Start new Thread to Delete account
             Delacc = DeleteAcc_Thread(self.window, self.MediaPlayer)
             Delacc.start()
             Delacc.DeleteAccount.connect(self.check)
 
         else:
+            # Error in Confirmation Verification code
             self.label_Error_code.setVisible(True)
 
     def No(self):
@@ -126,6 +132,7 @@ class DeleteAccountWindow(QMainWindow, Form, QtCore.QThread):
         self.label_Error.setVisible(False)
         self.Button_No.setEnabled(True)
         self.Button_Yes.setEnabled(True)
+        self.window.pushButton_Delete_Acc.setEnabled(True)
         self.close()
 
 
@@ -179,12 +186,12 @@ class DeleteAcc_Thread(QtCore.QThread):
 
     def __init__(self, window, MediaPlayer):
         QtCore.QThread.__init__(self, parent=window)
-        self.MediaPlayer = MediaPlayer
-        self.window=window
+        self.MediaPlayer = MediaPlayer  # Media player window
+        self.window = window  # Setting window
 
     def run(self):
         result = get_Database.Delete_Account(
-            self.MediaPlayer,self.window, read_Pass('Email'))
+            self.MediaPlayer, self.window, read_Pass('Email'))
         self.DeleteAccount.emit(result)
 
     def stop(self):

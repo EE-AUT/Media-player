@@ -78,7 +78,7 @@ def Change_password(oldPass, NewPass):
         client = gspread.authorize(creds)
         sheet = client.open("test").sheet1
         address = sheet.find('#'+oldPass)
-        sheet.update_cell(address.row, address.col, '#'+NewPass) # uodate pass here
+        sheet.update_cell(address.row, address.col, '#'+NewPass) # Update password here
         Edit_user(NewPass) # edit user information in user.csv
         return True
 
@@ -111,7 +111,7 @@ def Delete_Account(Mediaplayer,SettingW,Email):
         SettingW.close()
         Mediaplayer.Logout()
         return True
-    except:
+    except:# Handle connection fault
         print('OH')
         return False
 

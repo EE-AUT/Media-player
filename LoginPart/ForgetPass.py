@@ -15,6 +15,8 @@ class ForgetPassWindow(QDialog, Form):
         QDialog.__init__(self)
         Form.__init__(self)
         self.setupUi(self)
+
+        # To Specialize flags
         self.setWindowFlags(
             QtCore.Qt.Window |
             QtCore.Qt.CustomizeWindowHint |
@@ -31,6 +33,7 @@ class ForgetPassWindow(QDialog, Form):
         self.lineEdit_StudentID.textChanged.connect(self.Edit_studentID)
 
         self.pushButton_Back.clicked.connect(self.Back)
+        # To get Data from Database in new Thread
         self.Get_Data = Get_Data(self)
         self.Get_Data.Data.connect(self.Sent_Email)
         self.pushButton_sent.clicked.connect(self.start_to_sent)
@@ -61,6 +64,7 @@ class ForgetPassWindow(QDialog, Form):
         self.Get_Data.start()
 
     def Back(self):
+        #Reset to factory! and close
         self.label_sent.setVisible(False)
         self.label_Error_Connection.setVisible(False)
         self.lineEdit_Email.clear()
@@ -74,32 +78,33 @@ class ForgetPassWindow(QDialog, Form):
         if data:
             self.Password = None
             self.label_Error_Connection.setVisible(False)
+            self.label_Incorrect.setVisible(False)
             for user in data:
                 if str(user["Email"]).lower() == self.lineEdit_Email.text().lower():
                     if str(user["studentNO"]) == self.lineEdit_StudentID.text():
                         self.Password = user["password"][1:]
+                        # sent Email in new Thread
                         self.Sent_Email_ = Sent_Email_Thread(
                             self, user['FirstName'], user['LastName'], self.Password, self.lineEdit_Email.text())
                         self.Sent_Email_.sent.connect(self.Check)
                         self.Sent_Email_.start()
-            if not self.Password:
+            if not self.Password:  # Password is incorrect
                 self.label_Incorrect.setVisible(True)
                 self.label_Wait.setVisible(False)
                 self.pushButton_Back.setEnabled(True)
                 self.pushButton_sent.setEnabled(True)
-        else:
+        else:  # connection fail
             self.label_Error_Connection.setVisible(True)
             self.label_Wait.setVisible(False)
             self.pushButton_Back.setEnabled(True)
             self.pushButton_sent.setEnabled(True)
 
-
     def Check(self, val):
-        if val:
+        if val:  # Everything is ok !
             self.label_sent.setVisible(True)
             self.label_Error_Connection.setVisible(False)
 
-        else:
+        else:  # Connection fail
             self.label_Error_Connection.setVisible(True)
             self.label_sent.setVisible(False)
         self.label_Wait.setVisible(False)
@@ -107,7 +112,6 @@ class ForgetPassWindow(QDialog, Form):
         self.pushButton_sent.setEnabled(True)
 
     def Close(self, val):
-        pass
         try:
             self.Get_Data.stop()
             if self.Sent_Email_:
@@ -125,7 +129,7 @@ class Get_Data(QtCore.QThread):
     def run(self):
         try:
             self.Data.emit(get_Database.get_Database())
-        except:
+        except:  # Error in connection
             self.Data.emit([])
 
     def stop(self):
@@ -149,7 +153,7 @@ class Sent_Email_Thread(QtCore.QThread):
     def run(self):
         # The mail addresses and password
         sender_address = 'ap.mediaplayer@gmail.com'
-        sender_pass = 'AP_MediaPlayer2020' # secret :)
+        sender_pass = 'AP_MediaPlayer2020'  # secret :)
         # Setup the MIME
         message = MIMEMultipart()
         message['From'] = sender_address

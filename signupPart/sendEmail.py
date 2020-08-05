@@ -9,9 +9,12 @@ import random
 def Send_Email(receiver_address):
     start = time()
     confirm_key = random.randint(10e5, 10e6)
-    mail_content = f'''Hello,
-    This is  simple mail form AP MediaPlayer. Verification code is: {confirm_key}.
-    Thank You'''
+    mail_content =  f'''Hello 
+    You recently requested to sign up in Media player .
+    Your Verification code is :{confirm_key}
+    If you did not request to Delete Account , Please ignore this email or reply to let us know .
+    Thank You
+    Media Player'''
 
     #The mail addresses and password
     sender_address = 'ap.mediaplayer@gmail.com'

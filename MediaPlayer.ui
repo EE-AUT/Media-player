@@ -553,6 +553,12 @@
             <height>16777215</height>
            </size>
           </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="placeholderText">
+           <string>write bookmark here</string>
+          </property>
          </widget>
         </item>
        </layout>
@@ -607,6 +613,9 @@
             <width>16777215</width>
             <height>16777215</height>
            </size>
+          </property>
+          <property name="placeholderText">
+           <string>search Tags here</string>
           </property>
          </widget>
         </item>
@@ -682,9 +691,9 @@
      <string>File</string>
     </property>
     <addaction name="actionOpen"/>
-    <addaction name="actionOpen_Tag"/>
     <addaction name="separator"/>
     <addaction name="actionChange_Password"/>
+    <addaction name="actionDelete_Account"/>
     <addaction name="actionLogOut"/>
     <addaction name="actionExit"/>
    </widget>
@@ -693,6 +702,7 @@
      <string>view</string>
     </property>
     <addaction name="actionFullScreen"/>
+    <addaction name="actionSpeed"/>
     <addaction name="actionThme"/>
     <addaction name="actionFont"/>
    </widget>
@@ -700,7 +710,8 @@
     <property name="title">
      <string>Tag</string>
     </property>
-    <addaction name="actionOpenTag"/>
+    <addaction name="actionCreate_Tag"/>
+    <addaction name="actionOpen_Tags"/>
     <addaction name="actionEdit_Tag"/>
     <addaction name="actionClose_Tag"/>
    </widget>
@@ -738,7 +749,7 @@
     <string>FullScreen</string>
    </property>
    <property name="shortcut">
-    <string>5</string>
+    <string>F5</string>
    </property>
    <property name="shortcutContext">
     <enum>Qt::WindowShortcut</enum>
@@ -762,7 +773,7 @@
     <string>Font</string>
    </property>
   </action>
-  <action name="actionOpenTag">
+  <action name="actionOpen_Tags">
    <property name="text">
     <string>OpenTag</string>
    </property>
@@ -780,6 +791,21 @@
   <action name="actionChange_Password">
    <property name="text">
     <string>Change Password</string>
+   </property>
+  </action>
+  <action name="actionSpeed">
+   <property name="text">
+    <string>Speed</string>
+   </property>
+  </action>
+  <action name="actionCreate_Tag">
+   <property name="text">
+    <string>Create Tag</string>
+   </property>
+  </action>
+  <action name="actionDelete_Account">
+   <property name="text">
+    <string>Delete Account</string>
    </property>
   </action>
  </widget>
