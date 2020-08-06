@@ -256,11 +256,13 @@ class MediaPlayer(QMainWindow, Form):
             self.confirmCloseTag.show()
         else:
             dialog = QFileDialog(self, 'File tag', directory=os.getcwd())
-            dialog.setFileMode(QFileDialog.DirectoryOnly)
-            if dialog.exec_() == QDialog.Accepted:
-                _path = dialog.selectedFiles()[0]
-                self.tag_Path = _path + "/Created_tag.csv"
-                open(self.tag_Path, "w")
+            _path = dialog.getSaveFileName(filter= "*.csv")[0]
+            try:
+                if _path:
+                    self.tag_Path = _path
+                    open(self.tag_Path, "w")
+            except:
+                pass
 
 
     def menuBarCloseTag(self):

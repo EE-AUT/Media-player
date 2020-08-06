@@ -10,6 +10,9 @@ def edit_Tags(befor, after, filename):
         with open(filename) as csvfile:
             string = csvfile.read()
 
+
         with open(filename, "w") as csvfile:
-            csvfile.write(re.sub(befor, after, string))  # save edited string
+            string = re.sub(befor, after, string)
+            string = re.sub("\n\n", "\n", string) # Delete empty line
+            csvfile.write(string)  # Save edited string
 

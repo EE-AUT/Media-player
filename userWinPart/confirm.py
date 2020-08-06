@@ -12,13 +12,13 @@ Form = uic.loadUiType(os.path.join(os.getcwd(), 'userWinPart/confirm.ui'))[0]
 
 
 class confrimWin(QMainWindow, Form):
-    def __init__(self, parent=None, session=None, tag_Text=None, Text="Are You sure", Title="change video", tagPartText=None):
+    def __init__(self, parent=None, session=None, tag_Text=None, Text="Are You sure", Title="Change video", tagPartText=None):
         Form.__init__(self)
         QMainWindow.__init__(self, parent=parent)
         self.setupUi(self)
         self.Title = Title
         self.setWindowTitle(Title)
-        if Title == "message for close tag":
+        if Title == "Message for close tag":
             self.no_Button.setVisible(False)
             self.yes_Button.setText("Ok")
         self.MediaPlayer = parent
@@ -38,7 +38,7 @@ class confrimWin(QMainWindow, Form):
 
     # accept and do some works
     def yes_Clicked(self):
-        if self.Title == "change video":
+        if self.Title == "Change video":
             self.MediaPlayer.change_Video(self.session)
             try:
                 time_second = tc.to_second(
@@ -46,7 +46,7 @@ class confrimWin(QMainWindow, Form):
                 self.MediaPlayer.change_Position(time_second)
             except:
                 pass
-        if self.Title == "delete tag":
+        if self.Title == "Delete tag":
             try:
                 del self.MediaPlayer.allTag[self.session][self.tagPartText[0]]
                 self.MediaPlayer.set_TagonListwidget(self.session)
@@ -65,17 +65,23 @@ class confrimWin(QMainWindow, Form):
 
         # create new tag
         if self.Title == "Create Tag":
+            self.close()
             self.closeTag()
-            dialog = QFileDialog(self, 'file tag', directory=os.getcwd())
-            dialog.setFileMode(QFileDialog.DirectoryOnly)
-            if dialog.exec_() == QDialog.Accepted:
-                _path = dialog.selectedFiles()[0]
-                self.tag_Path = _path + "/Created_tag.csv"
-                open(self.tag_Path, "w")
-                self.MediaPlayer.actionCreate_Tag.setEnabled(True)
+            dialog = QFileDialog(self, 'File tag', directory=os.getcwd())
+            _path = dialog.getSaveFileName(filter= "*.csv")[0]
+            try:
+                if _path:
+                    self.tag_Path = _path
+                    open(self.tag_Path, "w")
+            except:
+                pass
+            self.MediaPlayer.actionCreate_Tag.setEnabled(True)
 
         self.MediaPlayer.actionClose_Tag.setEnabled(True)
-        self.close()
+        try:
+            self.close()
+        except: 
+            pass
 
     # no clicked
 

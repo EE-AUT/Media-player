@@ -166,7 +166,7 @@ class SettingWindow(QMainWindow, Form):
             if session in self.MediaPlayer.allTag:
                 # show window to get accept from user
                 self.confirmWin = confrimWin(
-                    self.MediaPlayer, session=session, Text=f"are you sure to delete ({item[0]}) tag", tagPartText=item, Title="delete tag")
+                    self.MediaPlayer, session=session, Text=f"are you sure to delete ({item[0]}) tag", tagPartText=item, Title="Delete tag")
                 self.confirmWin.show()
         except:
             pass
