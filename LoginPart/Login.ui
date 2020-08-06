@@ -30,7 +30,7 @@
     <normaloff>../Icons/login.png</normaloff>../Icons/login.png</iconset>
   </property>
   <property name="styleSheet">
-   <string notr="true">background-color:rgb(143, 143, 143);</string>
+   <string notr="true">background-color: rgb(147, 147, 147);</string>
   </property>
   <layout class="QGridLayout" name="gridLayout_2">
    <item row="0" column="0">
@@ -101,7 +101,7 @@ background-color: rgb(0, 170, 0);
 }</string>
           </property>
           <property name="text">
-           <string>sign in</string>
+           <string>Sign in</string>
           </property>
          </widget>
         </item>
@@ -120,7 +120,7 @@ background-color: rgb(85, 170, 127);
 }</string>
           </property>
           <property name="text">
-           <string>sign up</string>
+           <string>Sign up</string>
           </property>
          </widget>
         </item>
@@ -144,7 +144,7 @@ background-color: rgb(250, 0, 0);
 }</string>
           </property>
           <property name="text">
-           <string>clear</string>
+           <string>Clear</string>
           </property>
          </widget>
         </item>
@@ -189,11 +189,11 @@ background-color: rgb(250, 0, 0);
           <property name="styleSheet">
            <string notr="true">QLabel::hover
 {
-color: rgb(0, 170, 0);
+color: rgb(0, 255, 127);
 }</string>
           </property>
           <property name="text">
-           <string>forget password</string>
+           <string>Forget password</string>
           </property>
          </widget>
         </item>

@@ -10,7 +10,7 @@ Form = uic.loadUiType(os.path.join(os.getcwd(), 'PlayListPart/Playlist.ui'))[0]
 
 class PlaylistWindow(QMainWindow, Form):
     def __init__(self, MediaPlayer):
-        QMainWindow.__init__(self)
+        QMainWindow.__init__(self, parent=MediaPlayer)
         Form.__init__(self)
         self.setupUi(self)
         self.MediaPlayer = MediaPlayer

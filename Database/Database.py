@@ -95,7 +95,7 @@ def Edit_user(newPass):
         csvfile.write(Newstring)
 
 
-def Delete_Account(Mediaplayer, SettingW, Email):
+def Delete_Account(Mediaplayer, Email):
     scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/spreadsheets",
              "https://www.googleapis.com/auth/drive.file", "https://www.googleapis.com/auth/drive"]
 
@@ -106,7 +106,6 @@ def Delete_Account(Mediaplayer, SettingW, Email):
         sheet = client.open("test").sheet1
         address = sheet.find(Email)
         sheet.delete_row(address.row)
-        SettingW.close()
         Mediaplayer.Logout()
         return True
     except:  # Handle connection fault

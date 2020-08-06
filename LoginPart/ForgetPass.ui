@@ -49,7 +49,7 @@
       <string notr="true"/>
      </property>
      <property name="text">
-      <string>don't worry . Password recovery is easy</string>
+      <string>Don't worry . Password recovery is easy</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
@@ -68,11 +68,11 @@
       </font>
      </property>
      <property name="styleSheet">
-      <string notr="true">color: rgb(85, 170, 0);
+      <string notr="true">color: rgb(0, 255, 127);
 </string>
      </property>
      <property name="text">
-      <string>we've sent your Password to your Email</string>
+      <string>We've sent your Password to your Email</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>
@@ -194,7 +194,7 @@ background-color: rgb(255, 0, 0);
       </font>
      </property>
      <property name="styleSheet">
-      <string notr="true">color: rgb(85, 170, 0);</string>
+      <string notr="true">color: rgb(0, 255, 127);</string>
      </property>
      <property name="text">
       <string>Please wait...</string>

@@ -12,7 +12,7 @@ Form = uic.loadUiType(os.path.join(os.getcwd(), 'LoginPart/ForgetPass.ui'))[0]
 
 class ForgetPassWindow(QDialog, Form):
     def __init__(self, window):
-        QDialog.__init__(self)
+        QDialog.__init__(self, parent=window)
         Form.__init__(self)
         self.setupUi(self)
 

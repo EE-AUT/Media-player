@@ -14,7 +14,7 @@ Form = uic.loadUiType(os.path.join(os.getcwd(), 'userWinPart/confirm.ui'))[0]
 class confrimWin(QMainWindow, Form):
     def __init__(self, parent=None, session=None, tag_Text=None, Text="Are You sure", Title="change video", tagPartText=None):
         Form.__init__(self)
-        QMainWindow.__init__(self)
+        QMainWindow.__init__(self, parent=parent)
         self.setupUi(self)
         self.Title = Title
         self.setWindowTitle(Title)

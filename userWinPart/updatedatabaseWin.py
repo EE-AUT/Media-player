@@ -13,7 +13,7 @@ Form = uic.loadUiType(os.path.join(
 class updatedatabaseWin(QMainWindow, Form):
     def __init__(self, parent=None, Title="Upload Database"):
         Form.__init__(self)
-        QMainWindow.__init__(self)
+        QMainWindow.__init__(self, parent=parent)
         self.setupUi(self)
         self.Title = Title
         self.setWindowTitle(Title)

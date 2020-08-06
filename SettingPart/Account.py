@@ -53,6 +53,8 @@ def DeleteAcc(SettingWindow, MediaPlayer):
     Sent_Email_.sent.connect(DeletAccW.check)
     Sent_Email_.start()
 
+# Change password in new Thread
+
 
 class Apply_Thread(QtCore.QThread):
     pass_changed = QtCore.pyqtSignal(bool)
@@ -80,7 +82,7 @@ Form = uic.loadUiType(os.path.join(
 
 class DeleteAccountWindow(QMainWindow, Form):
     def __init__(self, window, MediaPlayer, key):
-        QMainWindow.__init__(self)
+        QMainWindow.__init__(self, parent=window)
         Form.__init__(self)
         self.setupUi(self)
 
@@ -191,7 +193,7 @@ class DeleteAcc_Thread(QtCore.QThread):
 
     def run(self):
         result = get_Database.Delete_Account(
-            self.MediaPlayer, self.window, read_Pass('Email'))
+            self.MediaPlayer, read_Pass('Email'))
         self.DeleteAccount.emit(result)
 
     def stop(self):

@@ -183,7 +183,7 @@ class LoginWindow(QDialog, Form):
         if val:
             if self.GetData:
                 self.user_Message("please wait ...",
-                                  "rgb(0, 170, 0)", wait=False)
+                                  "rgb(0, 255, 127)", wait=False)
                 self.LoginButton.setEnabled(False)
                 self.GetData.start()
         else:

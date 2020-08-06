@@ -18,7 +18,7 @@ Form = uic.loadUiType(os.path.join(os.getcwd(), 'SettingPart/Setting.ui'))[0]
 
 class SettingWindow(QMainWindow, Form):
     def __init__(self, Mediaplayer):
-        QMainWindow.__init__(self)
+        QMainWindow.__init__(self, parent=Mediaplayer)
         Form.__init__(self)
         self.setupUi(self)
         self.MediaPlayer = Mediaplayer

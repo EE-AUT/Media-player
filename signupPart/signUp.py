@@ -132,7 +132,7 @@ class signUpWindow(QMainWindow, Form):
             if self.isEqual_pass and self.StudentNo_LineEdit.text() != "" and not self.error_No:
                 if len(self.PassLineEdit.text()) >= 8:
                     self.user_Message("please wait ...",
-                                      "rgb(0, 170, 0)", wait=False)
+                                      "rgb(0, 255, 127)", wait=False)
                     self.submit_Button.setEnabled(False)
                     self._check_Exist()
                 else:
@@ -193,7 +193,7 @@ class signUpWindow(QMainWindow, Form):
         self.submit_Button.setEnabled(True)
         if key:
             self.Confirm_key = key
-            self.user_Message("message sent", "rgb(0, 170, 0)")
+            self.user_Message("message sent", "rgb(0, 255, 127)")
             self.setVisibleAll(False)
             if self.wait_Toconfirm:
                 self.wait_Toconfirm.start()
@@ -230,7 +230,7 @@ class signUpWindow(QMainWindow, Form):
         try:
             if int(self.confirm_LineEdit.text()) == int(self.Confirm_key):
                 self.user_Message("Please wait ...",
-                                  "rgb(0, 170, 0)", wait=False)
+                                  "rgb(0, 255, 127)", wait=False)
                 self.Confirmation()  # start confirmation
             else:
                 # key is not true
@@ -252,7 +252,7 @@ class signUpWindow(QMainWindow, Form):
     def signUp_Ended(self, key):
         if key:
             self.user_Message("Register has been done",
-                              "rgb(0, 170, 0)", font=10)
+                              "rgb(0, 255, 127)", font=10)
             self.setVisibleAll(True)
         else:
             self.user_Message(

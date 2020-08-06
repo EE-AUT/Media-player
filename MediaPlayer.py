@@ -255,14 +255,13 @@ class MediaPlayer(QMainWindow, Form):
             self.actionCreate_Tag.setEnabled(False)
             self.confirmCloseTag.show()
         else:
-            dialog = QFileDialog(self, 'file tag', directory=os.getcwd())
+            dialog = QFileDialog(self, 'File tag', directory=os.getcwd())
             dialog.setFileMode(QFileDialog.DirectoryOnly)
             if dialog.exec_() == QDialog.Accepted:
                 _path = dialog.selectedFiles()[0]
                 self.tag_Path = _path + "/Created_tag.csv"
                 open(self.tag_Path, "w")
 
-        pass
 
     def menuBarCloseTag(self):
         # close current tags
@@ -273,7 +272,7 @@ class MediaPlayer(QMainWindow, Form):
             self.actionClose_Tag.setEnabled(False)
         else:
             self.confirmCloseTag = confrimWin(
-                self, Title="message for close tag", Text="There is no tag to close")
+                self, Title="Message for close tag", Text="There is no tag to close")
             self.confirmCloseTag.show()
             self.actionClose_Tag.setEnabled(False)
 
@@ -640,7 +639,7 @@ class MediaPlayer(QMainWindow, Form):
         if session != self.windowTitle()[16:].split(".")[0]:
             # Show confirm window to get accept user for change video
             self.confirmWin = confrimWin(self, session=session.split(".")[0],
-                                         tag_Text=tag, Text=f"are you sure to change video to {session} from search")
+                                         tag_Text=tag, Text=f"Are you sure to change video to {session} from search")
             self.confirmWin.show()
         else:
             try:
@@ -784,7 +783,7 @@ class MediaPlayer(QMainWindow, Form):
         else:
             session = self.ComboBox_Tags_of_file.currentText().split(".")[0]
             self.confirmWin = confrimWin(self, session=session,
-                                         tag_Text=tag_Text, Text=f"are you sure to change video to {session}")
+                                         tag_Text=tag_Text, Text=f"Are you sure to change video to {session}")
             self.confirmWin.show()
 
     def change_Position(self, time_second):
