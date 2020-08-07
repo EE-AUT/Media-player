@@ -274,7 +274,7 @@ class MediaPlayer(QMainWindow, Form):
             self.actionClose_Tag.setEnabled(False)
         else:
             self.confirmCloseTag = confrimWin(
-                self, Title="Message for close tag", Text="There is no tag to close")
+                self, Title="Warning", Text="There is no tag to close")
             self.confirmCloseTag.show()
             self.actionClose_Tag.setEnabled(False)
 
@@ -375,7 +375,7 @@ class MediaPlayer(QMainWindow, Form):
             self.PlaylistW.spliter:]
         index = self.ComboBox_Tags_of_file.findText(currentText)
         self.ComboBox_Tags_of_file.setCurrentIndex(index)
-        self.set_TagonListwidget((currentText.split("."))[0])
+        self.set_TagonListwidget(".".join(currentText.split(".")[:-1]))
         self.start()
         # To handle Next button
         if self.PlaylistW.listWidget_Playlist.currentRow() == self.PlaylistW.listWidget_Playlist.count()-1:
@@ -404,7 +404,7 @@ class MediaPlayer(QMainWindow, Form):
             self.PlaylistW.spliter:]
         index = self.ComboBox_Tags_of_file.findText(currentText)
         self.ComboBox_Tags_of_file.setCurrentIndex(index)
-        self.set_TagonListwidget((currentText.split("."))[0])
+        self.set_TagonListwidget(".".join(currentText.split(".")[:-1]))
         self.start()
 
         # To handle previous button
@@ -438,7 +438,7 @@ class MediaPlayer(QMainWindow, Form):
 
             # Create Playlist
             self.PlaylistW.Create_Playlist(file_path)
-            self.set_TagonListwidget((self.windowTitle()[16:].split("."))[0])
+            self.set_TagonListwidget(".".join(self.windowTitle()[16:].split(".")[:-1]))
 
     def Position_changed(self, position):
         if position > self.player.duration():
@@ -555,11 +555,11 @@ class MediaPlayer(QMainWindow, Form):
             # use add bookmark function to add bookmarks in tag part
             add_Bookmark(
                 self.lineEdit_Bookmark.text() + "#" + tc.millis_to_format(self.player.position()),
-                self.windowTitle()[16:].split(".")[0], self.tag_Path)
+                ".".join(self.windowTitle()[16:].split(".")[:-1]), self.tag_Path)
             # there isn't any tags for movie we want to add bookmark it
-            if not self.windowTitle()[16:].split(".")[0] in self.allTag:
-                self.allTag.update({self.windowTitle()[16:].split(".")[0]: {}})
-            self.allTag[self.windowTitle()[16:].split(".")[0]].update(
+            if not ".".join(self.windowTitle()[16:].split(".")[:-1]) in self.allTag:
+                self.allTag.update({".".join(self.windowTitle()[16:].split(".")[:-1]): {}})
+            self.allTag[".".join(self.windowTitle()[16:].split(".")[:-1])].update(
                 {self.lineEdit_Bookmark.text(): tc.millis_to_format(self.player.position())})
             self.set_TagonListwidget(self.windowTitle()[16:].split(".")[
                                      0])  # update tag listwidget
@@ -638,18 +638,26 @@ class MediaPlayer(QMainWindow, Form):
     # Item clicked event in search tag part
     def item_searchlist_Event(self, item):
         session, tag = re.split(" -> ", item.text())
-        if session != self.windowTitle()[16:].split(".")[0]:
-            # Show confirm window to get accept user for change video
-            self.confirmWin = confrimWin(self, session=session.split(".")[0],
-                                         tag_Text=tag, Text=f"Are you sure to change video to {session} from search")
-            self.confirmWin.show()
+        # get all session to compare that is selected tag in playlist or user select tag wrong
+        all_sessions = list(self.PlaylistW.Files.keys())
+        # there is bug here if mp3 and mp4 has same name
+        all_sessions = [".".join(item.split(".")[:-1]) for item in all_sessions]
+        if session in all_sessions:
+            if session != ".".join(self.windowTitle()[16:].split(".")[:-1]):
+                # Show confirm window to get accept user for change video
+                self.confirmWin = confrimWin(self, session=".".join(session.split(".")[:-1]),
+                                            tag_Text=tag, Text=f"Are you sure to change video to {session} from search")
+                self.confirmWin.show()
+            else:
+                try:
+                    # concert time format to second for using in change position
+                    time_second = tc.to_second(self.allTag[session][tag])
+                    self.change_Position(time_second)
+                except:  # handle unexcepted error!
+                    pass
         else:
-            try:
-                # concert time format to second for using in change position
-                time_second = tc.to_second(self.allTag[session][tag])
-                self.change_Position(time_second)
-            except:  # handle unexcepted error!
-                pass
+            Warning_user_wrongTags = confrimWin(self, Title= "Warning", Text= "You has opened wrong tag files, please be care")
+            Warning_user_wrongTags.show()
 
     # Create search listwidget and running thread to starting search
 
@@ -713,8 +721,9 @@ class MediaPlayer(QMainWindow, Form):
 
     def ListWidget_Tag(self, index):
         """Tag combo box item clicked function"""
-        videoName = (list(self.PlaylistW.Files.keys())[index].split("."))[0]
+        videoName = ".".join(list(self.PlaylistW.Files.keys())[index].split(".")[:-1])
         self.set_TagonListwidget(videoName, Setting_Tags=False)
+        print(videoName)
 
     def openTags(self):
         """OpenTag in csv, pptx, docx format and start tag thread for reading data"""
@@ -736,7 +745,7 @@ class MediaPlayer(QMainWindow, Form):
         self.allTag = tags
         index = self.ComboBox_Tags_of_file.findText(self.windowTitle()[16:])
         self.ComboBox_Tags_of_file.setCurrentIndex(index)
-        self.set_TagonListwidget((self.windowTitle()[16:].split("."))[0])
+        self.set_TagonListwidget(".".join(self.windowTitle()[16:].split(".")[:-1]))
 
     # set tags on tag listwidget using vedio name
     # update tags
@@ -774,7 +783,7 @@ class MediaPlayer(QMainWindow, Form):
         tag_Text = item.text()[spliter:]
         # change time if clicked on tags that belong to playing session
         if self.windowTitle()[16:] == self.ComboBox_Tags_of_file.currentText():
-            session = self.windowTitle()[16:].split(".")[0]
+            session = ".".join(self.windowTitle()[16:].split(".")[:-1])
             try:
                 # convert time to seconds using tc mudole(write by own)
                 time_second = tc.to_second(self.allTag[session][tag_Text])
@@ -783,7 +792,7 @@ class MediaPlayer(QMainWindow, Form):
             except:
                 pass
         else:
-            session = self.ComboBox_Tags_of_file.currentText().split(".")[0]
+            session = ".".join(self.ComboBox_Tags_of_file.currentText().split(".")[:-1])
             self.confirmWin = confrimWin(self, session=session,
                                          tag_Text=tag_Text, Text=f"Are you sure to change video to {session}")
             self.confirmWin.show()
@@ -810,7 +819,7 @@ class MediaPlayer(QMainWindow, Form):
                 self.ComboBox_Tags_of_file.setCurrentIndex(
                     index)  # update combo box
                 # update tags on setting and MediaPlayer window
-                self.set_TagonListwidget((key.split("."))[0])
+                self.set_TagonListwidget(".".join(key.split(".")[:-1]))
 
                 return True
         return False

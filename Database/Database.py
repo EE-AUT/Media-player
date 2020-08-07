@@ -15,7 +15,7 @@ def get_Database():
         creds = ServiceAccountCredentials.from_json_keyfile_name(
             "./Database/json/creds.json", scope)
         client = gspread.authorize(creds)
-        sheet = client.open("test").sheet1
+        sheet = client.open("Users").sheet1
         data = sheet.get_all_records()
 
         return data  # return users information as a dictionary
@@ -32,7 +32,7 @@ def exist_Email(Email):
         creds = ServiceAccountCredentials.from_json_keyfile_name(
             "./Database/json/creds.json", scope)
         client = gspread.authorize(creds)
-        sheet = client.open("test").sheet1
+        sheet = client.open("Users").sheet1
         data = sheet.get_all_records()
 
         for user in data:
@@ -52,7 +52,7 @@ def add_User(user):
         creds = ServiceAccountCredentials.from_json_keyfile_name(
             "./Database/json/creds.json", scope)
         client = gspread.authorize(creds)
-        sheet = client.open("test").sheet1
+        sheet = client.open("Users").sheet1
         data = sheet.get_all_records()
 
         sheet.insert_row(user, len(data) + 2)  # add user to end row
@@ -72,7 +72,7 @@ def Change_password(oldPass, NewPass):
         creds = ServiceAccountCredentials.from_json_keyfile_name(
             "./Database/json/creds.json", scope)
         client = gspread.authorize(creds)
-        sheet = client.open("test").sheet1
+        sheet = client.open("Users").sheet1
         address = sheet.find('#'+oldPass)
         sheet.update_cell(address.row, address.col, '#' +
                           NewPass)  # Update password here
@@ -103,7 +103,7 @@ def Delete_Account(Mediaplayer, Email):
         creds = ServiceAccountCredentials.from_json_keyfile_name(
             "./Database/json/creds.json", scope)
         client = gspread.authorize(creds)
-        sheet = client.open("test").sheet1
+        sheet = client.open("Users").sheet1
         address = sheet.find(Email)
         sheet.delete_row(address.row)
         Mediaplayer.Logout()

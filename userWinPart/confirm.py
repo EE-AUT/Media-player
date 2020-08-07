@@ -18,7 +18,7 @@ class confrimWin(QMainWindow, Form):
         self.setupUi(self)
         self.Title = Title
         self.setWindowTitle(Title)
-        if Title == "Message for close tag":
+        if Title == "Warning":
             self.no_Button.setVisible(False)
             self.yes_Button.setText("Ok")
         self.MediaPlayer = parent

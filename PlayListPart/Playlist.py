@@ -100,7 +100,7 @@ class PlaylistWindow(QMainWindow, Form):
         index = self.MediaPlayer.ComboBox_Tags_of_file.findText(currentText)
         self.MediaPlayer.ComboBox_Tags_of_file.setCurrentIndex(index)
         self.MediaPlayer.Setting.comboBox_Tag.setCurrentIndex(index)
-        self.MediaPlayer.set_TagonListwidget(currentText.split(".")[0])
+        self.MediaPlayer.set_TagonListwidget(".".join(currentText.split(".")[:-1]))
 
     def add_file(self):
         file_path, _ = QFileDialog.getOpenFileName(

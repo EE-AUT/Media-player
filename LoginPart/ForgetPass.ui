@@ -86,6 +86,16 @@
     <layout class="QVBoxLayout" name="verticalLayout">
      <item>
       <widget class="QLineEdit" name="lineEdit_Email">
+       <property name="styleSheet">
+        <string notr="true">QLineEdit{ 
+                background-color: #c6c6c6;
+                border: 2px solid gray;
+                border-radius: 4px;
+                padding: 0 8px;
+                selection-background-color: darkgray;
+     
+            }</string>
+       </property>
        <property name="placeholderText">
         <string>Email</string>
        </property>
@@ -93,6 +103,16 @@
      </item>
      <item>
       <widget class="QLineEdit" name="lineEdit_StudentID">
+       <property name="styleSheet">
+        <string notr="true">QLineEdit{ 
+                background-color: #c6c6c6;
+                border: 2px solid gray;
+                border-radius: 4px;
+                padding: 0 8px;
+                selection-background-color: darkgray;
+     
+            }</string>
+       </property>
        <property name="placeholderText">
         <string>StudentID</string>
        </property>

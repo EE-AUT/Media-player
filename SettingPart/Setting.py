@@ -138,8 +138,9 @@ class SettingWindow(QMainWindow, Form):
     # updata tags part of settingpart's tag listwidget
 
     def ListWidget_Tag_Edit(self, index):
-        videoName = (list(self.MediaPlayer.PlaylistW.Files.keys())
-                     [index].split("."))[0]  # get videoname
+        videoName = ".".join((list(self.MediaPlayer.PlaylistW.Files.keys())
+                     [index].split("."))[:-1])  # get videoname
+        print(videoName)
         self.MediaPlayer.set_TagonListwidget(  # update listwidgets
             videoName, Setting_Tags=True, Media_Tags=False)
 
@@ -162,7 +163,7 @@ class SettingWindow(QMainWindow, Form):
         try:  # handle error of not selected item
             item = [self.Edit_tag_Listwidget.currentItem().text(
                 0), self.Edit_tag_Listwidget.currentItem().text(1)]
-            session = self.comboBox_Tag.currentText().split(".")[0]
+            session = ".".join(self.comboBox_Tag.currentText().split(".")[:-1])
             if session in self.MediaPlayer.allTag:
                 # show window to get accept from user
                 self.confirmWin = confrimWin(

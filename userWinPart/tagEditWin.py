@@ -79,7 +79,7 @@ class tagEditWin(QMainWindow, Form):
                                          self.MediaPlayer.tag_Path)
 
                         # check for syncronise media tags and setting tags
-                        if session == self.MediaPlayer.ComboBox_Tags_of_file.currentText().split(".")[0]:
+                        if session == ".".join(self.MediaPlayer.ComboBox_Tags_of_file.currentText().split(".")[:-1]):
                             self.MediaPlayer.set_TagonListwidget(
                                 session)  # update tags in add part
                         else:

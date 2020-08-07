@@ -32,7 +32,6 @@ pointer#00:24:20
 new in pointer#00:58:55
 pointer in pointer#01:05:06
 S04-981213
-hasan#00:00:07#*
 Reviewing Previous Session int**#01:30
 Visualizing dynamic array and allocating memory using �new�#02:40
 ( Dangling arrays ) Sequence of deleting arrays#08:30
@@ -71,7 +70,7 @@ Difference between *arr and arr[ ]#01:09:10
 S07-981223
 setter & getter in class #00:01:39
 colon(:) operator (delegate & const member variables!)#00:04:11
-copy constructor#00:04:44
+copy constructor 1#00:04:45
 pointer to class#00:17:02
 arrow(->) operator#00:19:41
 passing an object of a class by reference#00:22:30
