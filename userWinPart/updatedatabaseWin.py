@@ -150,10 +150,18 @@ class updatedatabaseWin(QMainWindow, Form):
 
     # select csv file to write downloaded database there
     def select_Csv(self):
-        save_tag_Path, _ = QFileDialog.getOpenFileName(
-            self, "Select Tag to save tags Tag", directory=os.path.join(os.getcwd(), 'Tags'), filter='*.csv')
-        if save_tag_Path:
-            self.LineEdit.setText(save_tag_Path)
+        dialog = QFileDialog(self, "Select Tag to save tags Tag", directory=os.getcwd())
+        save_path = dialog.getSaveFileName(filter= "*.csv")[0]
+        try:
+            if save_path:
+                self.LineEdit.setText(save_path)
+                open(save_path, "w")
+        except:
+            pass
+        # save_tag_Path, _ = QFileDialog.getOpenFileName(
+        #     self, "Select Tag to save tags Tag", directory=os.path.join(os.getcwd(), 'Tags'), filter='*.csv')
+        # if save_tag_Path:
+        #     self.LineEdit.setText(save_tag_Path)
 
     # handle download
     def OkClicked_Download(self):

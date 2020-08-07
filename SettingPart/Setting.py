@@ -156,8 +156,8 @@ class SettingWindow(QMainWindow, Form):
             self.tagEditWin.show()
         except:
             pass
+        
     # delete part for deleting selected item in tree widget
-
     def del_Tag(self):
         try:  # handle error of not selected item
             item = [self.Edit_tag_Listwidget.currentItem().text(
