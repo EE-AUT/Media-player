@@ -656,7 +656,7 @@ class MediaPlayer(QMainWindow, Form):
                 except:  # handle unexcepted error!
                     pass
         else:
-            Warning_user_wrongTags = confrimWin(self, Title= "Warning", Text= "You has opened wrong tag files, please be care")
+            Warning_user_wrongTags = confrimWin(self, Title= "Warning", Text= "You have opened a wrong tag files")
             Warning_user_wrongTags.show()
 
     # Create search listwidget and running thread to starting search

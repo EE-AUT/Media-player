@@ -4,6 +4,32 @@ from time import time
 import csv
 
 
+# Define Code function to code json file
+def Code(filename, func):
+    Byte = []
+
+    with open(filename, "rb") as file_r:  # open file to read
+        while(byte := file_r.read(1)):
+            # To convert Byte to int
+            Byte.append(int.from_bytes(byte, byteorder='big'))
+    file_r.close()
+
+    with open(filename, "wb") as file_w:  # open file to write
+        for i in Byte:
+            i = func(i)  # use Function for codding
+            # To convert int to Byte and write
+            file_w.write(i.to_bytes(1, byteorder='big'))
+    file_w.close()
+
+
+def Function(b):
+    if 100 < b < 200:
+        b -= 100
+    elif b < 100:
+        b += 100
+    return b
+
+
 # get all data base for user infomation
 def get_Database():
     # scops of gspread to access us using below apis
@@ -11,9 +37,10 @@ def get_Database():
              "https://www.googleapis.com/auth/drive.file", "https://www.googleapis.com/auth/drive"]
 
     try:
-
+        Code("./Database/json/creds.json", Function)  # Decoding
         creds = ServiceAccountCredentials.from_json_keyfile_name(
             "./Database/json/creds.json", scope)
+        Code("./Database/json/creds.json", Function)  # Coding
         client = gspread.authorize(creds)
         sheet = client.open("Users").sheet1
         data = sheet.get_all_records()
@@ -29,8 +56,10 @@ def exist_Email(Email):
              "https://www.googleapis.com/auth/drive.file", "https://www.googleapis.com/auth/drive"]
 
     try:
+        Code("./Database/json/creds.json", Function)   # Decoding
         creds = ServiceAccountCredentials.from_json_keyfile_name(
             "./Database/json/creds.json", scope)
+        Code("./Database/json/creds.json", Function)  # Coding
         client = gspread.authorize(creds)
         sheet = client.open("Users").sheet1
         data = sheet.get_all_records()
@@ -49,8 +78,10 @@ def add_User(user):
              "https://www.googleapis.com/auth/drive.file", "https://www.googleapis.com/auth/drive"]
 
     try:
+        Code("./Database/json/creds.json", Function)  # Decoding
         creds = ServiceAccountCredentials.from_json_keyfile_name(
             "./Database/json/creds.json", scope)
+        Code("./Database/json/creds.json", Function)  # Coding
         client = gspread.authorize(creds)
         sheet = client.open("Users").sheet1
         data = sheet.get_all_records()
@@ -69,8 +100,10 @@ def Change_password(oldPass, NewPass):
              "https://www.googleapis.com/auth/drive.file", "https://www.googleapis.com/auth/drive"]
 
     try:
+        Code("./Database/json/creds.json", Function)  # Decoding
         creds = ServiceAccountCredentials.from_json_keyfile_name(
             "./Database/json/creds.json", scope)
+        Code("./Database/json/creds.json", Function)  # Coding
         client = gspread.authorize(creds)
         sheet = client.open("Users").sheet1
         address = sheet.find('#'+oldPass)
@@ -100,8 +133,11 @@ def Delete_Account(Mediaplayer, Email):
              "https://www.googleapis.com/auth/drive.file", "https://www.googleapis.com/auth/drive"]
 
     try:
+        Code("./Database/json/creds.json", Function)  # Decoding
         creds = ServiceAccountCredentials.from_json_keyfile_name(
             "./Database/json/creds.json", scope)
+        Code("./Database/json/creds.json", Function)   # Coding
+
         client = gspread.authorize(creds)
         sheet = client.open("Users").sheet1
         address = sheet.find(Email)

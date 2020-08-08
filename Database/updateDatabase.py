@@ -4,6 +4,7 @@ import os
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 from time import time
+import Database.Database as Database
 
 
 #  upload tags to user online database in google sheet
@@ -12,8 +13,12 @@ def upload_Database(user, filename, filepath):
              "https://www.googleapis.com/auth/drive.file", "https://www.googleapis.com/auth/drive"]
 
     try:
+        Database.Code("./Database/json/creds.json",
+                      Database.Function)  # DeCoding
         creds = ServiceAccountCredentials.from_json_keyfile_name(
             "./Database/json/creds.json", scope)
+        Database.Code("./Database/json/creds.json",
+                      Database.Function)   # Coding
         client = gspread.authorize(creds)
         spreadsheets = client.list_spreadsheet_files()
         data = get_csvData(filepath)
@@ -43,8 +48,12 @@ def download_Database(user, filename, filepath):
              "https://www.googleapis.com/auth/drive.file", "https://www.googleapis.com/auth/drive"]
 
     try:
+        Database.Code("./Database/json/creds.json",
+                      Database.Function)  # DeCoding
         creds = ServiceAccountCredentials.from_json_keyfile_name(
             "./Database/json/creds.json", scope)
+        Database.Code("./Database/json/creds.json",
+                      Database.Function)   # Coding
         client = gspread.authorize(creds)
         sh = client.open(user)
         sheet = sh.worksheet(filename)
@@ -93,8 +102,12 @@ def get_allworksheet(user):
     scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/spreadsheets",
              "https://www.googleapis.com/auth/drive.file", "https://www.googleapis.com/auth/drive"]
     try:
+        Database.Code("./Database/json/creds.json",
+                      Database.Function)  # DeCoding
         creds = ServiceAccountCredentials.from_json_keyfile_name(
             "./Database/json/creds.json", scope)
+        Database.Code("./Database/json/creds.json",
+                      Database.Function)  # Coding
         client = gspread.authorize(creds)
         spreadsheets = client.list_spreadsheet_files()
         for sh in spreadsheets:
@@ -114,5 +127,3 @@ def get_allworksheet(user):
 
     except:
         return [], False, [], False
-
-
