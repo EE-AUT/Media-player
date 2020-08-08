@@ -565,6 +565,13 @@ class MediaPlayer(QMainWindow, Form):
                 {self.lineEdit_Bookmark.text(): tc.millis_to_format(self.player.position())})
             self.set_TagonListwidget(self.windowTitle()[16:].split(".")[
                                      0])  # update tag listwidget
+            # update combo box of edit and Main window
+            index = self.ComboBox_Tags_of_file.findText(self.windowTitle()[16:])
+            self.ComboBox_Tags_of_file.setCurrentIndex(index)
+            index = self.Setting.comboBox_Tag.findText(self.windowTitle()[16:])
+            self.Setting.comboBox_Tag.setCurrentIndex(index)
+            # ****
+            
 
         except:
             pass
@@ -725,7 +732,6 @@ class MediaPlayer(QMainWindow, Form):
         """Tag combo box item clicked function"""
         videoName = ".".join(list(self.PlaylistW.Files.keys())[index].split(".")[:-1])
         self.set_TagonListwidget(videoName, Setting_Tags=False)
-        print(videoName)
 
     def openTags(self):
         """OpenTag in csv, pptx, docx format and start tag thread for reading data"""
@@ -753,7 +759,6 @@ class MediaPlayer(QMainWindow, Form):
     # update tags
 
     def set_TagonListwidget(self, videoName, Setting_Tags=True, Media_Tags=True):
-        # tree = QtGui.QTreeWidget()
         if Media_Tags:
             self.ListWidget_Tags_of_file.clear()
         if Setting_Tags:
