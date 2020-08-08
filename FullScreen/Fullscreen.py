@@ -7,6 +7,7 @@ def MousePosition(MediaPlayer, position):
         Set_visible(MediaPlayer, True)
     else:  # The cursor is in the middle
         Set_visible(MediaPlayer, False)
+        MediaPlayer.sch_listWidget.setVisible(False)
 
 
 def fullscreen(MediaPlayer):
@@ -113,7 +114,7 @@ def Remove_from_layout(MediaPlayer):
 
     MediaPlayer.lay.addWidget(MediaPlayer.search_lineEdit, 2)
     MediaPlayer.lay.addWidget(MediaPlayer.pushButton_Search, 3)
-    MediaPlayer.frame.resize(screenWidth, 35)
+    MediaPlayer.frame.resize(screenWidth, 40)
 
     MediaPlayer.frame.move(0, 0)
 

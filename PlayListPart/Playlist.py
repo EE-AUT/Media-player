@@ -38,7 +38,9 @@ class PlaylistWindow(QMainWindow, Form):
         self.MediaPlayer.setWindowTitle(f" Media Player - {self.FileName}")
         self.File_Path = file_path.replace(f"{self.FileName}", "")
         list_File = os.listdir(self.File_Path)  # File of directory
-        list_File.sort(key=lambda x: len(x))  # Sort file
+        # Sort file and natural_keys was defined below
+        list_File.sort(key=natural_keys)
+
         # Create a dictionary for Files that keys of it are files name and values of it is file path
         self.Files = dict((file, f'{self.File_Path}{file}') for file in list_File if re.search(
             f'.{File_format}', file))  # Create Files
@@ -150,3 +152,12 @@ class PlaylistWindow(QMainWindow, Form):
         self.MediaPlayer.ComboBox_Tags_of_file.clear()
         self.MediaPlayer.ComboBox_Tags_of_file.addItems(self.Files.keys())
         self.MediaPlayer.Setting.comboBox_Tag.addItems(self.Files.keys())
+
+
+# These Functions to use sort play list
+def atoi(text):
+    return int(text) if text.isdigit() else text
+
+
+def natural_keys(text):
+    return [atoi(c) for c in re.split(r'(\d+)', text)]
