@@ -140,7 +140,6 @@ class SettingWindow(QMainWindow, Form):
     def ListWidget_Tag_Edit(self, index):
         videoName = ".".join((list(self.MediaPlayer.PlaylistW.Files.keys())
                      [index].split("."))[:-1])  # get videoname
-        print(videoName)
         self.MediaPlayer.set_TagonListwidget(  # update listwidgets
             videoName, Setting_Tags=True, Media_Tags=False)
 

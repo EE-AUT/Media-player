@@ -37,9 +37,11 @@ class PlaylistWindow(QMainWindow, Form):
         File_format = self.FileName.split(".")[-1]
         self.MediaPlayer.setWindowTitle(f" Media Player - {self.FileName}")
         self.File_Path = file_path.replace(f"{self.FileName}", "")
+        list_File = os.listdir(self.File_Path)  # File of directory
+        list_File.sort(key=lambda x: len(x))  # Sort file
         # Create a dictionary for Files that keys of it are files name and values of it is file path
-        self.Files = dict((file, f'{self.File_Path}{file}') for file in os.listdir(
-            self.File_Path) if re.search(f'.{File_format}', file))  # Create Files
+        self.Files = dict((file, f'{self.File_Path}{file}') for file in list_File if re.search(
+            f'.{File_format}', file))  # Create Files
         for file in self.Files:
             self.listWidget_Playlist.addItem(
                 f'{self.listWidget_Playlist.count()+1} . {file}')  # Add file to listWidget in playlist
@@ -100,7 +102,8 @@ class PlaylistWindow(QMainWindow, Form):
         index = self.MediaPlayer.ComboBox_Tags_of_file.findText(currentText)
         self.MediaPlayer.ComboBox_Tags_of_file.setCurrentIndex(index)
         self.MediaPlayer.Setting.comboBox_Tag.setCurrentIndex(index)
-        self.MediaPlayer.set_TagonListwidget(".".join(currentText.split(".")[:-1]))
+        self.MediaPlayer.set_TagonListwidget(
+            ".".join(currentText.split(".")[:-1]))
 
     def add_file(self):
         file_path, _ = QFileDialog.getOpenFileName(
