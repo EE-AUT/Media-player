@@ -437,6 +437,8 @@ class MediaPlayer(QMainWindow, Form):
             self.player.setVolume(60)
 
             # Create Playlist
+            self.Setting.comboBox_Tag.clear()
+            self.ComboBox_Tags_of_file.clear()
             self.PlaylistW.Create_Playlist(file_path)
             self.set_TagonListwidget(".".join(self.windowTitle()[16:].split(".")[:-1]))
 
@@ -656,7 +658,7 @@ class MediaPlayer(QMainWindow, Form):
                 except:  # handle unexcepted error!
                     pass
         else:
-            Warning_user_wrongTags = confrimWin(self, Title= "Warning", Text= "You have opened a wrong tag files")
+            Warning_user_wrongTags = confrimWin(self, Title= "Warning", Text= "You has opened wrong tag files, please be care")
             Warning_user_wrongTags.show()
 
     # Create search listwidget and running thread to starting search
