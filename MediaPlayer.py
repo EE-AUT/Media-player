@@ -654,7 +654,7 @@ class MediaPlayer(QMainWindow, Form):
         if session in all_sessions:
             if session != ".".join(self.windowTitle()[16:].split(".")[:-1]):
                 # Show confirm window to get accept user for change video
-                self.confirmWin = confrimWin(self, session=".".join(session.split(".")[:-1]),
+                self.confirmWin = confrimWin(self, session= session,
                                             tag_Text=tag, Text=f"Are you sure to change video to {session} from search")
                 self.confirmWin.show()
             else:
@@ -810,26 +810,33 @@ class MediaPlayer(QMainWindow, Form):
         # change video position using item time
         self.player.setPosition(int(time_second)*1000)
 
+
     # change video function to change video when clicked on
     # tags that there is not in current movie's tags
-
     def change_Video(self, session):
+        # there is bug here if user select mp3 file that has same name with mp4 similar file
         for key in self.PlaylistW.Files:
-            if re.search(session, key):
-                self.player.setMedia(
-                    QMediaContent(QUrl.fromLocalFile(self.PlaylistW.Files[key])))  # set video
-                self.start()
-                self.setWindowTitle(
-                    f" Media Player - {key}")  # change title
-                # update combo box of session in MediaPlayer
-                index = self.ComboBox_Tags_of_file.findText(key)
-                self.ComboBox_Tags_of_file.setCurrentIndex(
-                    index)  # update combo box
-                # update tags on setting and MediaPlayer window
-                self.set_TagonListwidget(".".join(key.split(".")[:-1]))
-
-                return True
+            if session + ".mp4" == key:
+                return self._change_Video(key)
+            elif session + ".mp3" == key:
+                return self._change_Video(key)
+            elif session + ".mkv" == key:
+                return self._change_Video(key)
         return False
+
+    def _change_Video(self, key):
+        self.player.setMedia(
+            QMediaContent(QUrl.fromLocalFile(self.PlaylistW.Files[key])))  # set video
+        self.start()
+        self.setWindowTitle(
+            f" Media Player - {key}")  # change title
+        # update combo box of session in MediaPlayer
+        index = self.ComboBox_Tags_of_file.findText(key)
+        self.ComboBox_Tags_of_file.setCurrentIndex(
+            index)  # update combo box
+        # update tags on setting and MediaPlayer window
+        self.set_TagonListwidget(".".join(key.split(".")[:-1]))
+        return True
 
     # close Event to stop runnig thread and preventing error
     def Close(self, val):
