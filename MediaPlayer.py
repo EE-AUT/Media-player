@@ -566,6 +566,7 @@ class MediaPlayer(QMainWindow, Form):
             self.set_TagonListwidget(self.windowTitle()[16:].split(".")[
                                      0])  # update tag listwidget
             # update combo box of edit and Main window
+            self.pushButton_Start.setFocus(True)
             index = self.ComboBox_Tags_of_file.findText(self.windowTitle()[16:])
             self.ComboBox_Tags_of_file.setCurrentIndex(index)
             index = self.Setting.comboBox_Tag.findText(self.windowTitle()[16:])
