@@ -565,6 +565,10 @@ class MediaPlayer(QMainWindow, Form):
 
     # save bookmarks and updatae tag list widget
     def save_Bookmarks(self):
+        if not self.tag_Path:
+            error_addBookmark = confrimWin(self, Title= "Warning", Text= "First select or create a tag file and try again")
+            error_addBookmark.show()
+            return False
         try:
             # use add bookmark function to add bookmarks in tag part
             add_Bookmark(
@@ -722,9 +726,13 @@ class MediaPlayer(QMainWindow, Form):
     def Play_list(self):
         # Open playlist
         # To show current Row for every time it is opened
-        if self.PlaylistW.listWidget_Playlist.count():
-            self.PlaylistW.listWidget_Playlist.setCurrentRow(
-                list(self.PlaylistW.Files.keys()).index(self.windowTitle()[16:]))
+
+        try:
+            if self.PlaylistW.listWidget_Playlist.count():
+                self.PlaylistW.listWidget_Playlist.setCurrentRow(
+                    list(self.PlaylistW.Files.keys()).index(self.windowTitle()[16:]))
+        except Exception as e:
+            pass
 
         self.PlaylistW.show()
         # setPosition of playlist when it is opened
@@ -756,20 +764,36 @@ class MediaPlayer(QMainWindow, Form):
 
     def openTags(self):
         """OpenTag in csv, pptx, docx format and start tag thread for reading data"""
-
-        self.tag_Path, _ = QFileDialog.getOpenFileName(
-            self, "Open Tag", directory=os.path.join(os.getcwd(), 'Tags'), filter='*.csv *.pptx *.docx')
+        try:
+            # To read initial Tag Directory from csvfile
+            # if there is FilePath_Tag.csv 
+            with open("./tagPart/Filepath_Tag.csv") as file:
+                initial_FilePath_Tag = file.read()
+                self.tag_Path, _ = QFileDialog.getOpenFileName(
+                    self, "Open Tag", directory=initial_FilePath_Tag, filter='*.csv *.docx *.pptx')
+                
+        except Exception as e:
+            initial_FilePath_Tag = os.path.join(os.getcwd(), 'Tags')
+            self.tag_Path, _ = QFileDialog.getOpenFileName(
+                self, "Open Tag", directory=initial_FilePath_Tag, filter='*.csv *.docx *.pptx')
+        
         # if tagpath is correct we starting tag_thread to read tags from path
         if self.tag_Path:
-            self.Tagname = self.tag_Path.split("/")[-1]
-            fileFormat = self.Tagname.split(".")[-1]
+            # save filepath in csv file
+            try:
+                with open("./tagPart/Filepath_Tag.csv", 'w') as file:
+                    file.write(self.tag_Path.replace(self.tag_Path.split("/")[-1], ""))
+            except Exception as e:
+                pass
+            Tagname = self.tag_Path.split("/")[-1]
+            fileFormat = Tagname.split(".")[-1]
             self.tag_thread = read_Tag(self, self.tag_Path, fileFormat)
             self.tag_thread.Tag_Ready.connect(self.getTag)
             self.tag_thread.start()
 
+
     # Tag is ready to use
     # if tags ready we shoud save them in self.allTag variable to use them properly
-
     def getTag(self, tags):
         self.allTag = tags
         index = self.ComboBox_Tags_of_file.findText(self.windowTitle()[16:])

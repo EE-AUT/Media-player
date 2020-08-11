@@ -56,8 +56,9 @@ class confrimWin(QMainWindow, Form):
                 # delete tag
                 edit_Tags(
                     self.tagPartText[0] + "#" + self.tagPartText[1], "", self.MediaPlayer.tag_Path)
+                self.MediaPlayer.Setting.comboBox_Tag.setEnabled(True)
             except:
-                pass
+                self.MediaPlayer.Setting.comboBox_Tag.setEnabled(True)
 
         # close curent tag
         if self.Title == "Close Tag":
@@ -76,8 +77,10 @@ class confrimWin(QMainWindow, Form):
             except:
                 pass
             self.MediaPlayer.actionCreate_Tag.setEnabled(True)
-
-        self.MediaPlayer.actionClose_Tag.setEnabled(True)
+        try:
+            self.MediaPlayer.actionClose_Tag.setEnabled(True)
+        except:
+            pass
         try:
             self.close()
         except: 
@@ -86,6 +89,7 @@ class confrimWin(QMainWindow, Form):
     # no clicked
 
     def no_Clicked(self):
+        self.MediaPlayer.actionCreate_Tag.setEnabled(True)
         self.close()
 
     # close current tag in Media

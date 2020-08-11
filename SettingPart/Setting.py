@@ -146,6 +146,7 @@ class SettingWindow(QMainWindow, Form):
     # edit tag part
 
     def edit_Tag(self):
+        self.comboBox_Tag.setEnabled(False)
         self.pushButton_Edit.setEnabled(False)
         self.pushButton_Add.setEnabled(False)
         try:
@@ -159,6 +160,7 @@ class SettingWindow(QMainWindow, Form):
         
     # delete part for deleting selected item in tree widget
     def del_Tag(self):
+        self.comboBox_Tag.setEnabled(False)
         try:  # handle error of not selected item
             item = [self.Edit_tag_Listwidget.currentItem().text(
                 0), self.Edit_tag_Listwidget.currentItem().text(1)]
@@ -174,6 +176,7 @@ class SettingWindow(QMainWindow, Form):
     # add tag
 
     def add_Tag(self):
+        self.comboBox_Tag.setEnabled(False)
         self.pushButton_Edit.setEnabled(False)
         self.pushButton_Add.setEnabled(False)
         self.tagEditWin = tagEditWin(  # show add tag win that user enter tag information

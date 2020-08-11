@@ -65,6 +65,7 @@ class PlaylistWindow(QMainWindow, Form):
 
         # To update part of Tags of file  Dackwidget
         self.MediaPlayer.ComboBox_Tags_of_file.clear()
+        self.MediaPlayer.Setting.comboBox_Tag.clear()
         self.MediaPlayer.ComboBox_Tags_of_file.addItems(self.Files.keys())
         self.MediaPlayer.Setting.comboBox_Tag.addItems(self.Files.keys())
         index = self.MediaPlayer.ComboBox_Tags_of_file.findText(self.FileName)
@@ -119,6 +120,7 @@ class PlaylistWindow(QMainWindow, Form):
 
         # To update part of Tags of file  Dackwidget
         self.MediaPlayer.ComboBox_Tags_of_file.clear()
+        self.MediaPlayer.Setting.comboBox_Tag.clear()
         self.MediaPlayer.ComboBox_Tags_of_file.addItems(self.Files.keys())
         self.MediaPlayer.Setting.comboBox_Tag.addItems(self.Files.keys())
 
@@ -141,6 +143,15 @@ class PlaylistWindow(QMainWindow, Form):
         # If the selected Item is playing
         if Selected_Item == self.MediaPlayer.windowTitle()[16:]:
             self.listWidget_Playlist.setCurrentRow(index-1)
+
+        # If the selected Item on list wodgets
+        if Selected_Item == self.MediaPlayer.ComboBox_Tags_of_file.currentText(): 
+            self.MediaPlayer.ListWidget_Tags_of_file.clear()
+        
+        if Selected_Item == self.MediaPlayer.Setting.comboBox_Tag.currentText(): 
+            self.MediaPlayer.Setting.Edit_tag_Listwidget.clear()
+        # ****
+
         if self.MediaPlayer.windowTitle()[16:] in self.Files.keys():
             # If the playing Item is last item
             if list(self.Files.keys()).index(self.MediaPlayer.windowTitle()[16:]) == self.listWidget_Playlist.count()-1:
@@ -150,6 +161,7 @@ class PlaylistWindow(QMainWindow, Form):
                 self.MediaPlayer.pushButton_previous.setEnabled(False)
         # To update part of Tags of file  Dackwidget
         self.MediaPlayer.ComboBox_Tags_of_file.clear()
+        self.MediaPlayer.Setting.comboBox_Tag.clear()
         self.MediaPlayer.ComboBox_Tags_of_file.addItems(self.Files.keys())
         self.MediaPlayer.Setting.comboBox_Tag.addItems(self.Files.keys())
 
