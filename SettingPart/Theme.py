@@ -29,45 +29,48 @@ def saveANDexit(SettingWindow):
 
 def Theme_apply(SettingWindow):
     # To Read everything about Setting from Sitting.csv
-    with open('SettingPart/Setting.csv') as file:
-        Setting_reader = csv.reader(file)
-        Dict = {rows[0]: rows[1] for rows in Setting_reader}
+    try:
+        with open('SettingPart/Setting.csv') as file:
+            Setting_reader = csv.reader(file)
+            Dict = {rows[0]: rows[1] for rows in Setting_reader}
+    except:
+        Dict = {'Theme': 1, 'Classic': 0, 'Background': 11, 'Base': 2,
+                'WindowText': 0, 'Text': 0, 'Button': 11, 'ButtonText': 0, 'Slider Color': 5}
+    SettingWindow.comboBox_Theme.setCurrentIndex(int(Dict['Theme']))
+    _Theme(SettingWindow, int(Dict['Theme']))
 
-        SettingWindow.comboBox_Theme.setCurrentIndex(int(Dict['Theme']))
-        _Theme(SettingWindow, int(Dict['Theme']))
+    Classic_Theme(int(Dict['Classic']))
+    SettingWindow.checkBox_Theme.setChecked(int(Dict['Classic']))
 
-        Classic_Theme(int(Dict['Classic']))
-        SettingWindow.checkBox_Theme.setChecked(int(Dict['Classic']))
+    background_Theme(SettingWindow, int(Dict['Background']))
+    SettingWindow.comboBox_Background.setCurrentIndex(
+        int(Dict['Background']))
 
-        background_Theme(SettingWindow, int(Dict['Background']))
-        SettingWindow.comboBox_Background.setCurrentIndex(
-            int(Dict['Background']))
+    Base_Theme(SettingWindow, int(Dict['Base']))
+    SettingWindow.comboBox_Base.setCurrentIndex(int(Dict['Base']))
 
-        Base_Theme(SettingWindow, int(Dict['Base']))
-        SettingWindow.comboBox_Base.setCurrentIndex(int(Dict['Base']))
+    WindowsText_Theme(SettingWindow, int(Dict['WindowText']))
+    SettingWindow.comboBox_WindowsText.setCurrentIndex(
+        int(Dict['WindowText']))
 
-        WindowsText_Theme(SettingWindow, int(Dict['WindowText']))
-        SettingWindow.comboBox_WindowsText.setCurrentIndex(
-            int(Dict['WindowText']))
+    Text_Theme(SettingWindow, int(Dict['Text']))
+    SettingWindow.comboBox_Text.setCurrentIndex(int(Dict['Text']))
 
-        Text_Theme(SettingWindow, int(Dict['Text']))
-        SettingWindow.comboBox_Text.setCurrentIndex(int(Dict['Text']))
+    Button_Theme(SettingWindow, int(Dict['Button']))
+    SettingWindow.comboBox_Button.setCurrentIndex(int(Dict['Button']))
 
-        Button_Theme(SettingWindow, int(Dict['Button']))
-        SettingWindow.comboBox_Button.setCurrentIndex(int(Dict['Button']))
+    ButtonText_Theme(SettingWindow, int(Dict['ButtonText']))
+    SettingWindow.comboBox_ButtonText.setCurrentIndex(
+        int(Dict['ButtonText']))
 
-        ButtonText_Theme(SettingWindow, int(Dict['ButtonText']))
-        SettingWindow.comboBox_ButtonText.setCurrentIndex(
-            int(Dict['ButtonText']))
+    SliderTheme(SettingWindow, int(Dict['Slider Color']))
+    SettingWindow.comboBox_Slider.setCurrentIndex(
+        int(Dict['Slider Color']))
 
-        SliderTheme(SettingWindow, int(Dict['Slider Color']))
-        SettingWindow.comboBox_Slider.setCurrentIndex(
-            int(Dict['Slider Color']))
-
-        if int(Dict['Theme']) != 4:
-            SettingWindow.scrollArea_Theme.setVisible(False)
-        elif int(Dict['Theme']) == 4:
-            SettingWindow.scrollArea_Theme.setVisible(True)
+    if int(Dict['Theme']) != 4:
+        SettingWindow.scrollArea_Theme.setVisible(False)
+    elif int(Dict['Theme']) == 4:
+        SettingWindow.scrollArea_Theme.setVisible(True)
 
 
 def _Theme(SettingWindow, index):
@@ -113,8 +116,8 @@ def _Theme(SettingWindow, index):
         background_Theme(SettingWindow, 11)
         SettingWindow.comboBox_Background.setCurrentIndex(11)
 
-        Base_Theme(SettingWindow, 2)
-        SettingWindow.comboBox_Base.setCurrentIndex(2)
+        Base_Theme(SettingWindow, 11)
+        SettingWindow.comboBox_Base.setCurrentIndex(11)
 
         WindowsText_Theme(SettingWindow, 0)
         SettingWindow.comboBox_WindowsText.setCurrentIndex(0)
@@ -177,7 +180,7 @@ def background_Theme(SettingWindow, index):
         QApplication.setPalette(SettingWindow.palette)
     if index == 2:
         SettingWindow.palette.setColor(QtGui.QPalette.Window,
-                                       QtGui.QColor(53, 53, 53))  # Black
+                                       QtGui.QColor('#000000'))  # Black
         QApplication.setPalette(SettingWindow.palette)
     if index == 3:
         SettingWindow.palette.setColor(QtGui.QPalette.Window,
@@ -228,7 +231,7 @@ def Base_Theme(SettingWindow, index):
                                        QtGui.QColor('#ebebeb'))
     if index == 2:
         SettingWindow.palette.setColor(QtGui.QPalette.Base,
-                                       QtGui.QColor(53, 53, 53))
+                                       QtGui.QColor('#000000'))
     if index == 3:
         SettingWindow.palette.setColor(QtGui.QPalette.Base,
                                        QtGui.QColor('#35b9ff'))
@@ -272,7 +275,7 @@ def WindowsText_Theme(SettingWindow, index):
         QApplication.setPalette(SettingWindow.palette)
     if index == 2:
         SettingWindow.palette.setColor(QtGui.QPalette.WindowText,
-                                       QtGui.QColor(53, 53, 53))
+                                       QtGui.QColor('#000000'))
     if index == 3:
         SettingWindow.palette.setColor(QtGui.QPalette.WindowText,
                                        QtGui.QColor('#35b9ff'))
@@ -315,7 +318,7 @@ def Text_Theme(SettingWindow, index):
                                        QtGui.QColor('#ebebeb'))
     if index == 2:
         SettingWindow.palette.setColor(QtGui.QPalette.Text,
-                                       QtGui.QColor(53, 53, 53))
+                                       QtGui.QColor('#000000'))
     if index == 3:
         SettingWindow.palette.setColor(QtGui.QPalette.Text,
                                        QtGui.QColor('#35b9ff'))
@@ -358,7 +361,7 @@ def Button_Theme(SettingWindow, index):
                                        QtGui.QColor('#ebebeb'))
     if index == 2:
         SettingWindow.palette.setColor(QtGui.QPalette.Button,
-                                       QtGui.QColor(53, 53, 53))
+                                       QtGui.QColor('#000000'))
     if index == 3:
         SettingWindow.palette.setColor(QtGui.QPalette.Button,
                                        QtGui.QColor('#35b9ff'))
@@ -401,7 +404,7 @@ def ButtonText_Theme(SettingWindow, index):
                                        QtGui.QColor('#ebebeb'))
     if index == 2:
         SettingWindow.palette.setColor(QtGui.QPalette.ButtonText,
-                                       QtGui.QColor(53, 53, 53))
+                                       QtGui.QColor('#000000'))
     if index == 3:
         SettingWindow.palette.setColor(QtGui.QPalette.ButtonText,
                                        QtGui.QColor('#35b9ff'))
@@ -435,8 +438,8 @@ def ButtonText_Theme(SettingWindow, index):
 
 def SliderTheme(SettingWindow, index):
     # Create list of Color of Slider in comboBox
-    color = ["#ffffff", "#ebebeb", "#353535", "#35b9ff", "#163393",
-             "#ee8bff", "#9538bd", "#55aa00", "#ffff7f", "#ff0000", "#ffaa00"]
+    color = ["#ffffff", "#ebebeb", "#000000", "#35b9ff", "#163393",
+             "#ee8bff", "#9538bd", "#55aa00", "#ffff7f", "#ff0000", "#ffaa00", "#353535"]
     if SettingWindow.checkBox_Theme.isChecked():
         # Set stylesheet for Sliders Classic
         StyleSheet_Slider = ("")

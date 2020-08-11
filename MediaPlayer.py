@@ -256,14 +256,13 @@ class MediaPlayer(QMainWindow, Form):
             self.confirmCloseTag.show()
         else:
             dialog = QFileDialog(self, 'File tag', directory=os.getcwd())
-            _path = dialog.getSaveFileName(filter= "*.csv")[0]
+            _path = dialog.getSaveFileName(filter="*.csv")[0]
             try:
                 if _path:
                     self.tag_Path = _path
                     open(self.tag_Path, "w")
             except:
                 pass
-
 
     def menuBarCloseTag(self):
         # close current tags
@@ -416,12 +415,24 @@ class MediaPlayer(QMainWindow, Form):
         # Load Files of directory
         # just mp4 ,mkv , mp3
         if not filepath:
-            file_path, _ = QFileDialog.getOpenFileName(
-                self, "Open video", directory=os.path.join(os.getcwd(), 'Video'), filter='*.mp4 *.mkv *.mp3')
+            try:
+                # To read initial Directory from csvfile
+                with open("./PlayListPart/Filepath.csv") as file:
+                    initial_FilePath = file.read()
+                    file_path, _ = QFileDialog.getOpenFileName(
+                        self, "Open video", directory=initial_FilePath, filter='*.mp4 *.mkv *.mp3')
+            except:
+                initial_FilePath = os.getcwd()
+                file_path, _ = QFileDialog.getOpenFileName(
+                    self, "Open video", directory=initial_FilePath, filter='*.mp4 *.mkv *.mp3')
         else:
+            initial_FilePath = None
             file_path = filepath
-
         if file_path:
+            # To write initial Directory in csvfile
+            if file_path.replace(file_path.split("/")[-1], "") != initial_FilePath:
+                with open("./PlayListPart/Filepath.csv", 'w') as file:
+                    file.write(file_path.replace(file_path.split("/")[-1], ""))
             self.player.setMedia(QMediaContent(QUrl.fromLocalFile(file_path)))
             self.start()
             self.pushButton_volume.setEnabled(True)
@@ -440,7 +451,8 @@ class MediaPlayer(QMainWindow, Form):
             self.Setting.comboBox_Tag.clear()
             self.ComboBox_Tags_of_file.clear()
             self.PlaylistW.Create_Playlist(file_path)
-            self.set_TagonListwidget(".".join(self.windowTitle()[16:].split(".")[:-1]))
+            self.set_TagonListwidget(
+                ".".join(self.windowTitle()[16:].split(".")[:-1]))
 
     def Position_changed(self, position):
         if position > self.player.duration():
@@ -560,19 +572,20 @@ class MediaPlayer(QMainWindow, Form):
                 ".".join(self.windowTitle()[16:].split(".")[:-1]), self.tag_Path)
             # there isn't any tags for movie we want to add bookmark it
             if not ".".join(self.windowTitle()[16:].split(".")[:-1]) in self.allTag:
-                self.allTag.update({".".join(self.windowTitle()[16:].split(".")[:-1]): {}})
+                self.allTag.update(
+                    {".".join(self.windowTitle()[16:].split(".")[:-1]): {}})
             self.allTag[".".join(self.windowTitle()[16:].split(".")[:-1])].update(
                 {self.lineEdit_Bookmark.text(): tc.millis_to_format(self.player.position())})
             self.set_TagonListwidget(self.windowTitle()[16:].split(".")[
                                      0])  # update tag listwidget
             # update combo box of edit and Main window
             self.pushButton_Start.setFocus(True)
-            index = self.ComboBox_Tags_of_file.findText(self.windowTitle()[16:])
+            index = self.ComboBox_Tags_of_file.findText(
+                self.windowTitle()[16:])
             self.ComboBox_Tags_of_file.setCurrentIndex(index)
             index = self.Setting.comboBox_Tag.findText(self.windowTitle()[16:])
             self.Setting.comboBox_Tag.setCurrentIndex(index)
             # ****
-            
 
         except:
             pass
@@ -651,12 +664,13 @@ class MediaPlayer(QMainWindow, Form):
         # get all session to compare that is selected tag in playlist or user select tag wrong
         all_sessions = list(self.PlaylistW.Files.keys())
         # there is bug here if mp3 and mp4 has same name
-        all_sessions = [".".join(item.split(".")[:-1]) for item in all_sessions]
+        all_sessions = [".".join(item.split(".")[:-1])
+                        for item in all_sessions]
         if session in all_sessions:
             if session != ".".join(self.windowTitle()[16:].split(".")[:-1]):
                 # Show confirm window to get accept user for change video
-                self.confirmWin = confrimWin(self, session= session,
-                                            tag_Text=tag, Text=f"Are you sure to change video to {session} from search")
+                self.confirmWin = confrimWin(self, session=session,
+                                             tag_Text=tag, Text=f"Are you sure to change video to {session} from search")
                 self.confirmWin.show()
             else:
                 try:
@@ -666,7 +680,8 @@ class MediaPlayer(QMainWindow, Form):
                 except:  # handle unexcepted error!
                     pass
         else:
-            Warning_user_wrongTags = confrimWin(self, Title= "Warning", Text= "You has opened wrong tag files, please be care")
+            Warning_user_wrongTags = confrimWin(
+                self, Title="Warning", Text="You has opened wrong tag files, please be care")
             Warning_user_wrongTags.show()
 
     # Create search listwidget and running thread to starting search
@@ -699,6 +714,9 @@ class MediaPlayer(QMainWindow, Form):
         os.remove("LoginPart/User.csv")
         self.close()
         self.player.stop()
+        self.Setting.close()
+        self.PlaylistW.close()
+        self.DockWidget_Tags_of_file.close()
         subprocess.call(['python', 'MediaPlayer.py'])  # Start again
 
     def Play_list(self):
@@ -714,6 +732,7 @@ class MediaPlayer(QMainWindow, Form):
                             QtGui.QCursor().pos().y()-self.PlaylistW.size().height()-25)
 
     def Show_Tags_of_file(self):
+        self.sch_listWidget.setVisible(False)
         # To show Tags of file in DockWidget
         self.DockWidget_Tags_of_file.setVisible(
             not self.DockWidget_Tags_of_file.isVisible())
@@ -731,7 +750,8 @@ class MediaPlayer(QMainWindow, Form):
 
     def ListWidget_Tag(self, index):
         """Tag combo box item clicked function"""
-        videoName = ".".join(list(self.PlaylistW.Files.keys())[index].split(".")[:-1])
+        videoName = ".".join(list(self.PlaylistW.Files.keys())[
+                             index].split(".")[:-1])
         self.set_TagonListwidget(videoName, Setting_Tags=False)
 
     def openTags(self):
@@ -754,7 +774,8 @@ class MediaPlayer(QMainWindow, Form):
         self.allTag = tags
         index = self.ComboBox_Tags_of_file.findText(self.windowTitle()[16:])
         self.ComboBox_Tags_of_file.setCurrentIndex(index)
-        self.set_TagonListwidget(".".join(self.windowTitle()[16:].split(".")[:-1]))
+        self.set_TagonListwidget(
+            ".".join(self.windowTitle()[16:].split(".")[:-1]))
 
     # set tags on tag listwidget using vedio name
     # update tags
@@ -800,7 +821,8 @@ class MediaPlayer(QMainWindow, Form):
             except:
                 pass
         else:
-            session = ".".join(self.ComboBox_Tags_of_file.currentText().split(".")[:-1])
+            session = ".".join(
+                self.ComboBox_Tags_of_file.currentText().split(".")[:-1])
             self.confirmWin = confrimWin(self, session=session,
                                          tag_Text=tag_Text, Text=f"Are you sure to change video to {session}")
             self.confirmWin.show()
@@ -811,9 +833,9 @@ class MediaPlayer(QMainWindow, Form):
         # change video position using item time
         self.player.setPosition(int(time_second)*1000)
 
-
     # change video function to change video when clicked on
     # tags that there is not in current movie's tags
+
     def change_Video(self, session):
         # there is bug here if user select mp3 file that has same name with mp4 similar file
         for key in self.PlaylistW.Files:
