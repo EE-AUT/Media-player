@@ -769,17 +769,18 @@ class MediaPlayer(QMainWindow, Form):
             # if there is FilePath_Tag.csv 
             with open("./tagPart/Filepath_Tag.csv") as file:
                 initial_FilePath_Tag = file.read()
-                self.tag_Path, _ = QFileDialog.getOpenFileName(
+                _tag_Path, _ = QFileDialog.getOpenFileName(
                     self, "Open Tag", directory=initial_FilePath_Tag, filter='*.csv *.docx *.pptx')
                 
         except Exception as e:
             initial_FilePath_Tag = os.path.join(os.getcwd(), 'Tags')
-            self.tag_Path, _ = QFileDialog.getOpenFileName(
+            _tag_Path, _ = QFileDialog.getOpenFileName(
                 self, "Open Tag", directory=initial_FilePath_Tag, filter='*.csv *.docx *.pptx')
         
         # if tagpath is correct we starting tag_thread to read tags from path
-        if self.tag_Path:
+        if _tag_Path:
             # save filepath in csv file
+            self.tag_Path = _tag_Path
             try:
                 with open("./tagPart/Filepath_Tag.csv", 'w') as file:
                     file.write(self.tag_Path.replace(self.tag_Path.split("/")[-1], ""))
