@@ -704,7 +704,6 @@
     <addaction name="actionFullScreen"/>
     <addaction name="actionSpeed"/>
     <addaction name="actionThme"/>
-    <addaction name="actionFont"/>
    </widget>
    <widget class="QMenu" name="menuTag">
     <property name="title">
