@@ -58,11 +58,11 @@ class tagEditWin(QMainWindow, Form):
                 # check format of line edit
                 if re.search("\d\d:\d\d", time) or re.search("\d\d:\d\d:\d\d", time):
                     if self.Title == "Change tag":  # if change tag
-                        del self.MediaPlayer.allTag[session][self.Text]
-                        self.MediaPlayer.allTag[session].update({text: time})
-                        self.MediaPlayer.set_TagonListwidget(
-                            session)  # update tags in Edit part
                         if self.check_Timeformat(time): # check time format
+                            del self.MediaPlayer.allTag[session][self.Text]
+                            self.MediaPlayer.allTag[session].update({text: time})
+                            self.MediaPlayer.set_TagonListwidget(
+                                session)  # update tags in Edit part
                             edit_Tags(
                                 self.Text + "#" + self.Time, text + "#" + time, self.MediaPlayer.tag_Path)
                             self.close()
