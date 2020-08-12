@@ -174,7 +174,6 @@ class MediaPlayer(QMainWindow, Form):
         self.actionFullScreen.triggered.connect(self.fullscreen)
         self.actionSpeed.triggered.connect(self.menuBarSpeed)
         self.actionThme.triggered.connect(self.menuBarTheme)
-        self.actionFont.triggered.connect(self.menuBarFont)
 
         self.actionCreate_Tag.triggered.connect(self.menuBarCreateTag)
         self.actionOpen_Tags.triggered.connect(self.openTags)
@@ -223,29 +222,23 @@ class MediaPlayer(QMainWindow, Form):
         self.Settingshow()
         self.Setting.Tab.setCurrentIndex(0)
 
-    def menuBarFont(self):
-        # Open Font Tab of Setting Window
-        self.Setting.Account_changing = False
-        self.Settingshow()
-        self.Setting.Tab.setCurrentIndex(1)
-
     def menuBarSpeed(self):
         # Open Speed Tab of Setting Window
         self.Setting.Account_changing = False
         self.Settingshow()
-        self.Setting.Tab.setCurrentIndex(2)
+        self.Setting.Tab.setCurrentIndex(1)
 
     def menuBarEditTag(self):
         # Open Tag Tab of Setting Window
         self.Setting.Account_changing = False
         self.Settingshow()
-        self.Setting.Tab.setCurrentIndex(3)
+        self.Setting.Tab.setCurrentIndex(2)
 
     def menuBarAccout(self):
         # Open Account Tab of Setting Window
         self.Setting.Account_changing = False
         self.Settingshow()
-        self.Setting.Tab.setCurrentIndex(4)
+        self.Setting.Tab.setCurrentIndex(3)
 
     def menuBarCreateTag(self):
         # create new Tag file
