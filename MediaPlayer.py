@@ -7,6 +7,7 @@ from time import sleep
 import LoginPart.Login as Login
 import SettingPart.Setting as Setting
 import PlayListPart.Playlist as Playlist
+import HelpPart.help as Help
 from PyQt5.QtWidgets import QApplication, QHBoxLayout, QWidget, QLabel, QFrame, QMainWindow, QComboBox, QVBoxLayout, QDockWidget, QMenuBar, QFileDialog, QLineEdit, QListWidget, QSlider, QShortcut, QTreeWidgetItem, QGraphicsView, QDialog
 from PyQt5 import uic, QtCore, QtGui
 from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
@@ -72,6 +73,9 @@ class MediaPlayer(QMainWindow, Form):
         # To Apply initial Theme
         self.Setting = Setting.SettingWindow(self)
         Theme_module.Theme_apply(self.Setting)
+
+        #Create Help 
+        self.helpW = Help.helpWindow(self)
 
         # PushButttons
         self.pushButton_Start.setEnabled(False)
@@ -168,6 +172,7 @@ class MediaPlayer(QMainWindow, Form):
         self.actionChange_Password.triggered.connect(self.menuBarAccout)
         self.actionDelete_Account.triggered.connect(self.menuBarAccout)
 
+        self.actionHelp.triggered.connect(self.Help)
         self.actionLogOut.triggered.connect(self.Logout)
         self.actionExit.triggered.connect(lambda: self.close())
 
@@ -221,6 +226,9 @@ class MediaPlayer(QMainWindow, Form):
         self.Setting.Account_changing = False
         self.Settingshow()
         self.Setting.Tab.setCurrentIndex(0)
+    def Help(self):
+        self.helpW.show()
+
 
     def menuBarSpeed(self):
         # Open Speed Tab of Setting Window
@@ -713,6 +721,7 @@ class MediaPlayer(QMainWindow, Form):
         self.player.stop()
         self.Setting.close()
         self.PlaylistW.close()
+        self.helpW.close()
         self.DockWidget_Tags_of_file.close()
         subprocess.call(['python', 'MediaPlayer.py'])  # Start again
 

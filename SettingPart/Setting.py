@@ -23,6 +23,7 @@ class SettingWindow(QMainWindow, Form):
         self.setupUi(self)
         self.MediaPlayer = Mediaplayer
         self.Account_changing = False  # This parameter shown password must be change
+        self.setWindowTitle("Setting")
 
         # Theme Part
         self.palette = QtGui.QPalette()

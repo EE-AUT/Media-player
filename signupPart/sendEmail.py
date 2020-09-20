@@ -11,7 +11,7 @@ def Send_Email(receiver_address):
     mail_content = f'''Hello 
     You recently requested to sign up in Media player .
     Your Verification code is :{confirm_key}
-    If you did not request to Delete Account , Please ignore this email or reply to let us know .
+    If you did not request to sign up , Please ignore this email or reply to let us know .
     Thank You
     Media Player'''
 

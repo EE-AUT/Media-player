@@ -694,6 +694,7 @@
     <addaction name="separator"/>
     <addaction name="actionChange_Password"/>
     <addaction name="actionDelete_Account"/>
+    <addaction name="actionHelp"/>
     <addaction name="actionLogOut"/>
     <addaction name="actionExit"/>
    </widget>
@@ -805,6 +806,16 @@
   <action name="actionDelete_Account">
    <property name="text">
     <string>Delete Account</string>
+   </property>
+  </action>
+  <action name="actionconnect_us">
+   <property name="text">
+    <string>Connect us</string>
+   </property>
+  </action>
+  <action name="actionHelp">
+   <property name="text">
+    <string>Help</string>
    </property>
   </action>
  </widget>
