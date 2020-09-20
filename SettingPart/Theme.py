@@ -116,8 +116,8 @@ def _Theme(SettingWindow, index):
         background_Theme(SettingWindow, 11)
         SettingWindow.comboBox_Background.setCurrentIndex(11)
 
-        Base_Theme(SettingWindow, 11)
-        SettingWindow.comboBox_Base.setCurrentIndex(11)
+        Base_Theme(SettingWindow, 2)
+        SettingWindow.comboBox_Base.setCurrentIndex(2)
 
         WindowsText_Theme(SettingWindow, 0)
         SettingWindow.comboBox_WindowsText.setCurrentIndex(0)

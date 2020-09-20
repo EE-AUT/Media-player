@@ -123,6 +123,7 @@ class PlaylistWindow(QMainWindow, Form):
         self.MediaPlayer.Setting.comboBox_Tag.clear()
         self.MediaPlayer.ComboBox_Tags_of_file.addItems(self.Files.keys())
         self.MediaPlayer.Setting.comboBox_Tag.addItems(self.Files.keys())
+        self.MediaPlayer.pushButton_next.setEnabled(True)
 
     def del_file(self):
         self.spliter = len(

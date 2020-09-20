@@ -82,9 +82,10 @@ Form = uic.loadUiType(os.path.join(
 
 class DeleteAccountWindow(QMainWindow, Form):
     def __init__(self, window, MediaPlayer, key):
-        QMainWindow.__init__(self, parent=window)
+        QMainWindow.__init__(self, parent=MediaPlayer)
         Form.__init__(self)
         self.setupUi(self)
+        self.setWindowTitle(" Delete Account")
 
         # To Specialize flags
         self.setWindowFlags(
@@ -142,7 +143,7 @@ class Sent_Email_Thread(QtCore.QThread):
     sent = QtCore.pyqtSignal(bool)
 
     def __init__(self, window, code, receiver_address):
-        QtCore.QThread.__init__(self, window)
+        QtCore.QThread.__init__(self, parent=window)
         self.receiver_address = receiver_address
         self.Text = f'''Hello 
         You recently requested to Delete your Account .
@@ -187,7 +188,7 @@ class DeleteAcc_Thread(QtCore.QThread):
     DeleteAccount = QtCore.pyqtSignal(bool)
 
     def __init__(self, window, MediaPlayer):
-        QtCore.QThread.__init__(self, parent=window)
+        QtCore.QThread.__init__(self, parent=MediaPlayer)
         self.MediaPlayer = MediaPlayer  # Media player window
         self.window = window  # Setting window
 
