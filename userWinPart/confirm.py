@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog, QDialog
+from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog, QDialog, QSizePolicy
 from PyQt5 import uic, QtCore, QtGui
 import os
 from editPart import timeconvert as tc
@@ -34,6 +34,12 @@ class confrimWin(QMainWindow, Form):
 
         self.yes_Button.clicked.connect(self.yes_Clicked)
         self.no_Button.clicked.connect(self.no_Clicked)
+
+        if len(Text) > 60:
+            Font_Size = int((60 / len(Text)) * 12)
+        else:
+            Font_Size = 10
+        self.Msg_Lebel.setFont(QtGui.QFont('Arial', Font_Size)) 
         self.Msg_Lebel.setText(Text)
 
     # accept and do some works
