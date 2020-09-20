@@ -21,6 +21,6 @@ def find_Closest_to(tags, word):
 def __find__(tags, word):
     suggest = {}
     for key in tags:
-        if key.find(word) != -1:
+        if key.lower().find(word.lower()) != -1:
             suggest.update({key: tags[key]})
     return suggest  # return dict
