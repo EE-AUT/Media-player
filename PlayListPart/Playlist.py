@@ -34,16 +34,19 @@ class PlaylistWindow(QMainWindow, Form):
     def Create_Playlist(self, file_path):
         self.listWidget_Playlist.clear()
         self.FileName = file_path.split("/")[-1]
-        File_format = self.FileName.split(".")[-1]
+        File_formats = ['mp4', 'mp3', 'mkv', 'mov' ]
         self.MediaPlayer.setWindowTitle(f" Media Player - {self.FileName}")
         self.File_Path = file_path.replace(f"{self.FileName}", "")
         list_File = os.listdir(self.File_Path)  # File of directory
         # Sort file and natural_keys was defined below
         list_File.sort(key=natural_keys)
+        self.Files= dict()
 
         # Create a dictionary for Files that keys of it are files name and values of it is file path
-        self.Files = dict((file, f'{self.File_Path}{file}') for file in list_File if re.search(
-            f'.{File_format}', file))  # Create Files
+        for File_format in File_formats:
+            print(File_format)
+            self.Files.update(dict((file, f'{self.File_Path}{file}') for file in list_File if re.search(
+                f'.{File_format}', file)))  # Create Files
         for file in self.Files:
             self.listWidget_Playlist.addItem(
                 f'{self.listWidget_Playlist.count()+1} . {file}')  # Add file to listWidget in playlist
@@ -110,7 +113,7 @@ class PlaylistWindow(QMainWindow, Form):
 
     def add_file(self):
         file_path, _ = QFileDialog.getOpenFileName(
-            self, "Open video", directory=self.File_Path, filter='*.mp4 *.mkv *.mp3')
+            self, "Open video", directory=self.File_Path, filter='*.mp4 *.mkv *.mp3 *.mov')
         if file_path:
             file_name = file_path.split("/")[-1]
             if not file_name in self.Files.keys():

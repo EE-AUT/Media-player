@@ -765,7 +765,7 @@
   </action>
   <action name="actionThme">
    <property name="text">
-    <string>Thme</string>
+    <string>Theme</string>
    </property>
   </action>
   <action name="actionFont">

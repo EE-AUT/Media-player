@@ -414,18 +414,18 @@ class MediaPlayer(QMainWindow, Form):
 
     def Load_video(self, filepath=None):
         # Load Files of directory
-        # just mp4 ,mkv , mp3
+        # just mp4, mkv, mp3, mov
         if not filepath:
             try:
                 # To read initial Directory from csvfile
                 with open("./PlayListPart/Filepath.csv") as file:
                     initial_FilePath = file.read()
                     file_path, _ = QFileDialog.getOpenFileName(
-                        self, "Open video", directory=initial_FilePath, filter='*.mp4 *.mkv *.mp3')
+                        self, "Open video", directory=initial_FilePath, filter='*.mp4 *.mkv *.mp3 *.mov')
             except:
                 initial_FilePath = os.getcwd()
                 file_path, _ = QFileDialog.getOpenFileName(
-                    self, "Open video", directory=initial_FilePath, filter='*.mp4 *.mkv *.mp3')
+                    self, "Open video", directory=initial_FilePath, filter='*.mp4 *.mkv *.mp3 *.mov')
         else:
             initial_FilePath = None
             file_path = filepath
@@ -872,6 +872,8 @@ class MediaPlayer(QMainWindow, Form):
                 return self._change_Video(key)
             elif session + ".mkv" == key:
                 return self._change_Video(key)
+            elif session + ".mov" == key:
+                return self._change_Video(key)
         return False
 
     def _change_Video(self, key):
@@ -922,7 +924,7 @@ class MediaPlayer(QMainWindow, Form):
             # get droppen file path
             file_path = event.mimeData().urls()[0].toLocalFile()
             file_format = (file_path.split("/")[-1]).split(".")[-1]
-            desired_format = ['mp4', 'mkv', 'mp3']  # desired path to open
+            desired_format = ['mp4', 'mkv', 'mp3','mov']  # desired path to open
             if file_format in desired_format:  # check file format
                 self.Load_video(filepath=file_path)
 
